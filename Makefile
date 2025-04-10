@@ -5,7 +5,7 @@
 # Object files location. Object files will be placed in this directory during compilation
 OBJDIR   = objects
 # Full names of object files
-OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o)
+OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o)
 
 # The Compiler
 CC       = gcc
@@ -81,6 +81,13 @@ $(SHARED): $(OBJECTS)
 WINDOW   = $(addprefix source/, window.c)
 
 $(OBJDIR)/Window.o: $(WINDOW) $(INCLUDE)
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ======== #
+
+CLOCK    = $(addprefix source/, clock.c)
+
+$(OBJDIR)/Clock.o: $(CLOCK) $(INCLUDE)
 	$(CC) $(CFLAGS) -o $@ $<
 
 # ================================================================ #
