@@ -2,14 +2,6 @@
 
 /* ================================================================ */
 
-struct texture {
-
-    SDL_Renderer* r;
-    SDL_Texture* t;
-};
-
-/* ================================================================ */
-
 Texture* Texture_new(SDL_Renderer* context, const char* filename) {
 
     Texture* texture;
