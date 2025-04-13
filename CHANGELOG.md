@@ -4,6 +4,14 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [0.3.0] - 2025-04-14
+
+### Added
+- A `Text` object with initial functionality
+
+### Changed
+- A `Texture` object is exposed now
+
 ## [0.2.0] - 2025-04-13
 
 ### Added
