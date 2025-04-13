@@ -6,6 +6,12 @@
 
 /* ================================================================ */
 
+struct texture {
+
+    SDL_Renderer* r;
+    SDL_Texture* t;
+};
+
 typedef struct texture Texture;
 
 /**
@@ -55,6 +61,8 @@ int Texture_drawM(const Texture *t, const SDL_Rect *src, const SDL_Rect *dst, co
  * 
  * @param w a pointer filled in with the width of the texture in pixels. This argument can be NULL if you don't need this information
  * @param h a pointer filled in with the height of the texture in pixels. This argument can be NULL if you don't need this information
+ * 
+ * @return 0 on success or a negative error code on failure.
  */
 int Texture_get_dimensions(const Texture* texture, int* w, int* h);
 
