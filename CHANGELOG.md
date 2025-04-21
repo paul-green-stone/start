@@ -4,6 +4,11 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [0.5.0] - 2025-04-21
+
+### Added
+- A `Vector2` addition and subtraction
+
 ## [0.4.0] - 2025-04-21
 
 ### Added
