@@ -152,3 +152,56 @@ int Vector2_normalize(Vector2* v) {
 }
 
 /* ================================================================ */
+
+int Vector2_add(const Vector2* a, Vector2* b, Vector2* dst_vector) {
+
+    if ((a == NULL) || (b == NULL)) {
+        return -1;
+    }
+
+    if (dst_vector == NULL) {
+
+        /* Addition is commutative */
+        b->x += a->x;
+        b->y += a->y;
+
+        /* ======== */
+
+        return 0;
+    }
+
+    dst_vector->x = b->x + a->x;
+    dst_vector->y = b->y + a->y;
+
+    /* ======== */
+
+    return 0;
+}
+
+/* ================================================================ */
+
+int Vector2_subtract(const Vector2* a, Vector2* b, Vector2* dst_vector) {
+
+    if ((a == NULL) || (b == NULL)) {
+        return -1;
+    }
+
+    if (dst_vector == NULL) {
+
+        b->x = a->x - b->x;
+        b->y = a->y - b->y;
+
+        /* ======== */
+
+        return 0;
+    }
+
+    dst_vector->x = a->x - b->x;
+    dst_vector->y = a->y - b->y;
+
+    /* ======== */
+
+    return 0;
+}
+
+/* ================================================================ */
