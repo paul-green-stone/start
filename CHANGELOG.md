@@ -4,6 +4,16 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [0.4.0] - 2025-04-21
+
+### Added
+- A `Vector2` object with initial functionality: 
+  - *multiplication by a scalar*
+  - *division by a scalar*
+  - *vector negation*
+  - *vector normalization*
+  - *finding the vector's magnitude*
+
 ## [0.3.0] - 2025-04-14
 
 ### Added
