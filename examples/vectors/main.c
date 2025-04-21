@@ -31,6 +31,19 @@ int main(int argc, char** argv) {
 
     Vector2_normalize(&d);
     printf("d (normalized) = {%.2f; %.2f}\n", d.x, d.y);
+
+    a.x = 1.0;
+    a.y = 2.0;
+
+    d.x = 8.0;
+    d.y = 3.0;
+
+    Vector2 z = {0, 0};
+    Vector2_add(&a, &d, &z);
+    printf("z (a + b) = {%.2f; %.2f}\n", z.x, z.y);
+
+    Vector2_subtract(&a, &d, NULL);
+    printf("d (a - d) = {%.2f; %.2f}\n", d.x, d.y);
 }
 
 /* ================================================================ */
