@@ -5,7 +5,7 @@
 # Object files location. Object files will be placed in this directory during compilation
 OBJDIR   = objects
 # Full names of object files
-OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o)
+OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o)
 
 # The Compiler
 CC       = gcc
@@ -13,7 +13,7 @@ CC       = gcc
 CFLAGS   = -c -g -Wall -Wextra -pedantic-errors -fPIC -O2 -ansi
 
 # Additional libraries that need to be searched for function definitions
-LDFLAGS  = `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf`
+LDFLAGS  = `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf` -lm
 
 # An archiver to produce a static library
 AR       = ar
@@ -102,6 +102,13 @@ $(OBJDIR)/Texture.o: $(TEXTURE) $(INCLUDE)
 TEXT     = $(addprefix source/, text.c)
 
 $(OBJDIR)/Text.o: $(TEXT) $(INCLUDE)
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ======== #
+
+VECTOR2  = $(addprefix source/Math/, vector2.c)
+
+$(OBJDIR)/Vector2.o: $(VECTOR2) $(INCLUDE)
 	$(CC) $(CFLAGS) -o $@ $<
 
 # ================================================================ #
