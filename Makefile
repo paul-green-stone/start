@@ -5,7 +5,7 @@
 # Object files location. Object files will be placed in this directory during compilation
 OBJDIR   = objects
 # Full names of object files
-OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o)
+OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o)
 
 # The Compiler
 CC       = gcc
@@ -109,6 +109,13 @@ $(OBJDIR)/Text.o: $(TEXT) $(INCLUDE)
 VECTOR2  = $(addprefix source/Math/, vector2.c)
 
 $(OBJDIR)/Vector2.o: $(VECTOR2) $(INCLUDE)
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ======== #
+
+INPUT    = $(addprefix source/, input.c)
+
+$(OBJDIR)/Input.o: $(INPUT) $(INCLUDE)
 	$(CC) $(CFLAGS) -o $@ $<
 
 # ================================================================ #
