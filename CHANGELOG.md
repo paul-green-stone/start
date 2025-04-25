@@ -4,9 +4,15 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [0.7.0] - 2025-04-25
+
+### Added
+- Add application struct (`App`) to encapsulate SDL window, renderer, and timing state
+- An example on using app
+
 ## [0.6.0] - 2025-04-23
 
-## Added
+### Added
 - A basic mechanism for handling input
 
 ## [0.5.0] - 2025-04-21
