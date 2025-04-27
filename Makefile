@@ -159,13 +159,14 @@ ifeq ($(OS_NAME), Linux)
 # If the operating system is macOS
 else ifeq ($(OS_NAME), Darwin)
 # Installing a dynamic library
-	install -Dm755 $(SHARED) $(DESTDIR)/lib/$(SHARED)
+	install -m755 $(SHARED) $(DESTDIR)/lib/$(SHARED)
 # Installing a static library
-	install -Dm644 $(STATIC) $(DESTDIR)/lib/$(STATIC)
+	install -m644 $(STATIC) $(DESTDIR)/lib/$(STATIC)
 	
 	for header in $(INCLUDE); do \
 		destination=$$(echo $$header | sed 's,^include/,,' ); \
-		install -Dm644 $$header $(DESTDIR)/include/start/$$destination; \
+	 	mkdir -p $(DESTDIR)/include/start/$$(dirname $$destination); \
+		install -m644 $$header $(DESTDIR)/include/start/$$destination; \
 	done
 
 else
