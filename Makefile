@@ -31,6 +31,9 @@ INCLUDE  = $(wildcard include/*/*.h) $(wildcard include/*.h)
 # Operating System name
 OS_NAME  = $(shell uname -s)
 
+# Default installation location
+DESTDIR  ?= /usr/local
+
 # ================================ #
 # === Determining the library ==== #
 # ================================ #
@@ -133,7 +136,77 @@ $(OBJDIR)/Application.o: $(APP) $(INCLUDE)
 $(shell mkdir -p $(OBJDIR))
 
 # Executing the commands regardless of whether a file named clean exists or not
-.PHONY: clean
+.PHONY: clean install uninstall
+
+# ================================================================ #
+# ========================== INSTALLING ========================== #
+# ================================================================ #
+
+install:
+
+# If the operating system is Linux
+ifeq ($(OS_NAME), Linux)
+# Installing a dynamic library
+	install -Dm755 $(SHARED) $(DESTDIR)/lib/$(SHARED)
+# Installing a static library
+	install -Dm644 $(STATIC) $(DESTDIR)/lib/$(STATIC)
+
+	for header in $(INCLUDE); do \
+		destination=$$(echo $$header | sed 's,^include/,,' ); \
+		install -Dm644 $$header $(DESTDIR)/include/start/$$destination; \
+	done
+
+# If the operating system is macOS
+else ifeq ($(OS_NAME), Darwin)
+# Installing a dynamic library
+	install -Dm755 $(SHARED) $(DESTDIR)/lib/$(SHARED)
+# Installing a static library
+	install -Dm644 $(STATIC) $(DESTDIR)/lib/$(STATIC)
+	
+	for header in $(INCLUDE); do \
+		destination=$$(echo $$header | sed 's,^include/,,' ); \
+		install -Dm644 $$header $(DESTDIR)/include/start/$$destination; \
+	done
+
+else
+    $(error Unsupported operating system)
+endif
+
+# ================================================================ #
+# ========================= UNINSTALLING ========================= #
+# ================================================================ #
+
+uninstall:
+
+# If the operating system is Linux
+ifeq ($(OS_NAME), Linux)
+# Uninstalling a dynamic library
+	rm -f $(DESTDIR)/lib/$(SHARED)
+# Uninstalling a static library
+	rm -f $(DESTDIR)/lib/$(STATIC)
+
+	for header in $(INCLUDE); do \
+		destination=$$(echo $$header | sed 's,^include/,,' ); \
+		rm -rf $(DESTDIR)/include/start/$$dest; \
+	done
+
+# If the operating system is macOS
+else ifeq ($(OS_NAME), Darwin)
+# Uninstalling a dynamic library
+	rm -f $(DESTDIR)/lib/$(SHARED)
+# Uninstalling a static library
+	rm -f $(DESTDIR)/lib/$(STATIC)
+
+	for header in $(INCLUDE); do \
+		destination=$$(echo $$header | sed 's,^include/,,' ); \
+		rm -rf $(DESTDIR)/include/start/$$dest; \
+	done
+
+else
+    $(error Unsupported operating system)
+endif
+
+# ================================================================ #
 
 clean:
 	rm -rf ./include/*/*.gch $(OBJS) $(OBJDIR) $(STATIC) $(SHARED) *.out
