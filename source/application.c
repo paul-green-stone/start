@@ -1,8 +1,13 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <string.h>
 
 #include "../include/Application.h"
 #include "../include/Window.h"
 #include "../include/Clock.h"
+
 /* ================================================================ */
 
 struct application {
@@ -30,13 +35,13 @@ static struct application app;
 
 /* ================================ */
 
-int App_init(const char* title) {
+int App_init(const char* title, int width, int height) {
 
     /* ================================================ */
     /* ============== CREATING A WINDOW =============== */
     /* ================================================ */
 
-    if ((app.window = Window_new(title, 640, 480, 0, SDL_RENDERER_ACCELERATED)) == NULL) {
+    if ((app.window = Window_new(title, width, height, 0, SDL_RENDERER_ACCELERATED)) == NULL) {
         return -1;
     }
 
@@ -133,6 +138,12 @@ SDL_Renderer* get_context(void) {
 
 /* ================================================================ */
 
+SDL_Window* get_window(void) {
+    return Window_get_window(app.window);
+}
+
+/* ================================================================ */
+
 double get_delta(void) {
     return app.delta_time;
 }
@@ -141,6 +152,76 @@ double get_delta(void) {
 
 int get_fps(void) {
     return app.actual_fps;
+}
+
+/* ================================================================ */
+
+int take_screenshot(const char* filename) {
+
+    SDL_Surface* surface;
+    int width;
+    int height;
+    struct stat st;
+    char filepath[64];
+
+    /* ================================================ */
+    /* === Creating a directory if it doesn't exist === */
+    /* ================================================ */
+
+    memset(&st, 0, sizeof(st));
+
+    if (stat("screenshots", &st) == -1) {
+        mkdir("screenshots", 0755);
+    }
+
+    strcat(filepath, "screenshots/");
+
+    /* ================================================ */
+
+    /* Do not use `NULL` */
+    if (filename == NULL) {
+        return -1;
+    }
+
+    /* Getting window dimensions */
+    SDL_GetWindowSize(Window_get_window(app.window), &width, &height);
+
+    if ((surface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, SDL_PIXELFORMAT_RGBA32)) == NULL) {
+        return -1;
+    }
+
+    if (SDL_RenderReadPixels(get_context(), NULL, SDL_PIXELFORMAT_RGBA32, surface->pixels, surface->pitch) != 0) {
+
+        SDL_FreeSurface(surface);
+
+        /* ======== */
+
+        return -2;
+    }
+
+    /* ================================================ */
+    /* ============ Updating the filename ============= */
+    /* ================================================ */
+
+    strcat(filepath, filename);
+    filepath[strlen(filepath)] = '\0';
+
+    /* ================================================ */
+
+    if (IMG_SavePNG(surface, filepath) != 0) {
+
+        SDL_FreeSurface(surface);
+
+        /* ======== */
+
+        return -3;  
+    }
+
+    SDL_FreeSurface(surface);
+
+    /* ======== */
+
+    return 0;
 }
 
 /* ================================================================ */

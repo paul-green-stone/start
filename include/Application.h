@@ -7,10 +7,12 @@
  * Initializes the application by creating the main window and setting up basic parameters.
  * 
  * @param title a null-terminated string specifying the title of the application window
+ * @param width width of the window
+ * @param height height of the window
  * 
  * @return Returns 0 on success, or -1 if window creation fails.
  */
-int App_init(const char* title);
+int App_init(const char* title, int width, int height);
 
 /**
  * Cleans up and shuts down the application.
@@ -67,6 +69,15 @@ int get_fps(void);
  * @return A pointer to the SDL_Renderer used by the application.
  */
 SDL_Renderer* get_context(void);
+
+/**
+ * Captures the current rendering output from the `SDL_Window` and saves it as a PNG image file in a `screenshots` directory.
+ * 
+ * @param filename name of the PNG file to save the screenshot as (e.g., "capture.png")
+ * 
+ * @return Returns 0 on success or a negative error code on failure.
+ */
+int take_screenshot(const char* filename);
 
 /* ================================================================ */
 
