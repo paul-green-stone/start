@@ -39,6 +39,15 @@ int Window_destroy(Window** window);
  */
 SDL_Renderer* Window_get_context(const Window* window);
 
+/**
+ * Returns the underlying `SDL_Window` pointer associated with the given `Window` wrapper object.
+ * 
+ * @param window Pointer to the `Window` instance to query
+ * 
+ * @return Returns the `SDL_Window*` stored inside the `Window` instance, NULL on failure.
+ */
+SDL_Window* Window_get_window(const Window* window);
+
 /* ================================================================ */
 
 #endif /* _START_WINDOW_INTERFACE_H */

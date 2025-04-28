@@ -8,7 +8,7 @@ struct _window {
     SDL_Renderer* r;    /* Rendering Context */
 };
 
-/* ================================ */
+/* ================================================================ */
 
 Window* Window_new(const char* title, int width, int height, Uint32 window_flags, Uint32 renderer_flags) {
 
@@ -55,7 +55,7 @@ Window* Window_new(const char* title, int width, int height, Uint32 window_flags
     return w;
 }
 
-/* ================================ */
+/* ================================================================ */
 
 int Window_destroy(Window** window) {
     
@@ -91,12 +91,25 @@ int Window_destroy(Window** window) {
     return 0;
 }
 
-/* ================================ */
+/* ================================================================ */
 
 SDL_Renderer* Window_get_context(const Window* window) {
 
     if (window != NULL) {
         return window->r;
+    }
+
+    /* ======== */
+
+    return NULL;
+}
+
+/* ================================================================ */
+
+SDL_Window* Window_get_window(const Window* window) {
+
+    if (window != NULL) {
+        return window->w;
     }
 
     /* ======== */
