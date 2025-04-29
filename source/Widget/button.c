@@ -18,6 +18,7 @@ struct button {
     /* Button's top left corner coordinates */
     Vector2 position;
     Text* label;
+    action on_click;            /* What to do on a mouse click */
 };
 
 /* ================================ */
@@ -131,8 +132,7 @@ static int Button_draw(const void* _self, const SDL_Rect* dst) {
 /* ================================================================ */
 
 /**
- * Calculates and returns the total dimensions (width and height) of a button widget,
- * including its label size and padding.
+ * Calculates and returns the total dimensions (width and height) of a button widget.
  * 
  * @param _self pointer to the button instance
  * 
@@ -175,6 +175,46 @@ Text* Button_get_label(const void* _self) {
 }
 
 /* ================================================================ */
+
+/**
+ * Assigns a callback function to a button's click event.
+ * 
+ * @param _self pointer to the button instance
+ * @param callback function pointer to the callback
+ * 
+ * @return None.
+ */
+void Button_bind_callback(void* _self, action callback) {
+
+    struct button* self;
+    self = _self;
+
+    self->on_click = callback;
+}
+
+/* ================================================================ */
+
+/**
+ * Triggers the button's on_click callback function when a click event occurs.
+ * 
+ * @param _self pointer to the button instance
+ * @param data arbitrary data passed to the `on_click` callback (e.g., event details or user context)
+ * 
+ * @return None (for now).
+ */
+void Button_handle_click(const void* _self, void* data) {
+
+    const struct button* self;
+    self = _self;
+
+    if (self->on_click == NULL) {
+        return ;
+    }
+
+    self->on_click(data);
+}
+
+/* ================================================================ */
 /* ======================== INITIALIZATION ======================== */
 /* ================================================================ */
 
@@ -189,6 +229,9 @@ static const struct widget _Button = {
 
     Button_get_dimensions,  /* get_dimensions */
     Button_get_label,       /* get_label */
+
+    Button_bind_callback,   /* bind */
+    Button_handle_click,    /* handle_click */
 };
 
 const void* Button = &_Button;
