@@ -4,6 +4,14 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [0.8.0] - 2025-04-29
+
+### Added
+- A basic `Menu` object with initial functionality such as rendering and updating
+- A basic widget system represented by a `Widget` object
+- A **Button** `Widget` that is a label a user can interact with (*in development*)
+- A `Window` object can return the underlying `SDL_Window` object now
+
 ## [0.7.0] - 2025-04-25
 
 ### Added
