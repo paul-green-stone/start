@@ -90,7 +90,28 @@ int Menu_draw(const Menu* menu, Alignment a);
  * 
  * @return Returns 0 on success, -1 on failure.
  */
-int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key);
+int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key, SDL_Scancode trigger);
+
+/**
+ * Retrieves the width and height dimensions of the given menu and stores them in the provided `Vector2` struct.
+ * 
+ * @param menu pointer to the menu instance to query
+ * @param dimensions pointer to a Vector2 struct to store the dimensions
+ * 
+ * @return Returns 0 on success. -1 on failure.
+ */
+int Menu_get_dimensions(const Menu* menu, Vector2* dimensions);
+
+/**
+ * Sets the position of the menu by updating its x and y coordinates.
+ * 
+ * @param menu pointer to the menu instance to modify
+ * @param x new horizontal position of the menu
+ * @param y new vertical position of the menu
+ * 
+ * @return Returns 0 on success. -1 on failure.
+ */
+int Menu_set_position(Menu* menu, int x, int y);
 
 /* ================================================================ */
 

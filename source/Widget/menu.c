@@ -246,7 +246,9 @@ int Menu_draw(const Menu* menu, Alignment a) {
 
 /* ================================================================ */
 
-int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key) {
+int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key, SDL_Scancode trigger) {
+
+    int i;
 
     if (menu == NULL) {
         return -1;
@@ -270,6 +272,53 @@ int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key) {
             menu->active_widget += 1;
         }
     }
+    
+    if (Input_wasKey_pressed(trigger)) {
+
+        for (i = 0; i < menu->num_widgets; i++) {
+
+            if (menu->active_widget == i) {
+                
+                Widget_handle_click(menu->widgets[i], NULL);
+
+                /* ======== */
+
+                return 0;
+            }
+        }
+    }
+
+    /* ======== */
+
+    return 0;
+}
+
+/* ================================================================ */
+
+int Menu_get_dimensions(const Menu* menu, Vector2* dimensions) {
+
+    if ((menu == NULL) || (dimensions == NULL)) {
+        return -1;
+    }
+
+    dimensions->x = menu->width;
+    dimensions->y = menu->height;
+
+    /* ======== */
+
+    return 0;
+}
+
+/* ================================================================ */
+
+int Menu_set_position(Menu* menu, int x, int y) {
+
+    if (menu == NULL) {
+        return -1;
+    }
+
+    menu->position.x = x;
+    menu->position.y = y;
 
     /* ======== */
 
