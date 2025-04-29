@@ -13,6 +13,25 @@
 
 /* ================================================================ */
 
+void quit(void* data) {
+    printf("Exiting the game...\n");
+    App_stop();
+}
+
+void start_game(void* data) {
+    printf("Starting a new game...\n");
+}
+
+void load_game(void* data) {
+    printf("Loading the game...\n");
+}
+
+void open_settings_menu(void* data) {
+    printf("Opening a settings window...\n");
+}
+
+/* ================================================================ */
+
 int main(int argc, char** argv) {
 
     /* SDL Library Initialization */
@@ -27,24 +46,34 @@ int main(int argc, char** argv) {
     SDL_Event event;
     SDL_Renderer* r = get_context();
 
-    TTF_Font* font = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 24);
-    Text* text = Text_new(r, font, &(SDL_Color) {0, 0, 0, 255}, "FPS: 60");
+    TTF_Font* font1 = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 24);
+    TTF_Font* font = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 48);
+    Text* text = Text_new(r, font1, &(SDL_Color) {0, 0, 0, 255}, "FPS: 60");
     SDL_Rect text_pos = {32, 32, text->width, text->height};
     char fps_buf[32];
 
-    Menu* menu = Menu_new(3, &(Vector2) {128, 128});
+    Menu* menu = Menu_new(4, &(Vector2) {640 / 2, 480 / 2});
     Menu_set_padding(menu, &(Vector2) {0, 24});
 
-    Vector2 bd;
-    void* button = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "Button 1", &(Vector2) {64.0f, 64.0f});
-    void* button2 = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "Button 2", &(Vector2) {64.0f, 64.0f});
-    void* button3 = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "Long Button", &(Vector2) {64.0f, 64.0f});
-    
-    Widget_get_dimensions(button, &bd);
+    Vector2 menu_d;
 
-    Menu_pack(menu, button);
-    Menu_pack(menu, button2);
-    Menu_pack(menu, button3);
+    void* new_game = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "New Game", &(Vector2) {64.0f, 64.0f});
+    void* load = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "Load", &(Vector2) {64.0f, 64.0f});
+    void* settings = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "Settings", &(Vector2) {64.0f, 64.0f});
+    void* exit = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "Exit", &(Vector2) {64.0f, 64.0f});
+
+    Widget_bind_callback(new_game, start_game);
+    Widget_bind_callback(load, load_game);
+    Widget_bind_callback(settings, open_settings_menu);
+    Widget_bind_callback(exit, quit);
+
+    Menu_pack(menu, new_game);
+    Menu_pack(menu, load);
+    Menu_pack(menu, settings);
+    Menu_pack(menu, exit);
+
+    Menu_get_dimensions(menu, &menu_d);
+    Menu_set_position(menu, 640 / 2 - menu_d.x / 2, 480 / 2 - menu_d.y / 2);
 
     App_setFPS(60);
 
@@ -62,7 +91,7 @@ int main(int argc, char** argv) {
 
         Input_update();
 
-        Menu_update(menu, SDL_SCANCODE_UP, SDL_SCANCODE_DOWN);
+        Menu_update(menu, SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_SPACE);
 
         /* ================ */
 
@@ -86,6 +115,7 @@ int main(int argc, char** argv) {
     App_quit();
 
     TTF_CloseFont(font);
+    TTF_CloseFont(font1);
 
     /* ======== */
 
