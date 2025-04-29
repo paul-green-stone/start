@@ -109,3 +109,41 @@ Text* Widget_get_label(const void* widget) {
 }
 
 /* ================================================================ */
+
+int Widget_bind_callback(void* widget, action callback) {
+
+    const struct widget* const* widget_p;
+    widget_p = widget;
+
+    if ((widget != NULL) && (*widget_p != NULL) && ((*widget_p)->bind != NULL)) {
+
+        (*widget_p)->bind(widget, callback);
+
+        /* ======== */
+
+        return 0;
+    }
+
+    return -1;
+}
+
+/* ================================================================ */
+
+int Widget_handle_click(const void* widget, void* data) {
+
+    const struct widget* const* widget_p;
+    widget_p = widget;
+
+    if ((widget != NULL) && (*widget_p != NULL) && ((*widget_p)->handle_click != NULL)) {
+
+        (*widget_p)->handle_click(widget, data);
+
+        /* ======== */
+
+        return 0;
+    }
+
+    return -1;
+}
+
+/* ================================================================ */

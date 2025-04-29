@@ -9,6 +9,13 @@
 /* ================================================================ */
 
 /**
+ * Defines a function pointer type named action for callback functions that take a single `void*` argument and return no value.
+ */
+typedef void (*action)(void* data);
+
+/* ================================ */
+
+/**
  * Creates a new widget instance.
  * 
  * @param widget pointer to a widget descriptor
@@ -56,6 +63,26 @@ int  Widget_get_dimensions(const void* widget, Vector2* dimensions);
  * @return Returns a pointer to the `Text` object representing the widget's label on success, NULL on failure.
  */
 Text* Widget_get_label(const void* widget);
+
+/**
+ * Binds a callback function to a widget.
+ * 
+ * @param widget pointer to the widget instance
+ * @param callbakc function pointer to the callback to bind to the widget
+ * 
+ * @return Returns 0 if the widget's bind method is called successfully, -1 otherwise.
+ */
+int Widget_bind_callback(void* widget, action callback);
+
+/**
+ * Triggers the widget's `on_click` callback function if it exists.
+ * 
+ * @param widget pointer to the widget instance to activate
+ * @param data optional user-defined data to pass to the callback
+ * 
+ * @return Returns 0 if the widget's callback function is successfully called, -1 otherwise.
+ */
+int Widget_handle_click(const void* widget, void* data);
 
 /* ================================================================ */
 
