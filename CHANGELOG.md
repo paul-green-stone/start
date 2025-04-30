@@ -4,6 +4,11 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [0.9.0] - 2025-04-30
+
+### Added
+- A `Button` widget can support a callback function
+
 ## [0.8.0] - 2025-04-29
 
 ### Added
