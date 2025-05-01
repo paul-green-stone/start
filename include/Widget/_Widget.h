@@ -28,8 +28,8 @@ struct widget {
     /* How to retrieve the widget's label */
     Text* (*get_label)(const void* self);
 
-    void (*bind)(void* self, void (*callback)(void* data));
-    void (*handle_click)(const void* self, void* data);
+    void (*bind)(void* self, void (*callback)(va_list* app));
+    void (*handle_click)(const void* self, va_list* app);
 };
 
 /* ================================================================ */

@@ -129,14 +129,20 @@ int Widget_bind_callback(void* widget, action callback) {
 
 /* ================================================================ */
 
-int Widget_handle_click(const void* widget, void* data) {
+int Widget_handle_click(const void* widget, ...) {
 
     const struct widget* const* widget_p;
+    va_list ap;
+
+    /* ======== */
+    
     widget_p = widget;
 
     if ((widget != NULL) && (*widget_p != NULL) && ((*widget_p)->handle_click != NULL)) {
 
-        (*widget_p)->handle_click(widget, data);
+        va_start(ap, widget);
+        (*widget_p)->handle_click(widget, &ap);
+        va_end(ap);
 
         /* ======== */
 

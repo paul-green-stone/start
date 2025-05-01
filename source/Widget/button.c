@@ -18,7 +18,7 @@ struct button {
     /* Button's top left corner coordinates */
     Vector2 position;
     Text* label;
-    action on_click;            /* What to do on a mouse click */
+    action on_click;            /* What to do on a mouse click or key press */
 };
 
 /* ================================ */
@@ -202,7 +202,7 @@ void Button_bind_callback(void* _self, action callback) {
  * 
  * @return None (for now).
  */
-void Button_handle_click(const void* _self, void* data) {
+void Button_handle_click(const void* _self, va_list* app) {
 
     const struct button* self;
     self = _self;
@@ -211,7 +211,7 @@ void Button_handle_click(const void* _self, void* data) {
         return ;
     }
 
-    self->on_click(data);
+    self->on_click(app);
 }
 
 /* ================================================================ */

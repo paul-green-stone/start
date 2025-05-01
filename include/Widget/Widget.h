@@ -2,6 +2,7 @@
 #define _START_WIDGET_INTERFACE_H
 
 #include <SDL2/SDL.h>
+#include <stdarg.h>
 
 #include "../Math/Vector2D.h"
 #include "../Text.h"
@@ -11,7 +12,7 @@
 /**
  * Defines a function pointer type named action for callback functions that take a single `void*` argument and return no value.
  */
-typedef void (*action)(void* data);
+typedef void (*action)(va_list* app);
 
 /* ================================ */
 
@@ -82,7 +83,7 @@ int Widget_bind_callback(void* widget, action callback);
  * 
  * @return Returns 0 if the widget's callback function is successfully called, -1 otherwise.
  */
-int Widget_handle_click(const void* widget, void* data);
+int Widget_handle_click(const void* widget, ...);
 
 /* ================================================================ */
 

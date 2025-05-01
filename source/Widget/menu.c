@@ -246,7 +246,7 @@ int Menu_draw(const Menu* menu, Alignment a) {
 
 /* ================================================================ */
 
-int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key, SDL_Scancode trigger) {
+int Menu_update(Menu* menu) {
 
     int i;
 
@@ -254,7 +254,7 @@ int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key, SDL_Scan
         return -1;
     }
 
-    if (Input_wasKey_pressed(up_key)) {
+    if (Input_wasKey_pressed(SDL_SCANCODE_UP)) {
 
         if ((menu->active_widget == -1) || (menu->active_widget == 0)) {
             menu->active_widget = menu->num_widgets - 1;
@@ -264,7 +264,7 @@ int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key, SDL_Scan
         }
     }
 
-    if (Input_wasKey_pressed(down_key)) {
+    if (Input_wasKey_pressed(SDL_SCANCODE_DOWN)) {
 
         if ((menu->active_widget == -1) || (menu->active_widget == (int)(menu->num_widgets - 1))) {
             menu->active_widget = 0;
@@ -273,13 +273,13 @@ int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key, SDL_Scan
         }
     }
     
-    if (Input_wasKey_pressed(trigger)) {
+    if (Input_wasKey_pressed(SDL_SCANCODE_RETURN)) {
 
         for (i = 0; i < menu->num_widgets; i++) {
 
             if (menu->active_widget == i) {
                 
-                Widget_handle_click(menu->widgets[i], NULL);
+                Widget_handle_click(menu->widgets[i], get_state());
 
                 /* ======== */
 

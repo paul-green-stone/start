@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stddef.h>
+#include <SDL2/SDL.h>
 
 #include "../Math/Vector2D.h"
 
@@ -90,7 +91,7 @@ int Menu_draw(const Menu* menu, Alignment a);
  * 
  * @return Returns 0 on success, -1 on failure.
  */
-int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key, SDL_Scancode trigger);
+int Menu_update(Menu* menu);
 
 /**
  * Retrieves the width and height dimensions of the given menu and stores them in the provided `Vector2` struct.
