@@ -98,7 +98,7 @@ int Menu_update(Menu* menu, SDL_Scancode up_key, SDL_Scancode down_key, SDL_Scan
  * @param menu pointer to the menu instance to query
  * @param dimensions pointer to a Vector2 struct to store the dimensions
  * 
- * @return Returns 0 on success. -1 on failure.
+ * @return Returns 0 on success, -1 on failure.
  */
 int Menu_get_dimensions(const Menu* menu, Vector2* dimensions);
 
@@ -109,7 +109,7 @@ int Menu_get_dimensions(const Menu* menu, Vector2* dimensions);
  * @param x new horizontal position of the menu
  * @param y new vertical position of the menu
  * 
- * @return Returns 0 on success. -1 on failure.
+ * @return Returns 0 on success, -1 on failure.
  */
 int Menu_set_position(Menu* menu, int x, int y);
 
