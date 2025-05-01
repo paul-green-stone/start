@@ -16,5 +16,5 @@ else
 endif
 
 all: main.c
-	gcc main.c $(CFLAGS) `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf`
+	gcc main.c $(CFLAGS) User/MainMenu_State.c User/Game_State.c User/Settings_State.c User/Load_State.c `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf`
 	

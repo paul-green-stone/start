@@ -10,25 +10,10 @@
 #include "../../include/Widget/Menu.h"
 #include "../../include/Math/Vector2D.h"
 #include "../../include/Input.h"
+#include "../../include/State/State.h"
 
-/* ================================================================ */
-
-void quit(void* data) {
-    printf("Exiting the game...\n");
-    App_stop();
-}
-
-void start_game(void* data) {
-    printf("Starting a new game...\n");
-}
-
-void load_game(void* data) {
-    printf("Loading the game...\n");
-}
-
-void open_settings_menu(void* data) {
-    printf("Opening a settings window...\n");
-}
+/* Contains information about user-defined states */
+#include "User/States.h"
 
 /* ================================================================ */
 
@@ -52,30 +37,10 @@ int main(int argc, char** argv) {
     SDL_Rect text_pos = {32, 32, text->width, text->height};
     char fps_buf[32];
 
-    Menu* menu = Menu_new(4, &(Vector2) {640 / 2, 480 / 2});
-    Menu_set_padding(menu, &(Vector2) {0, 24});
-
-    Vector2 menu_d;
-
-    void* new_game = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "New Game", &(Vector2) {64.0f, 64.0f});
-    void* load = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "Load", &(Vector2) {64.0f, 64.0f});
-    void* settings = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "Settings", &(Vector2) {64.0f, 64.0f});
-    void* exit = Widget_create(Button, font, &(SDL_Color){0, 0, 0, 255}, "Exit", &(Vector2) {64.0f, 64.0f});
-
-    Widget_bind_callback(new_game, start_game);
-    Widget_bind_callback(load, load_game);
-    Widget_bind_callback(settings, open_settings_menu);
-    Widget_bind_callback(exit, quit);
-
-    Menu_pack(menu, new_game);
-    Menu_pack(menu, load);
-    Menu_pack(menu, settings);
-    Menu_pack(menu, exit);
-
-    Menu_get_dimensions(menu, &menu_d);
-    Menu_set_position(menu, 640 / 2 - menu_d.x / 2, 480 / 2 - menu_d.y / 2);
-
     App_setFPS(60);
+
+    void* current_state = State_create(MainMenu_State, font);
+    set_state(current_state);
 
     while (App_isRunning()) {
 
@@ -90,8 +55,7 @@ int main(int argc, char** argv) {
         }
 
         Input_update();
-
-        Menu_update(menu, SDL_SCANCODE_UP, SDL_SCANCODE_DOWN, SDL_SCANCODE_SPACE);
+        State_handle(get_state());
 
         /* ================ */
 
@@ -101,7 +65,7 @@ int main(int argc, char** argv) {
         Text_draw(text, &text_pos);
 
         SDL_SetRenderDrawColor(r, 0, 0, 0, 255);
-        Menu_draw(menu, CENTER);
+        State_update(get_state());
 
         sprintf(fps_buf, "FPS: %d", get_fps());
         Text_update(text, fps_buf);
@@ -111,7 +75,7 @@ int main(int argc, char** argv) {
 
     /* ================================ */
 
-    Menu_destroy(&menu);
+    State_destroy(get_state());
     App_quit();
 
     TTF_CloseFont(font);
