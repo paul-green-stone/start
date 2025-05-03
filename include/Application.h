@@ -79,6 +79,22 @@ SDL_Renderer* get_context(void);
  */
 int take_screenshot(const char* filename);
 
+/**
+ * Sets the current application state.
+ * 
+ * @param state pointer to the new state to set as current
+ * 
+ * @return None.
+ */
+void set_state(const void* state);
+
+/**
+ * Retrieves the current application state pointer.
+ * 
+ * @return returns a `void*` pointer to the current state object
+ */
+void* get_state(void);
+
 /* ================================================================ */
 
 #endif /* _START_APPLICATION_H */

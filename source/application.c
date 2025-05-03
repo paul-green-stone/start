@@ -29,6 +29,9 @@ struct application {
     /* Frame start time */
     Uint64 fst;
     Uint64 running_time;
+
+    /* Application's current state */
+    void* state;
 };
 
 static struct application app;
@@ -222,6 +225,18 @@ int take_screenshot(const char* filename) {
     /* ======== */
 
     return 0;
+}
+
+/* ================================================================ */
+
+void set_state(const void* state) {
+    app.state = (void*) state;
+}
+
+/* ================================================================ */
+
+void* get_state(void) {
+    return app.state;
 }
 
 /* ================================================================ */
