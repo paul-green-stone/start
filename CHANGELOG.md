@@ -4,6 +4,16 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [0.10.0] - 2025-05-01 State Update
+
+### Added
+- A `State` object descriptor
+- The application can **set** and **retrieve** its current state
+- A `<Start.h>` header file that contains most of the framework systems
+
+### Fixed
+- Callback functions now require a list of variadic arguments
+
 ## [0.9.0] - 2025-04-30
 
 ### Added
