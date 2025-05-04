@@ -5,7 +5,7 @@
 # Object files location. Object files will be placed in this directory during compilation
 OBJDIR   = objects
 # Full names of object files
-OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o Widget.o Button.o Menu.o State.o)
+OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o Widget.o Button.o Menu.o State.o Manager.o)
 
 # The Compiler
 CC       = gcc
@@ -154,6 +154,13 @@ $(OBJDIR)/Menu.o: $(MENU) $(INCLUDE)
 STATE    = $(addprefix source/State/, state.c)
 
 $(OBJDIR)/State.o: $(STATE) $(INCLUDE)
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ======== #
+
+MANAGER  = $(addprefix source/, manager.c)
+
+$(OBJDIR)/Manager.o: $(MANAGER) $(INCLUDE)
 	$(CC) $(CFLAGS) -o $@ $<
 
 # ================================================================ #
