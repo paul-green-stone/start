@@ -1,4 +1,7 @@
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <string.h>
 
 #include "../../include/File/conf.h"
 
@@ -95,6 +98,10 @@ int Conf_extract(config_t* config, const char* path, Setting_Value type, void* d
         return -1;
     }
 
+    if ((type < INT) || (type > STRING)) {
+        return -2;
+    }
+
     if ((lookup_table[type].getter(config, path, data)) == CONFIG_FALSE) {
         return -1;
     }
@@ -102,6 +109,32 @@ int Conf_extract(config_t* config, const char* path, Setting_Value type, void* d
     /* ======== */
 
     return 0;
+}
+
+/* ================================================================ */
+
+int directory_exist(const char* path) {
+
+    struct stat info;
+
+    /* ======== */
+
+    return (stat(path, &info) == 0 && S_ISDIR(info.st_mode));
+}
+
+/* ================================================================ */
+
+void directory_new(const char* path) {
+
+    struct stat st;
+
+    /* ======== */
+
+    memset(&st, 0, sizeof(st));
+
+    if (stat(path, &st) == -1) {
+        mkdir(path, 0755);
+    }
 }
 
 /* ================================================================ */

@@ -10,10 +10,7 @@ typedef enum Setting_Value {
     INT64,          /* 64-bit integer */
     FLOAT,          /* Floating-Point mumber */
     BOOLEAN,        /* Boolean value, either 0 or 1 */
-    STRING,         /* String, textual data */
-    ARRAY,          /* Sequence of scalar salues, all of which must have the same type */
-    GROUP,          /* A collection of settings */
-    LIST            /* Sequence of values of any type */
+    STRING          /* String, textual data */
 } Setting_Value;
 
 /* ================================================================ */
@@ -40,6 +37,24 @@ int Conf_parse_file(config_t* config, const char* filename);
  * @return Returns 0 on success, -1 otherwise.
  */
 int Conf_extract(config_t* config, const char* path, Setting_Value type, void* data);
+
+/**
+ * Checks whether a directory exists at the specified filesystem path.
+ * 
+ * @param path a null-terminated string specifying the path to check
+ * 
+ * @return Returns 1 if the path exists and is a directory. 0 if the path does not exist or is not a directory.
+ */
+int directory_exist(const char* path);
+
+/**
+ * Creates a new directory at the specified filesystem path if it does not already exist.
+ * 
+ * @param path a null-terminated string specifying the directory path to create
+ * 
+ * @return None.
+ */
+void directory_new(const char* path);
 
 /* ================================================================ */
 
