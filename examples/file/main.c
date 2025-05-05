@@ -5,12 +5,14 @@
 int main(int argc, char** argv) {
 
     config_t config;
-    config_setting_t* setting;
     char* version;
     int w, h;
     double price;
 
     int status = Conf_parse_file(&config, "example.conf");
+
+    App_init("", 640, 480);
+    App_quit();
 
     if (status != 0) {
 
