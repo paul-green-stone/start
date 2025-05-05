@@ -147,8 +147,6 @@ int Manager_insert(const char* key, const void* data) {
 
         if (Manager.elements[position] == NULL) {
 
-            printf("%d\n", position);
-
             /*  Insert the data into the table */
             Manager.elements[position] = (void*) data;
             Manager.keys[position] = (char*) key;

@@ -1,6 +1,8 @@
 #ifndef _START_RESOURCE_MANAGER_H
 #define _START_RESOURCE_MANAGER_H
 
+#include <stdio.h>
+
 /* ================================================================ */
 
 /**
