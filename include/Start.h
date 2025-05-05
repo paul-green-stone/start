@@ -9,6 +9,9 @@
 #include "Input.h"
 #include "Texture.h"
 #include "Text.h"
+#include "Manager.h"
+#include "File/conf.h"
+#include "State/State.h"
 
 /* ================================================================ */
 
