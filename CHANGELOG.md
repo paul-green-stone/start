@@ -4,6 +4,11 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [0.11.0] - 2025-05-01 Resource Manager Update
+
+### Added
+- A simple resource manager based on a hash table for in-game resource storage
+
 ## [0.10.0] - 2025-05-01 State Update
 
 ### Added
