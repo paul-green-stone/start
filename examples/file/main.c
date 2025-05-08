@@ -9,9 +9,13 @@ int main(int argc, char** argv) {
     int w, h;
     double price;
 
+    config_init(&config);
+
     int status = Conf_parse_file(&config, "example.conf");
 
-    App_init("", 640, 480);
+    Start();
+
+    App_init();
     App_quit();
 
     if (status != 0) {
