@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "../include/Start.h"
 #include "../include/Core.h"
 #include "../include/File/conf.h"
 
