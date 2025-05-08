@@ -5,102 +5,24 @@
 #include <string.h>
 #include <libconfig.h>
 
+#include "../include/Start.h"
 #include "../include/Application.h"
 #include "../include/Window.h"
 #include "../include/Clock.h"
 #include "../include/File/conf.h"
 
-/* Default configuration file path */
-#define DEFAULT_CONFIG_FILE "./configs/system.conf"
+/* Default configuration file */
+#define DEFAULT_CONFIGURATION_FILE "application.conf"
 
-#define DEFAUL_CONFIG_DIR "./configs"
+#define combine(buffer) \
+    (buffer)[0] = '\0'; \
+    strcat((buffer), DEFAULT_CONFIGURATION_DIRECTORY); \
+    strcat((buffer), "/"); \
+    strcat((buffer), DEFAULT_CONFIGURATION_FILE); \
+    (buffer)[strlen((buffer))] = '\0'; \
 
 /* ================================================================ */
-/* ===================== AUXILIARY FUNCTIONS ====================== */
-/* ================================================================ */
-
-/**
- * 
- */
-static int _create_default_configuration_file_(void) {
-
-    config_t config;
-    config_setting_t* setting;
-    config_setting_t* array;
-    config_setting_t* elm;
-
-    size_t i;
-
-    /* ======== */
-
-    /* Structure holding default application properties */
-    struct {
-        char* wflags[1];
-        char* rflags[1];
-        
-        char* title;
-        int width;
-        int height;
-    } default_window = {{"SDL_WINDOW_SHOWN"}, {"SDL_RENDERER_ACCELERATED"}, "Start", 640, 480};
-
-    config_init(&config);
-
-    /* Create a new setting for the application configuration */
-    setting = config_setting_add(config_root_setting(&config), "application", CONFIG_TYPE_GROUP);
-
-    /* ================================ */
-    /* ============ TITLE ============= */
-    /* ================================ */
-
-    elm = config_setting_add(setting, "title", CONFIG_TYPE_STRING);
-    config_setting_set_string(elm, default_window.title);
-
-    /* ================================ */
-    /* ========= WIDTH&HEIGHT ========= */
-    /* ================================ */
-
-    elm = config_setting_add(setting, "width", CONFIG_TYPE_INT);
-    config_setting_set_int(elm, default_window.width);
-
-    elm = config_setting_add(setting, "height", CONFIG_TYPE_INT);
-    config_setting_set_int(elm, default_window.height);
-
-    /* ================================ */
-    /* ======== WFLAGS&RFLAGS ========= */
-    /* ================================ */
-
-    array = config_setting_add(setting, "Window", CONFIG_TYPE_ARRAY);
-
-    /* Set window flags */
-    for (i = 0; i < sizeof(default_window.wflags) / sizeof(default_window.wflags[0]); i++) {
-
-        elm = config_setting_add(array, NULL, CONFIG_TYPE_STRING);
-        config_setting_set_string(elm, default_window.wflags[i]);
-    }
-
-    array = config_setting_add(setting, "Renderer", CONFIG_TYPE_ARRAY);
-
-    /* Set renderer flags */
-    for (i = 0; i < sizeof(default_window.rflags) / sizeof(default_window.rflags[0]); i++) {
-
-        elm = config_setting_add(array, NULL, CONFIG_TYPE_STRING);
-        config_setting_set_string(elm, default_window.rflags[i]);
-    }
-
-    /* ================================ */
-
-    /* Write the configuration to a file */
-    if (!config_write_file(&config, DEFAULT_CONFIG_FILE)) {
-        return -2;
-    }
-
-    config_destroy(&config);
-    
-    /* ======== */
-
-    return 0;
-}
-
+/* ========================= DEFINITIONS ========================== */
 /* ================================================================ */
 
 struct application {
@@ -127,29 +49,273 @@ struct application {
     void* state;
 };
 
+/* ================================================================ */
+
+struct default_app {
+
+    Uint64 wflags;
+    Uint64 rflags;
+
+    char* title;
+
+    int width;
+    int height;
+};
+
+/* ================================================================ */
+/* ======================== STATIC STORAGE ======================== */
+/* ================================================================ */
+
+static struct lookup_table_entry SDL_CreateWindow__flags[] = {
+    {"SDL_WINDOW_FULLSCREEN", SDL_WINDOW_FULLSCREEN},
+    {"SDL_WINDOW_OPENGL", SDL_WINDOW_OPENGL},
+    {"SDL_WINDOW_SHOWN", SDL_WINDOW_SHOWN},
+    {"SDL_WINDOW_HIDDEN", SDL_WINDOW_HIDDEN},
+    {"SDL_WINDOW_BORDERLESS", SDL_WINDOW_BORDERLESS},
+    {"SDL_WINDOW_RESIZABLE", SDL_WINDOW_RESIZABLE},
+    {"SDL_WINDOW_MINIMIZED", SDL_WINDOW_MAXIMIZED},
+    {"SDL_WINDOW_MOUSE_GRABBED", SDL_WINDOW_MOUSE_GRABBED},
+    {"SDL_WINDOW_INPUT_FOCUS", SDL_WINDOW_INPUT_FOCUS},
+    {"SDL_WINDOW_MOUSE_FOCUS", SDL_WINDOW_MOUSE_FOCUS},
+    {"SDL_WINDOW_FULLSCREEN_DESKTOP", ( SDL_WINDOW_FULLSCREEN | 0x00001000 )},
+    {"SDL_WINDOW_FOREIGN", SDL_WINDOW_FOREIGN},
+    {"SDL_WINDOW_ALLOW_HIGHDPI", SDL_WINDOW_ALLOW_HIGHDPI},
+    {"SDL_WINDOW_MOUSE_CAPTURE", SDL_WINDOW_MOUSE_CAPTURE},
+    {"SDL_WINDOW_ALWAYS_ON_TOP", SDL_WINDOW_ALWAYS_ON_TOP},
+    {"SDL_WINDOW_SKIP_TASKBAR", SDL_WINDOW_SKIP_TASKBAR},
+    {"SDL_WINDOW_UTILITY", SDL_WINDOW_UTILITY},
+    {"SDL_WINDOW_TOOLTIP", SDL_WINDOW_TOOLTIP},
+    {"SDL_WINDOW_POPUP_MENU", SDL_WINDOW_POPUP_MENU},
+    {"SDL_WINDOW_KEYBOARD_GRABBED", SDL_WINDOW_KEYBOARD_GRABBED},
+    {"SDL_WINDOW_VULKAN", SDL_WINDOW_VULKAN},
+    {"SDL_WINDOW_METAL", SDL_WINDOW_METAL},
+    {"SDL_WINDOW_INPUT_GRABBED", SDL_WINDOW_MOUSE_GRABBED}
+};
+
+/* ======== */
+
+static struct lookup_table_entry SDL_CreateRenderer__flags[] = {
+    {"SDL_RENDERER_SOFTWARE", SDL_RENDERER_SOFTWARE},
+    {"SDL_RENDERER_ACCELERATED", SDL_RENDERER_ACCELERATED},
+    {"SDL_RENDERER_PRESENTVSYNC", SDL_RENDERER_PRESENTVSYNC},
+    {"SDL_RENDERER_TARGETTEXTURE", SDL_RENDERER_TARGETTEXTURE}
+};
+
+/* ======== */
+
 static struct application app;
 
-/* ================================ */
+/* ================================================================ */
+/* ===================== AUXILIARY FUNCTIONS ====================== */
+/* ================================================================ */
 
-int App_init(const char* title, int width, int height) {
+/**
+ * Reads a configuration file containing application settings and SDL flags,
+ * then populates a default_app structure with the parsed values.
+ * 
+ * @param _app output parameter. Pointer to a structure that will store parsed configuration values
+ * 
+ * @return Returns 0 on success or a negative error code on failure.
+ */
+static int _read_default_configuration_file(struct default_app* _app) {
+
+    config_t config;
+    config_setting_t* array;
+
+    int length, i;
+    int temp;
+    int flag;
+
+    char filepath[64];
+
+    /* ======== */
+
+    combine(filepath);
+
+    config_init(&config);
+
+    /* ================================ */
+    /* = Parsing a file that contains = */
+    /* == initial information about === */
+    /* ======= the application ======== */
+    /* ================================ */
+
+    if (Conf_parse_file(&config, filepath) != 0) {
+
+        config_destroy(&config);
+
+        /* ======== */
+
+        return -2;
+    }
+
+    /* ================================ */
+
+    Conf_extract(&config, "application.width", INT, &_app->width);
+    Conf_extract(&config, "application.height", INT, &_app->height);
+
+    Conf_extract(&config, "application.title", STRING, &_app->title);
+
+    /* ================================ */
+
+    /* Extracting an array of `SDL_Window` flags */
+    Conf_lookup(&config, "application.Window", &array);
+    /* and getting the number of elements it contains */
+    length = config_setting_length(array);
+
+    for (i = 0; i < length; i++) {
+
+        /* Map a string to its integral counterpart */
+        temp = lookup_table_find(SDL_CreateWindow__flags, sizeof(SDL_CreateWindow__flags) / sizeof(SDL_CreateWindow__flags[0]), config_setting_get_string_elem(array, i), &flag);
+
+        /* Combining flags */
+        _app->wflags |= (temp == 0) ? flag : 0;
+    }
+
+    /* ================================ */
+
+    /* Extracting an array of `SDL_Renderer` flags */
+    Conf_lookup(&config, "application.Renderer", &array);
+    /* and getting the number of elements it contains */
+    length = config_setting_length(array);
+
+    for (i = 0; i < length; i++) {
+
+        /* Map a string to its integral counterpart */
+        temp = lookup_table_find(SDL_CreateRenderer__flags, sizeof(SDL_CreateRenderer__flags) / sizeof(SDL_CreateRenderer__flags[0]), config_setting_get_string_elem(array, i), &flag);
+
+        /* Combining flags */
+        _app->rflags |= (temp == 0) ? flag : 0;
+    }
+
+    /* ======== */
+
+    return 0;
+}
+
+/* ================================================================ */
+
+/**
+ * Creates a default configuration file with predefined window and renderer settings using the libconfig library.
+ * 
+ * @return Returns 0 on success or a negative error code on failure.
+ */
+static int _write_default_configuration_file_(void) {
+
+    config_t config;
+    config_setting_t* setting;
+    config_setting_t* array;
+    config_setting_t* elm;
+
+    size_t i;
+
+    char filepath[64];
+
+    /* Structure holding default application properties */
+    struct {
+        char* wflags[1];
+        char* rflags[1];
+        
+        char* title;
+        int width;
+        int height;
+    } default_app;
+
+    /* ======== */
+
+    combine(filepath);
+
+    default_app.wflags[0] = "SDL_WINDOW_SHOWN";
+    default_app.rflags[0] = "SDL_RENDERER_ACCELERATED";
+    default_app.width = 640;
+    default_app.height = 480;
+    default_app.title = "Start";
+
+    config_init(&config);
+
+    /* Create a new setting for the application configuration */
+    setting = config_setting_add(config_root_setting(&config), "application", CONFIG_TYPE_GROUP);
+
+    /* ================================ */
+    /* ============ TITLE ============= */
+    /* ================================ */
+
+    elm = config_setting_add(setting, "title", CONFIG_TYPE_STRING);
+    config_setting_set_string(elm, default_app.title);
+
+    /* ================================ */
+    /* ========= WIDTH&HEIGHT ========= */
+    /* ================================ */
+
+    elm = config_setting_add(setting, "width", CONFIG_TYPE_INT);
+    config_setting_set_int(elm, default_app.width);
+
+    elm = config_setting_add(setting, "height", CONFIG_TYPE_INT);
+    config_setting_set_int(elm, default_app.height);
+
+    /* ================================ */
+    /* ======== WFLAGS&RFLAGS ========= */
+    /* ================================ */
+
+    array = config_setting_add(setting, "Window", CONFIG_TYPE_ARRAY);
+
+    /* Set window flags */
+    for (i = 0; i < sizeof(default_app.wflags) / sizeof(default_app.wflags[0]); i++) {
+
+        elm = config_setting_add(array, NULL, CONFIG_TYPE_STRING);
+        config_setting_set_string(elm, default_app.wflags[i]);
+    }
+
+    array = config_setting_add(setting, "Renderer", CONFIG_TYPE_ARRAY);
+
+    /* Set renderer flags */
+    for (i = 0; i < sizeof(default_app.rflags) / sizeof(default_app.rflags[0]); i++) {
+
+        elm = config_setting_add(array, NULL, CONFIG_TYPE_STRING);
+        config_setting_set_string(elm, default_app.rflags[i]);
+    }
+
+    /* ================================ */
+
+    /* Write the configuration to a file */
+    if (!config_write_file(&config, filepath)) {
+        return -2;
+    }
+
+    config_destroy(&config);
+    
+    /* ======== */
+
+    return 0;
+}
+
+/* ================================================================ */
+
+int App_init(void) {
+
+    struct default_app _app;
+    char filepath[64];
+
+    /* ======== */
+
+    combine(filepath);
+
+    /* Clearing the struct */
+    memset(&_app, 0, sizeof(struct default_app));
+
+    if (!file_exists(filepath)) {
+        _write_default_configuration_file_();
+    }
+
+    _read_default_configuration_file(&_app);
 
     /* ================================================ */
     /* ============== CREATING A WINDOW =============== */
     /* ================================================ */
 
-    if ((app.window = Window_new(title, width, height, 0, SDL_RENDERER_ACCELERATED)) == NULL) {
+    if ((app.window = Window_new(_app.title, _app.width, _app.height, _app.wflags, _app.rflags)) == NULL) {
         return -1;
     }
-
-    /* ================================================ */
-    /* ============= CREATING A DIRECTORY ============= */
-    /* ================================================ */
-    
-    if (!directory_exist(DEFAUL_CONFIG_DIR)) {
-        directory_new(DEFAUL_CONFIG_DIR);
-    }
-
-    _create_default_configuration_file_();
 
     /* ================================================ */
 

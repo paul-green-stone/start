@@ -1,18 +1,16 @@
 #ifndef _START_APPLICATION_H
 #define _START_APPLICATION_H
 
+#include "Core.h"
+
 /* ================================================================ */
 
 /**
  * Initializes the application by creating the main window and setting up basic parameters.
  * 
- * @param title a null-terminated string specifying the title of the application window
- * @param width width of the window
- * @param height height of the window
- * 
  * @return Returns 0 on success, or -1 if window creation fails.
  */
-int App_init(const char* title, int width, int height);
+int App_init(void);
 
 /**
  * Cleans up and shuts down the application.
