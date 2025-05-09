@@ -4,6 +4,13 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [1.0.0] - 2025-05-09
+
+### Added
+- Functionality for testing the existence of a file or directory
+- A `Start` function for initializing the framework and underlying systems it relies on
+- `App_init` reads configuration from a file now
+
 ## [0.11.0] - 2025-05-01 Resource Manager Update
 
 ### Added
