@@ -18,7 +18,7 @@ typedef enum Setting_Value {
 /**
  * Initializes and parses a configuration file using the `libconfig` library.
  * 
- * @param config a pointer to an uninitialized `config_t` structure
+ * @param config a pointer to an initialized `config_t` structure
  * @param filename path to the configuration file to parse
  * 
  * @return Returns 0 on success or a negative error code on failure.
@@ -39,22 +39,15 @@ int Conf_parse_file(config_t* config, const char* filename);
 int Conf_extract(config_t* config, const char* path, Setting_Value type, void* data);
 
 /**
- * Checks whether a directory exists at the specified filesystem path.
+ * Looks up a configuration setting within a libconfig configuration object at the specified path.
  * 
- * @param path a null-terminated string specifying the path to check
+ * @param config pointer to an initialized `libconfig` configuration object
+ * @param path a dot-separated string specifying the path to the desired setting
+ * @param setting output parameter. On success, set to point to the found configuration setting
  * 
- * @return Returns 1 if the path exists and is a directory. 0 if the path does not exist or is not a directory.
+ * @return Returns 0 on success or a negative error code on failure.
  */
-int directory_exist(const char* path);
-
-/**
- * Creates a new directory at the specified filesystem path if it does not already exist.
- * 
- * @param path a null-terminated string specifying the directory path to create
- * 
- * @return None.
- */
-void directory_new(const char* path);
+int Conf_lookup(const config_t* config, const char* path, config_setting_t** setting);
 
 /* ================================================================ */
 

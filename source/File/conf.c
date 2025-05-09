@@ -72,16 +72,8 @@ int Conf_parse_file(config_t* config, const char* filename) {
         return -1;
     }
 
-    /* Initializes the `config_t` structure */
-    config_init(config);
-
     /* Read and parse a configuration from the file */
     if (config_read_file(config, filename) == CONFIG_FALSE) {
-
-        config_destroy(config);
-
-        /* ======== */
-
         return -2;
     }
 
@@ -113,28 +105,19 @@ int Conf_extract(config_t* config, const char* path, Setting_Value type, void* d
 
 /* ================================================================ */
 
-int directory_exist(const char* path) {
+int Conf_lookup(const config_t* config, const char* path, config_setting_t** setting) {
 
-    struct stat info;
-
-    /* ======== */
-
-    return (stat(path, &info) == 0 && S_ISDIR(info.st_mode));
-}
-
-/* ================================================================ */
-
-void directory_new(const char* path) {
-
-    struct stat st;
-
-    /* ======== */
-
-    memset(&st, 0, sizeof(st));
-
-    if (stat(path, &st) == -1) {
-        mkdir(path, 0755);
+    if (setting == NULL) {
+        return -1;
     }
+
+    if ((*setting = config_lookup(config, path)) == NULL) {
+        return -2;
+    }
+
+    /* ======== */
+
+    return 0;
 }
 
 /* ================================================================ */
