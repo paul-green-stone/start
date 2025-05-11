@@ -12,11 +12,13 @@
 #include "Text.h"
 #include "Manager.h"
 #include "File/conf.h"
+#include "File/Color.h"
 #include "State/State.h"
 #include "Math/Vector2D.h"
 #include "Widget/Button.h"
 #include "Widget/Menu.h"
 #include "Widget/Widget.h"
+#include "Error.h"
 
 /* ================================================================ */
 

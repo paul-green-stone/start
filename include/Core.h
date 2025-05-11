@@ -14,6 +14,23 @@ struct lookup_table_entry {
     int int_value;       /* integer that represents the corresponding value associated with the string */
 };
 
+typedef enum {ERROR, INFO, SUCCESS} Message_Type;
+
+/**
+ * A shorthand for generating a message that indicates a failed operation.
+ */
+#define error(stream, format, ...) print_message((stream), ERROR, (format), __VA_ARGS__)
+
+/**
+ * This function serves as a shorthand method to generate and display warning messages.
+ */
+#define warning(stream, format, ...) print_message((stream), INFO, (format), __VA_ARGS__)
+
+/**
+ * This function serves as a shorthand for generating a message that indicates the successful completion of an operation.
+ */
+#define success(stream, format, ...) print_message((stream), SUCCESS, (format), __VA_ARGS__)
+
 /* ================================================================ */
 
 /**
@@ -37,7 +54,7 @@ int Stop(void);
  * @param table_size the number of entries in the lookup table
  * @param flag the string key to search for in the table
  * 
- * @return Returns the integer value associated with the matching key if found. 0 if the key is NULL or not found in the table
+ * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */
 int lookup_table_find(struct lookup_table_entry* table, int table_size, const char* flag, int* dest);
 
@@ -57,7 +74,7 @@ int file_exists(const char* filename);
  * 
  * @return Returns 1 if the path exists and is a directory. 0 if the path does not exist or is not a directory.
  */
-int directory_exist(const char* path);
+int directory_exists(const char* path);
 
 /**
  * Creates a new directory at the specified filesystem path if it does not already exist.
@@ -66,7 +83,12 @@ int directory_exist(const char* path);
  * 
  * @return None.
  */
-void directory_new(const char* path);
+int directory_new(const char* path);
+
+/**
+ * 
+ */
+void print_message(FILE* stream, Message_Type msg_type, const char* format, ...);
 
 /* ================================================================ */
 
