@@ -5,6 +5,9 @@
 
 /* ================================================================ */
 
+/**
+ * A set of values that a user can directly extract from a configuration file
+ */
 typedef enum Setting_Value {
     INT,            /* Simple integer */
     INT64,          /* 64-bit integer */
@@ -16,12 +19,12 @@ typedef enum Setting_Value {
 /* ================================================================ */
 
 /**
- * Initializes and parses a configuration file using the `libconfig` library.
+ * Parses a configuration file using the `libconfig` library.
  * 
  * @param config a pointer to an initialized `config_t` structure
  * @param filename path to the configuration file to parse
  * 
- * @return Returns 0 on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */
 int Conf_parse_file(config_t* config, const char* filename);
 
@@ -34,7 +37,7 @@ int Conf_parse_file(config_t* config, const char* filename);
  * @param type an enumeration or identifier specifying the expected type of the setting
  * @param data pointer to the memory location where the extracted value will be stored. The caller must ensure this points to a variable of the correct type corresponding to type
  * 
- * @return Returns 0 on success, -1 otherwise.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */
 int Conf_extract(config_t* config, const char* path, Setting_Value type, void* data);
 
@@ -45,7 +48,7 @@ int Conf_extract(config_t* config, const char* path, Setting_Value type, void* d
  * @param path a dot-separated string specifying the path to the desired setting
  * @param setting output parameter. On success, set to point to the found configuration setting
  * 
- * @return Returns 0 on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */
 int Conf_lookup(const config_t* config, const char* path, config_setting_t** setting);
 
