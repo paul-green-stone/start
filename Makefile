@@ -5,12 +5,12 @@
 # Object files location. Object files will be placed in this directory during compilation
 OBJDIR   = objects
 # Full names of object files
-OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o Widget.o Button.o Menu.o State.o Manager.o Conf.o Core.o)
+OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o Widget.o Button.o Menu.o State.o Manager.o Conf.o Core.o Error.o)
 
 # The Compiler
 CC       = gcc
 # and its flags
-CFLAGS   = -c -g -Wall -Wextra -pedantic-errors -fPIC -O2 -std=c90
+CFLAGS   = -c -g -Wall -Wextra -pedantic-errors -fPIC -O2 -std=c99
 
 # Additional libraries that need to be searched for function definitions
 LDFLAGS  = `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf` -lm
@@ -175,6 +175,13 @@ $(OBJDIR)/Conf.o: $(CONF) $(INCLUDE)
 CORE     = $(addprefix source/, core.c)
 
 $(OBJDIR)/Core.o: $(CORE) $(INCLUDE)
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ======== #
+
+ERROR    = $(addprefix source/, error.c)
+
+$(OBJDIR)/Error.o: $(ERROR) $(INCLUDE)
 	$(CC) $(CFLAGS) -o $@ $<
 
 # ================================================================ #
