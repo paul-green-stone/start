@@ -56,15 +56,111 @@ struct lookup_table_type_entry {
 static int _config_lookup_string(const config_t* config, const char* path, char** value) {
 
     config_setting_t* settings;
-    char* temp;
     /* ======== */
 
     /* Item not found */
     if (((settings = config_lookup(config, path)) == NULL) || (config_lookup_string(config, path, (const char**) value) == 0)) {
         return SERR_ITEM_NOT_FOUND;
     }
-    else {
-        //printf("%s\n", config_setting_get_string(settings));
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ======== */
+
+/**
+ * Looks up an int value in a `libconfig` configuration object at the given `path`.
+ * 
+ * @param config pointer to an initialized libconfig configuration object
+ * @param path a dot-separated path string specifying the setting to look up
+ * @param value output parameter. On success, set to point to the int value in the configuration
+ * 
+ * @return `SSUCCESS` if the setting was found and is an int. `SERR_ITEM_NOT_FOUND` if the setting was not found or is not an int.
+ */
+static int _config_lookup_int(const config_t* config, const char* path, void* value) {
+
+    config_setting_t* settings;
+    /* ======== */
+
+    /* Item not found */
+    if (((settings = config_lookup(config, path)) == NULL) || (config_lookup_int(config, path, (int*) value) == 0)) {
+        return SERR_ITEM_NOT_FOUND;
+    }
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ======== */
+
+/**
+ * Looks up an int64 value in a `libconfig` configuration object at the given `path`.
+ * 
+ * @param config pointer to an initialized libconfig configuration object
+ * @param path a dot-separated path string specifying the setting to look up
+ * @param value output parameter. On success, set to point to the int64 value in the configuration
+ * 
+ * @return `SSUCCESS` if the setting was found and is an int64. `SERR_ITEM_NOT_FOUND` if the setting was not found or is not an int64.
+ */
+static int _config_lookup_int64(const config_t* config, const char* path, void* value) {
+
+    config_setting_t* settings;
+    /* ======== */
+
+    /* Item not found */
+    if (((settings = config_lookup(config, path)) == NULL) || (config_lookup_int64(config, path, (long long*) value) == 0)) {
+        return SERR_ITEM_NOT_FOUND;
+    }
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ======== */
+
+/**
+ * Looks up a float value in a `libconfig` configuration object at the given `path`.
+ * 
+ * @param config pointer to an initialized libconfig configuration object
+ * @param path a dot-separated path string specifying the setting to look up
+ * @param value output parameter. On success, set to point to the float value in the configuration
+ * 
+ * @return `SSUCCESS` if the setting was found and is an float. `SERR_ITEM_NOT_FOUND` if the setting was not found or is not an float.
+ */
+static int _config_lookup_float(const config_t* config, const char* path, void* value) {
+
+    config_setting_t* settings;
+    /* ======== */
+
+    /* Item not found */
+    if (((settings = config_lookup(config, path)) == NULL) || (config_lookup_float(config, path, (double*) value) == 0)) {
+        return SERR_ITEM_NOT_FOUND;
+    }
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ======== */
+
+/**
+ * Looks up a boolean value in a `libconfig` configuration object at the given `path`.
+ * 
+ * @param config pointer to an initialized libconfig configuration object
+ * @param path a dot-separated path string specifying the setting to look up
+ * @param value output parameter. On success, set to point to the boolean value in the configuration
+ * 
+ * @return `SSUCCESS` if the setting was found and is an boolean. `SERR_ITEM_NOT_FOUND` if the setting was not found or is not an boolean.
+ */
+static int _config_lookup_bool(const config_t* config, const char* path, void* value) {
+
+    config_setting_t* settings;
+    /* ======== */
+
+    /* Item not found */
+    if (((settings = config_lookup(config, path)) == NULL) || (config_lookup_bool(config, path, (int*) value) == 0)) {
+        return SERR_ITEM_NOT_FOUND;
     }
 
     /* ======== */
@@ -81,10 +177,10 @@ static int _config_lookup_string(const config_t* config, const char* path, char*
  * and getter functions.
  */
 static struct lookup_table_type_entry lookup_table[] = {
-    {INT,     (getter) config_lookup_int},
-    {INT64,   (getter) config_lookup_int64},
-    {FLOAT,   (getter) config_lookup_float},
-    {BOOLEAN, (getter) config_lookup_bool},
+    {INT,     (getter) _config_lookup_int},
+    {INT64,   (getter) _config_lookup_int64},
+    {FLOAT,   (getter) _config_lookup_float},
+    {BOOLEAN, (getter) _config_lookup_bool},
     {STRING,  (getter) _config_lookup_string},
 };
 
