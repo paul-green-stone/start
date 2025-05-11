@@ -2,15 +2,23 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <limits.h>
 
 #include "../include/Start.h"
 #include "../include/Core.h"
 #include "../include/File/conf.h"
 
+#include "../include/Error.h"
+
+/* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
+/* ================================================================ */
+
 #define DEFAULT_CONFIGURATION_FILE "system.conf"
+#define BUFFER_SIZE 128
 
 #define combine(buffer) \
-    (buffer)[0] = '\0'; \
+    memset(buffer, '\0', sizeof(buffer)); \
     strcat((buffer), DEFAULT_CONFIGURATION_DIRECTORY); \
     strcat((buffer), "/"); \
     strcat((buffer), DEFAULT_CONFIGURATION_FILE); \
@@ -147,19 +155,20 @@ static int _read_default_system_config_file(void) {
 }
 
 /* ================================================================ */
+/* ==================== FUNCTIONS DEFENITIONS ===================== */
+/* ================================================================ */
 
 int Start(void) {
 
     int flags;
-    char filepath[64];
-
     int status;
 
+    char filepath[64];
     /* ======== */
 
     combine(filepath);
 
-    if (!directory_exist(DEFAULT_CONFIGURATION_DIRECTORY)) {
+    if (!directory_exists(DEFAULT_CONFIGURATION_DIRECTORY)) {
         directory_new(DEFAULT_CONFIGURATION_DIRECTORY);
     }
 
@@ -193,17 +202,42 @@ int Stop(void) {
 }
 
 /* ================================================================ */
-/* ======================== Miscellaneous ========================= */
+/* ======================== MISCELLANEOUS ========================= */
 /* ================================================================ */
 
 int lookup_table_find(struct lookup_table_entry* table, int table_size, const char* flag, int* dest) {
 
     int i;
-
     /* ======== */
 
+    /* ====== Do not dereference a NULL pointer ======= */
     if ((table == NULL) || (flag == NULL) || (dest == NULL)) {
-        return -1;
+        
+        /* Constructing and updating the error message */
+        __set_error__(SERR_NULL_POINTER, __func__);
+        __construct_error_msg__;
+
+        #ifdef STRICTMODE
+            error(stderr, "%s\n", Error_get_msg());
+        #endif
+
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    /* ===== Prevent going past the array borders ===== */
+    if ((table_size < 0) || (table_size > USHRT_MAX)) {
+
+        /* Constructing and updating the error message */
+        __set_error__(SERR_INVALID_RANGE, __func__);
+        __construct_error_msg__;
+
+        #ifdef STRICTMODE
+            error(stderr, "%s\n", Error_get_msg());
+        #endif
+
+        /* ======== */
+        return SERR_INVALID_RANGE;
     }
 
     for (i = 0; i < table_size; i++) {
@@ -212,14 +246,12 @@ int lookup_table_find(struct lookup_table_entry* table, int table_size, const ch
             *dest = (table + i)->int_value;
 
             /* ======== */
-            
-            return 0;
+            return SSUCCESS;
         }
     }
 
     /* ======== */
-
-    return -2;
+    return SERR_ITEM_NOT_FOUND;
 }
 
 /* ================================================================ */
@@ -227,19 +259,14 @@ int lookup_table_find(struct lookup_table_entry* table, int table_size, const ch
 int file_exists(const char* filename) {
 
     FILE* file;
-
     /* ======== */
 
     if ((file = fopen(filename, "r")) != NULL) {
-
         fclose(file);
 
         /* ======== */
-
         return 1;
     }
-
-    /* ======== */
 
     /* File does not exist */
     return 0;
@@ -247,28 +274,91 @@ int file_exists(const char* filename) {
 
 /* ================================================================ */
 
-int directory_exist(const char* path) {
+int directory_exists(const char* path) {
 
     struct stat info;
-
     /* ======== */
 
-    return (stat(path, &info) == 0 && S_ISDIR(info.st_mode));
+    memset(&info, 0, sizeof(info));
+
+    /* ======== */
+    return ((stat(path, &info) == 0) && (S_ISDIR(info.st_mode)));
 }
 
 /* ================================================================ */
 
-void directory_new(const char* path) {
+int directory_new(const char* path) {
 
-    struct stat st;
+    /* =============== Directory exists =============== */
+    if (directory_exists(path) == 1) {
+        return 1;
+    }
+    /* ============= Creating a directory ============= */
+    else if ((directory_exists(path) == 0) && (mkdir(path, 0755) == 0)) {
+        return SSUCCESS;
+    }
+    
+    /* Constructing and updating the error message */
+    __set_error__(SERR_SYSTEM, __func__);
+    __construct_error_msg__;
+
+    #ifdef STRICTMODE
+        error(stderr, "%s\n", Error_get_msg());
+    #endif
 
     /* ======== */
+    return SERR_SYSTEM;
+}
 
-    memset(&st, 0, sizeof(st));
+/* ================================================================ */
 
-    if (stat(path, &st) == -1) {
-        mkdir(path, 0755);
+void print_message(FILE* stream, Message_Type msg_type, const char* format, ...) {
+
+    char buffer[BUFFER_SIZE];
+    size_t bytes_written;
+
+    va_list args;
+    va_start(args, format);
+
+    char* prefix = NULL;
+
+    /* Determine the output stream: use stderr for ERROR, stdout otherwise */
+    stream = (!stream) ? ((msg_type == ERROR) ? stderr : stdout) : stream;
+
+    /* Set the message prefix based on the message type */
+    switch (msg_type) {
+
+        case ERROR:
+            prefix = BRED "Error" RESET;
+            break ;
+
+        case INFO:
+            prefix = BYELLOW "Info" RESET;
+            break ;
+
+        case SUCCESS:
+            prefix = BGREEN "Success" RESET;
+            break ;
     }
+
+    /* Format the prefix into the buffer and check for errors */
+    if (((bytes_written = snprintf(buffer, sizeof(buffer), "%s: ", prefix)) < 0) || (bytes_written >= sizeof(buffer))) {
+        fprintf(stream, "%s%s%s: error formatting error message\n", RED, "Error", WHITE);
+
+        return ;
+    }
+
+    /* Format the additional message into the buffer and check for errors */
+    if ((bytes_written = vsnprintf(buffer + bytes_written, sizeof(buffer) - bytes_written, format, args) < 0) || (bytes_written >= sizeof(buffer) - bytes_written)) {
+        fprintf(stream, "%s%s%s: error formatting error message\n", RED, "Error", WHITE);
+
+        return ;
+    }
+
+    fprintf(stream, "%s", buffer);
+    fflush(stream);
+
+    va_end(args);
 }
 
 /* ================================================================ */
