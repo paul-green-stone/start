@@ -6,21 +6,11 @@
 
 #include "../../include/Error.h"
 #include "../../include/File/conf.h"
+#include "../../include/_error.h"
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
-
-/** Constructs a formatted error message string
- * that combines the current error message
- * with the name of the function where the error occurred.
- */
-#define __construct_error_msg__ \
-    char error_msg[256]; \
-    snprintf(error_msg, sizeof(error_msg), "%s in %s%s%s", Error_get_msg(), BYELLOW, Error_get_func(), RESET); \
-    Error_set_msg(error_msg)
-
-/* ======== */
 
 /**
  * Function pointer type for retrieving a configuration value

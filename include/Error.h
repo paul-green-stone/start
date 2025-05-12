@@ -7,15 +7,6 @@
 /* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
 
-/** Constructs a formatted error message string
- * that combines the current error message
- * with the name of the function where the error occurred.
- */
-#define __construct_error_msg__ \
-    char error_msg[256]; \
-    snprintf(error_msg, sizeof(error_msg), "%s in %s%s%s", Error_get_msg(), BYELLOW, Error_get_func(), RESET); \
-    Error_set_msg(error_msg)
-
 #define STRICTMODE
 
 #define __set_error__(error_code, name) \
@@ -30,6 +21,7 @@ typedef enum error {
     SERR_ITEM_NOT_FOUND = -4,
     SERR_INVALID_RANGE = -5,
     SERR_SYSTEM = -6,
+    SERR_SDL = -7,
 } Error;
 
 /* ================================================================ */
