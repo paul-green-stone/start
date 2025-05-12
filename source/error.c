@@ -26,6 +26,7 @@ static const char* error_descriptions[] = {
     "data not found",
     "input value is out of valid range",
     "",     /* reserved for system errors */
+    "",     /* resrved for SDL errors */
 };
 
 /* ======== */
@@ -37,7 +38,6 @@ static struct _error _Error;
 void Error_set(Error error_code) {
 
     _Error.error_code = error_code;
-
 
     strncpy(_Error.error_string, (_Error.error_code == SERR_SYSTEM) ? strerror(errno): error_descriptions[_Error.error_code * -1], 127);
     _Error.error_string[strlen(_Error.error_string)] = '\0';
