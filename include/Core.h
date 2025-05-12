@@ -3,7 +3,15 @@
 
 #include <SDL2/SDL.h>
 
+/* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
+/* ================================================================ */
+
+/* Defines the default directory name where configuration files are stored */
 #define DEFAULT_CONFIGURATION_DIRECTORY "configs"
+
+/* Defines symbolic names for different types of messages used in logging or user output */
+typedef enum {ERROR, INFO, SUCCESS} Message_Type;
 
 /**
  * Represents an entry in a lookup table for mapping
@@ -13,8 +21,6 @@ struct lookup_table_entry {
     char* str_value;     /* pointer to a string that represents the flag name */
     int int_value;       /* integer that represents the corresponding value associated with the string */
 };
-
-typedef enum {ERROR, INFO, SUCCESS} Message_Type;
 
 /**
  * A shorthand for generating a message that indicates a failed operation.
@@ -32,19 +38,25 @@ typedef enum {ERROR, INFO, SUCCESS} Message_Type;
 #define success(stream, format, ...) print_message((stream), SUCCESS, (format), __VA_ARGS__)
 
 /* ================================================================ */
+/* ========================== INTERFACE =========================== */
+/* ================================================================ */
 
 /**
+ * Initializes the application.
  * 
+ * @return None.
  */
 int Start(void);
 
 /**
+ * Cleans up and shuts down the subsystems by calling their respective quit functions.
  * 
+ * @return None.
  */
 int Stop(void);
 
 /* ================================================================ */
-/* ======================== Miscellaneous ========================= */
+/* ======================== MISCELLANEOUS ========================= */
 /* ================================================================ */
 
 /**
@@ -53,6 +65,7 @@ int Stop(void);
  * @param table pointer to the first element of an array of `lookup_table_entry` structures
  * @param table_size the number of entries in the lookup table
  * @param flag the string key to search for in the table
+ * @param dest output parameter where the found integer value is stored
  * 
  * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */
@@ -81,12 +94,19 @@ int directory_exists(const char* path);
  * 
  * @param path a null-terminated string specifying the directory path to create
  * 
- * @return None.
+ * @return Returns 1 if the directory already exists, 0 if it was created, and a negative error code on failure.
  */
 int directory_new(const char* path);
 
 /**
+ * Formats and prints a message with a colored prefix to the specified output stream.
  * 
+ * @param stream pointer to the output stream where the message will be printed
+ * @param msg_type enum indicating the type of message, which determines the prefix and color
+ * @param format a `printf`-style format string for the message body
+ * @param ... variable arguments corresponding to the format specifiers in `format`
+ * 
+ * @return None.
  */
 void print_message(FILE* stream, Message_Type msg_type, const char* format, ...);
 
