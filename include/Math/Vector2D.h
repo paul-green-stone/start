@@ -4,6 +4,8 @@
 #include <math.h>
 
 /* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
+/* ================================================================ */
 
 struct vector2 {
 
@@ -13,13 +15,17 @@ struct vector2 {
 
 typedef struct vector2 Vector2;
 
-/* ================================================================ */
+/* ======================================= */
+/* Shorthands for common vector operations */
+/* ======================================= */
 
 #define v2_mul(a, b, s) Vector2_multiply((a), (b), (s))
 #define v2_div(a, b, s) Vector2_divide((a), (b), (s))
 #define v2_neg(a) Vector2_negate(a)
 #define v2_mag(a, dst) Vector2_get_magnitude((a), (dst))
 #define v2_nrm(a) Vector2_normalize((a))
+
+/* ======== */
 
 #define v2_add(a, b, dst) Vector2_add((a), (b), (dst))
 #define v2_sub(a, b, dst) Vector2_subtract((a), (b), (dst))
