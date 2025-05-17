@@ -42,16 +42,16 @@ struct lookup_table_entry {
 /* ================================================================ */
 
 /**
- * Initializes the application.
+ * Initializes the system by setting up configuration and SDL subsystems.
  * 
- * @return None.
+ * @return Returns SSUCCESS (0) on success, or a negative error code on failure.
  */
 int Start(void);
 
 /**
  * Cleans up and shuts down the subsystems by calling their respective quit functions.
  * 
- * @return None.
+ * @return Returns SSUCCESS (0) on success, or a negative error code on failure..
  */
 int Stop(void);
 

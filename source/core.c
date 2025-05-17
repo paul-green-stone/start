@@ -294,91 +294,67 @@ int Start(void) {
 
     /* ======= Trying to create a new directory ======= */
     if (!directory_exists(DEFAULT_CONFIGURATION_DIRECTORY) && (status = directory_new(DEFAULT_CONFIGURATION_DIRECTORY)) < 0) {
-        
-        /* Constructing the error message */
-        __set_error__(status, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
-        /* ======== */
-        return status;
+        goto ERROR;
     }
 
     /* ==== Trying to create a configuration file ===== */
-    if (!file_exists(filepath) && (status = _write_default_system_config_file()) != SSUCCESS) {
-        
-        /* Constructing the error message */
-        __set_error__(status, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
-        /* ======== */
-        return status;
+    if (!file_exists(filepath) && (status = _write_default_system_config_file() != SSUCCESS)) {
+        goto ERROR;
     }
 
     /* ==== Trying to read the configuration file ===== */
     if ((status = _read_default_system_config_file(&flags)) < 0) {
-
-        /* Constructing the error message */
-        __set_error__(status, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
-        /* ======== */
-        return status;
+        goto ERROR;
     }
 
     /* ============== Initializaing SDL =============== */
     if (SDL_Init(flags.SDL_flags) != 0) {
-        
-        /* Constructing the error message */
-        __set_error__(SERR_SDL, __func__);
-        __construct_error_msg__;
 
-        Error_set_msg(SDL_GetError());
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
+        status = SERR_SDL;
         /* ======== */
-        return SERR_SDL;
+        goto ERROR;
     }
 
     /* ============== Initializaing IMG =============== */
     if (!(IMG_Init(flags.IMG_flags) & flags.IMG_flags)) {
         
-        /* Constructing the error message */
-        __set_error__(SERR_SDL, __func__);
-        __construct_error_msg__;
+        status = SERR_SDL;
+        /* ======== */
+        goto ERROR;
+    }
 
-        Error_set_msg(SDL_GetError());
+    /* ============== Initializaing TTF =============== */
+    if (TTF_Init() != 0) {
+
+        status = SERR_SDL;
+        /* ======== */
+        goto ERROR;
+    }
+    
+    /* ======== */
+    return SSUCCESS;
+
+    /* ================ */
+    ERROR: {
+
+        /* Constructing the error message */
+        __set_error__(status, __func__);
+        __construct_error_msg__;
 
         #ifdef STRICTMODE
             error(stderr, "%s\n", Error_get_msg());
         #endif
 
         /* ======== */
-        return SERR_SDL;
-    }
-    
-    /* ======== */
-    return SSUCCESS;
+        return status;
+    };
 }
 
 /* ================================================================ */
 
 int Stop(void) {
     
+    TTF_Quit();
     IMG_Quit();
     SDL_Quit();
 
