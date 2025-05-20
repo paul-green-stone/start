@@ -179,19 +179,7 @@ static int _read_default_system_config_file(struct flags* _flags) {
 
     /* ======== Parsing the configuration file ======== */
     if ((status = Conf_parse_file(&config, filepath)) != SSUCCESS) {
-
-        config_destroy(&config);
-
-        /* Constructing the error message */
-        __set_error__(status, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
-        /* ======== */
-        return status;
+        goto ERROR;
     }
 
     /* ================================ */
@@ -199,19 +187,7 @@ static int _read_default_system_config_file(struct flags* _flags) {
     /* ================================ */
 
     if ((status = Conf_lookup(&config, "system", &array)) != SSUCCESS) {
-
-        config_destroy(&config);
-
-        /* Constructing the error message */
-        __set_error__(status, "Start");
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
-        /* ======== */
-        return status;
+        goto ERROR;
     }
 
     len = config_setting_length(array);
@@ -236,19 +212,7 @@ static int _read_default_system_config_file(struct flags* _flags) {
     /* ================================ */
 
     if ((status = Conf_lookup(&config, "graphics", &array)) != SSUCCESS) {
-
-        config_destroy(&config);
-
-        /* Constructing the error message */
-        __set_error__(status, "Start");
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
-        /* ======== */
-        return status;
+        goto ERROR;
     }
 
     len = config_setting_length(array);
@@ -272,6 +236,21 @@ static int _read_default_system_config_file(struct flags* _flags) {
 
     /* ======== */
     return flags;
+
+    /* ================ */
+    ERROR: {
+
+        /* Constructing the error message */
+        __set_error__(status, __func__);
+        __construct_error_msg__;
+
+        #ifdef STRICTMODE
+            error(stderr, "%s\n", Error_get_msg());
+        #endif
+
+        /* ======== */
+        return status;
+    };
 }
 
 /* ================================================================ */
@@ -369,36 +348,25 @@ int Stop(void) {
 int lookup_table_find(struct lookup_table_entry* table, int table_size, const char* flag, int* dest) {
 
     int i;
+    int status;
     /* ======== */
+
+    status = SSUCCESS;
 
     /* ====== Do not dereference a NULL pointer ======= */
     if ((table == NULL) || (flag == NULL) || (dest == NULL)) {
-        
-        /* Constructing and updating the error message */
-        __set_error__(SERR_NULL_POINTER, __func__);
-        __construct_error_msg__;
 
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
+        status = SERR_NULL_POINTER;
         /* ======== */
-        return SERR_NULL_POINTER;
+        goto ERROR;
     }
 
     /* ===== Prevent going past the array borders ===== */
     if ((table_size < 0) || (table_size > USHRT_MAX)) {
 
-        /* Constructing and updating the error message */
-        __set_error__(SERR_INVALID_RANGE, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
+        status = SERR_INVALID_RANGE;
         /* ======== */
-        return SERR_INVALID_RANGE;
+        goto ERROR;
     }
 
     for (i = 0; i < table_size; i++) {
@@ -413,6 +381,21 @@ int lookup_table_find(struct lookup_table_entry* table, int table_size, const ch
 
     /* ======== */
     return SERR_ITEM_NOT_FOUND;
+
+    /* ================ */
+    ERROR: {
+
+        /* Constructing the error message */
+        __set_error__(status, __func__);
+        __construct_error_msg__;
+
+        #ifdef STRICTMODE
+            error(stderr, "%s\n", Error_get_msg());
+        #endif
+
+        /* ======== */
+        return status;
+    };
 }
 
 /* ================================================================ */
