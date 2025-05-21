@@ -22,7 +22,7 @@ void* State_create(const void* state, ...);
  * 
  * @param state pointer to the state object to destroy
  * 
- * @return Returns 0 on success, -1 on failure
+ * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */
 int State_destroy(void* state);
 
@@ -34,7 +34,7 @@ int State_destroy(void* state);
  * @param state pointer to the state object to process
  * @param ... variadic arguments passed to the state's handler
  * 
- * @return Returns 0 if the handler is called, -1 otherwise.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */ 
 int State_handle(void* state, ...);
 
@@ -45,7 +45,7 @@ int State_handle(void* state, ...);
  * @param state pointer to the state object to update
  * @param ... variadic arguments forwarded to the state's update function
  * 
- * @return Returns 0 if the state's update function is called, -1 otherwise.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */
 int State_update(void* state, ...);
 
