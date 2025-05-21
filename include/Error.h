@@ -14,6 +14,7 @@
     Error_set_func((name));
 
 typedef enum error {
+
     SSUCCESS = 0,
     SERR_NULL_POINTER = -1,
     SERR_LIBCONFIG = -2,
@@ -22,6 +23,7 @@ typedef enum error {
     SERR_INVALID_RANGE = -5,
     SERR_SYSTEM = -6,
     SERR_SDL = -7,
+    SERR_NIMPLMNT = -8,
 } Error;
 
 /* ================================================================ */
