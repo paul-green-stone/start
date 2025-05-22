@@ -4,11 +4,13 @@
 #include "Core.h"
 
 /* ================================================================ */
+/* ========================== INTERFACE =========================== */
+/* ================================================================ */
 
 /**
  * Initializes the application by creating the main window and setting up basic parameters.
  * 
- * @return Returns 0 on success, or -1 if window creation fails.
+ * @return Returns the `Clock` that was created or NULL on failure; call `Error_get()` for more information
  */
 int App_init(void);
 
@@ -50,7 +52,7 @@ void App_stop(void);
 /**
  * Retrieves the time elapsed between the current and previous frame.
  * 
-* @return The delta time in seconds as a double-precision floating-point value
+* @return The delta time in seconds as a double-precision floating-point value.
  */
 double get_delta(void);
 
@@ -62,9 +64,9 @@ double get_delta(void);
 int get_fps(void);
 
 /**
- * Retrieves the `SDL_Renderer` associated with the application's main window.
+ * Retrieves the `SDL_Renderer*` associated with the application's main window.
  * 
- * @return A pointer to the SDL_Renderer used by the application.
+ * @return A pointer to the `SDL_Renderer` used by the application on success, `NULL` on failure; call `Error_get()` for more information.
  */
 SDL_Renderer* get_context(void);
 
@@ -73,7 +75,7 @@ SDL_Renderer* get_context(void);
  * 
  * @param filename name of the PNG file to save the screenshot as (e.g., "capture.png")
  * 
- * @return Returns 0 on success or a negative error code on failure.
+ * @return Returns 0 on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int take_screenshot(const char* filename);
 
@@ -92,6 +94,13 @@ void set_state(const void* state);
  * @return returns a `void*` pointer to the current state object
  */
 void* get_state(void);
+
+/**
+ * Retrieves the `SDL_Window*` associated with the application's main window.
+ * 
+ * @return A pointer to the `SDL_Window` used by the application on success, `NULL` on failure; call `Error_get()` for more information.
+ */
+SDL_Window* get_window(void);
 
 /* ================================================================ */
 

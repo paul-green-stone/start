@@ -8,13 +8,17 @@
 #include "../Text.h"
 
 /* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
+/* ================================================================ */
 
 /**
  * Defines a function pointer type named action for callback functions that take a single `void*` argument and return no value.
  */
 typedef void (*action)(va_list* app);
 
-/* ================================ */
+/* ================================================================ */
+/* ========================== INTERFACE =========================== */
+/* ================================================================ */
 
 /**
  * Creates a new widget instance.
@@ -22,7 +26,7 @@ typedef void (*action)(va_list* app);
  * @param widget pointer to a widget descriptor
  * @param ... constructor-specific arguments (type and quantity depend on widget implementation)
  * 
- * @return Returns a pointer to initialized widget instance or NULL if memory allocation fails.
+ * @return Returns a pointer to initialized widget instance on success, `NULL` on failure; call `Error_get()` for more information
  */
 void* Widget_create(const void* widget, ...);
 
@@ -31,7 +35,7 @@ void* Widget_create(const void* widget, ...);
  * 
  * @param widget pointer to widget instance created by `Widget_create`
  * 
- * @return Returns 0 on success or -1 on failure.
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information
  */
 int Widget_destroy(void* widget);
 
@@ -42,7 +46,7 @@ int Widget_destroy(void* widget);
  * 
  * @param widget pointer to a valid widget instance
  * 
- * @return Returns 0 on success or a negative error code on failure.
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int Widget_draw(const void* widget, const SDL_Rect* dst);
 
@@ -52,7 +56,7 @@ int Widget_draw(const void* widget, const SDL_Rect* dst);
  * @param widget Pointer to the widget instance
  * @param dimensions pointer to a `Vector2` struct where dimensions will be stored
  * 
- * @return Returns 0 and writes the widget dimensions to `*dimensions` or -1 on failure.
+ * @return Returns `SUCCESS` (0) and writes the widget dimensions to `dimensions or a negative error code on failure; call `Error_get()` for more information.
  */
 int  Widget_get_dimensions(const void* widget, Vector2* dimensions);
 
@@ -61,7 +65,7 @@ int  Widget_get_dimensions(const void* widget, Vector2* dimensions);
  * 
  * @param widget pointer to the widget instance
  * 
- * @return Returns a pointer to the `Text` object representing the widget's label on success, NULL on failure.
+ * @return Returns a pointer to the `Text` object representing the widget's label on success, NULL on failure; call `Error_get()` for more information.
  */
 Text* Widget_get_label(const void* widget);
 
@@ -71,7 +75,7 @@ Text* Widget_get_label(const void* widget);
  * @param widget pointer to the widget instance
  * @param callbakc function pointer to the callback to bind to the widget
  * 
- * @return Returns 0 if the widget's bind method is called successfully, -1 otherwise.
+ * @return Returns `SUCCESS` (0) if the widget's bind method is called successfully, a negative error code otherwise; call `Error_get()` for more information.
  */
 int Widget_bind_callback(void* widget, action callback);
 
@@ -81,7 +85,7 @@ int Widget_bind_callback(void* widget, action callback);
  * @param widget pointer to the widget instance to activate
  * @param data optional user-defined data to pass to the callback
  * 
- * @return Returns 0 if the widget's callback function is successfully called, -1 otherwise.
+ * @return Returns `SUCCESS` (0) if the widget's callback function is successfully called, -1 otherwise; call `Error_get()` for more information.
  */
 int Widget_handle_click(const void* widget, ...);
 

@@ -5,8 +5,9 @@
 #include "../../include/Widget/_Widget.h"
 #include "../../include/Text.h"
 #include "../../include/Error.h"
-#include "../../include/_error.h"
 
+/* ================================================================ */
+/* ==================== FUNCTIONS DEFENITIONS ===================== */
 /* ================================================================ */
 
 void* Widget_create(const void* _widget_descriptor, ...) {
@@ -46,14 +47,7 @@ void* Widget_create(const void* _widget_descriptor, ...) {
     /* ================ */
     ERROR: {
 
-        /* Constructing and updating the error message */
-        __set_error__(status, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
+        Error_set(status);
         /* ======== */
         return new_widget;
     };
@@ -68,6 +62,9 @@ int Widget_destroy(void* widget) {
     /* ======== */
 
     if ((widget != NULL) && (*widget_descriptor_p != NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
         return SERR_NULL_POINTER;
     }
 
@@ -90,6 +87,9 @@ int Widget_draw(const void* widget, const SDL_Rect* dst) {
     /* ======== */
 
     if ((widget != NULL) && (*widget_descriptor_p != NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
         return SERR_NULL_POINTER;
     }
 
@@ -97,8 +97,10 @@ int Widget_draw(const void* widget, const SDL_Rect* dst) {
         return (*widget_descriptor_p)->draw(widget, dst);
     }
 
+    Error_set(SERR_NOT_IMPLEMENTED);
+
     /* ======== */
-    return SERR_NIMPLMNT;
+    return SERR_NOT_IMPLEMENTED;
 }
 
 /* ================================================================ */
@@ -110,6 +112,9 @@ int Widget_get_dimensions(const void* widget, Vector2* dimensions) {
     /* ========= */
 
     if ((widget != NULL) && (*widget_descriptor_p != NULL) && (dimensions != NULL)) {
+        
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
         return SERR_NULL_POINTER;
     }
 
@@ -120,8 +125,10 @@ int Widget_get_dimensions(const void* widget, Vector2* dimensions) {
         return SSUCCESS;
     }
 
+    Error_set(SERR_NOT_IMPLEMENTED);
+
     /* ======== */
-    return SERR_NIMPLMNT;    /* Method is not implemented */
+    return SERR_NOT_IMPLEMENTED;    /* Method is not implemented */
 }
 
 /* ================================================================ */
@@ -132,9 +139,11 @@ Text* Widget_get_label(const void* widget) {
     widget_descriptor_p = widget;
     /* ======== */
 
-    if ((widget != NULL) && (*widget_descriptor_p != NULL) && ((*widget_descriptor_p)->get_dimensions != NULL)) {
+    if ((widget != NULL) && (*widget_descriptor_p != NULL) && ((*widget_descriptor_p)->get_label != NULL)) {
         return (*widget_descriptor_p)->get_label(widget);
     }
+
+    Error_set(SERR_NOT_IMPLEMENTED);
 
     /* ======== */
     return NULL;    /* Method is not implemented */
@@ -155,8 +164,10 @@ int Widget_bind_callback(void* widget, action callback) {
         return SSUCCESS;
     }
 
+    Error_set(SERR_NOT_IMPLEMENTED);
+
     /* ======== */
-    return SERR_NIMPLMNT;    /* Method is not implemented */
+    return SERR_NOT_IMPLEMENTED;    /* Method is not implemented */
 }
 
 /* ================================================================ */
@@ -181,8 +192,10 @@ int Widget_handle_click(const void* widget, ...) {
         return SSUCCESS;
     }
 
+    Error_set(SERR_NOT_IMPLEMENTED);
+
     /* ========= */
-    return SERR_NIMPLMNT;      /* Method is not implemented */
+    return SERR_NOT_IMPLEMENTED;      /* Method is not implemented */
 }
 
 /* ================================================================ */

@@ -2,7 +2,10 @@
 #include <math.h>
 
 #include "../include/Clock.h"
+#include "../include/Error.h"
 
+/* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
 
 struct clock {
@@ -19,16 +22,19 @@ struct clock {
 };
 
 /* ================================================================ */
+/* ==================== FUNCTIONS DEFENITIONS ===================== */
+/* ================================================================ */
 
 Clock* Clock_new(void) {
 
     Clock* clock = NULL;
+    /* ======== */
 
-    /* ================================ */
     /* === Clock Memory Allocation ==== */
-    /* ================================ */
-
     if ((clock = calloc(1, sizeof(Clock))) == NULL) {
+
+        Error_set(SERR_SYSTEM);
+        /* ======== */
         return NULL;
     }
 
@@ -36,31 +42,30 @@ Clock* Clock_new(void) {
     clock->modifier = 1.0f;
 
     /* ======== */
-
     return clock;
 }
 
-/* ================================ */
+/* ================================================================ */
 
 int Clock_destroy(Clock** clock) {
 
+    /* ====== Do not dereference a NULL pointer ======= */
     if ((clock == NULL) || (*clock == NULL)) {
-        return 1;
+        
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
     }
 
-    /* ================================ */
     /* === Deallocating a Container === */
-    /* ================================ */
-
     free(*clock);
     *clock = NULL;
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
-/* ================================ */
+/* ================================================================ */
 
 void Clock_start(Clock* clock) {
 
@@ -68,17 +73,18 @@ void Clock_start(Clock* clock) {
     clock->previous_ticks = SDL_GetPerformanceCounter();
 }
 
-/* ================================ */
+/* ================================================================ */
 
 void Clock_stop(Clock* clock) {
     clock->is_stopped = 1;
 }
 
-/* ================================ */
+/* ================================================================ */
 
 void Clock_update(Clock* clock) {
 
     double delta;
+    /* ======== */
 
     if (clock->is_stopped) {
         return ;
@@ -90,44 +96,45 @@ void Clock_update(Clock* clock) {
     
     clock->previous_ticks = clock->current_ticks;
     clock->delta = delta * clock->modifier;
-
     clock->accumulator += clock->delta;
 }
 
-/* ================================ */
+/* ================================================================ */
 
 int Clock_setSpeed(Clock* clock, double speed) {
 
     if (speed <= 0) {
-        return 2;
+        
+        Error_set(SERR_INVALID_RANGE);
+        /* ======== */
+        return SERR_INVALID_RANGE;
     }
 
     clock->modifier = speed;
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
-/* ================================ */
+/* ================================================================ */
 
 int Clock_isReady(const Clock* clock) {
     return clock->accumulator >= clock->timer;
 }
 
-/* ================================ */
+/* ================================================================ */
 
 void Clock_reset(Clock* clock) {
     clock->accumulator = 0;
 }
 
-/* ================================ */
+/* ================================================================ */
 
 void Clock_setTimer(Clock* clock, double seconds) {
     clock->timer = fabs(seconds);
 }
 
-/* ================================ */
+/* ================================================================ */
 
 double Clock_getDelta(const Clock* clock) {
     return clock->delta;

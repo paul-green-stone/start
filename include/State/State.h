@@ -4,6 +4,8 @@
 #include <stdarg.h>
 
 /* ================================================================ */
+/* ========================== INTERFACE =========================== */
+/* ================================================================ */
 
 /**
  * Creates a new state object. The function allocates memory for the state,
@@ -13,7 +15,7 @@
  * @param state pointer to a `struct state` descriptor
  * @param ... arguments passed to the descriptor's constructor (if defined)
  * 
- * @return Returns a pointer to the initialized state object on success, NULL on failure.
+ * @return Returns a pointer to the initialized state object on success, `NULL` on failure; call `Error_get()` for more information.
  */
 void* State_create(const void* state, ...);
 
@@ -22,7 +24,7 @@ void* State_create(const void* state, ...);
  * 
  * @param state pointer to the state object to destroy
  * 
- * @return Returns `SSUCCESS` on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int State_destroy(void* state);
 
@@ -34,7 +36,7 @@ int State_destroy(void* state);
  * @param state pointer to the state object to process
  * @param ... variadic arguments passed to the state's handler
  * 
- * @return Returns `SSUCCESS` on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure; call `Error_get()` for more information.
  */ 
 int State_handle(void* state, ...);
 
@@ -45,7 +47,7 @@ int State_handle(void* state, ...);
  * @param state pointer to the state object to update
  * @param ... variadic arguments forwarded to the state's update function
  * 
- * @return Returns `SSUCCESS` on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int State_update(void* state, ...);
 

@@ -1,16 +1,21 @@
 #include "../include/Manager.h"
+#include "../include/Error.h"
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
 
+/* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
+/* ================================================================ */
+
 #define TABLE_SIZE 256
 #define CONSTANT 0.6180339887l
 
 #define _hash(key, i) (pjw_hash((key)) + ((i) * multiplicative_hash((key))))
 
-/* ================================================================ */
+/* ======== */
 
 struct resource_manager {
 
@@ -22,6 +27,8 @@ struct resource_manager {
 
 static struct resource_manager Manager;
 
+/* ================================================================ */
+/* ===================== AUXILIARY FUNCTIONS ====================== */
 /* ================================================================ */
 
 /* @param prime_size the size of the hash table, typically a prime number */
@@ -35,10 +42,9 @@ static struct resource_manager Manager;
  */
 static size_t pjw_hash(const char* key) {
 
-    size_t hash_coding;
+    size_t hash_coding = 0;
     size_t tmp;
-
-    hash_coding = 0;
+    /* ======== */
 
     /* ================================================================ */
     /* == Hash the key by performing a number of bit operations on it = */
@@ -58,7 +64,6 @@ static size_t pjw_hash(const char* key) {
     }
 
     /* ======== */
-
     return hash_coding;
 }
 
@@ -73,11 +78,9 @@ static size_t pjw_hash(const char* key) {
  */
 static size_t multiplicative_hash(const char* key) {
 
-    size_t hash_coding;
-    size_t tmp;
-
-    hash_coding = 0;
-    tmp = 0;
+    size_t hash_coding = 0;
+    size_t tmp = 0;
+    /* ======== */
 
     while (*key != '\0') {
         tmp = tmp * 31 + (size_t) *key;
@@ -87,17 +90,17 @@ static size_t multiplicative_hash(const char* key) {
     hash_coding = floor(TABLE_SIZE * (fmod(tmp * CONSTANT, 1)));
 
     /* ======== */
-
     return hash_coding;
 }
 
 /* ================================================================ */
+/* ==================== FUNCTIONS DEFENITIONS ===================== */
+/* ================================================================ */
 
 void* Manager_lookup(const char* key) {
 
-    size_t position;
-    size_t i;
-
+    size_t position = 0;
+    size_t i = 0;
     /* ======== */
 
     for (i = 0; i < TABLE_SIZE; i++) {
@@ -117,8 +120,6 @@ void* Manager_lookup(const char* key) {
     }
 
     /* ======== */
-
-    /* Data was not found */
     return NULL;
 }
 
@@ -126,14 +127,16 @@ void* Manager_lookup(const char* key) {
 
 int Manager_insert(const char* key, const void* data) {
 
-    size_t position;
-    size_t i;
-
+    size_t position = 0;
+    size_t i = 0;
     /* ======== */
 
     /* Do not exceed the number of positions in the table */
     if (Manager.size == TABLE_SIZE) {
-        return -1;
+        
+        Error_set(SERR_INVALID_RANGE);
+        /* ======== */
+        return SERR_INVALID_RANGE;
     }
 
     /* Do nothing if the data is already in the table */
@@ -154,13 +157,11 @@ int Manager_insert(const char* key, const void* data) {
             Manager.size++;
 
             /* ======== */
-
-            return 0;
+            return SSUCCESS;
         }
     }
 
     /* ======== */
-
     return -1;
 }
 
@@ -171,11 +172,8 @@ void* Manager_remove(const char* key) {
     size_t position;
     size_t i;
 
-    void* data;
-
+    void* data = NULL;
     /* ======== */
-
-    data = NULL;
 
     for (i = 0; i < TABLE_SIZE; i++) {
 
@@ -186,7 +184,6 @@ void* Manager_remove(const char* key) {
             /* Return that the data was not found */
             break ;
         }
-
         else if (strcmp(Manager.keys[position], key) == 0) {
 
             data = Manager.elements[position];
@@ -199,7 +196,6 @@ void* Manager_remove(const char* key) {
     }
 
     /* ======== */
-
     return data;
 }
 

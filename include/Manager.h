@@ -4,6 +4,8 @@
 #include <stdio.h>
 
 /* ================================================================ */
+/* ========================== INTERFACE =========================== */
+/* ================================================================ */
 
 /**
  * Inserts a key-data pair into the storage.
@@ -20,7 +22,7 @@ int Manager_insert(const char* key, const void* data);
  * 
  * @param key A null-terminated string representing the key to remove
  * 
- * @return Returns pointer to the data associated with the removed key if found and removed. NULL if the key was not found in the table.
+ * @return Returns pointer to the data associated with the removed key if found and removed. `NULL` if the key was not found in the table.
  */
 void* Manager_remove(const char* key);
 
@@ -29,7 +31,7 @@ void* Manager_remove(const char* key);
  * 
  * @param key A null-terminated string representing the key to search for in the table
  * 
- * @return Returns a pointer to the data associated with the key if found. Returns NULL if the key does not exist in the table.
+ * @return Returns a pointer to the data associated with the key if found. Returns `NULL` if the key does not exist in the table.
  */
 void* Manager_lookup(const char* key);
 

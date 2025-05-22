@@ -1,34 +1,32 @@
 #include "../include/Texture.h"
+#include "../include/Error.h"
 
+/* ================================================================ */
+/* ==================== FUNCTIONS DEFENITIONS ===================== */
 /* ================================================================ */
 
 Texture* Texture_new(SDL_Renderer* context, const char* filename) {
 
-    Texture* texture;
-    texture = NULL;
+    Texture* texture = NULL;
+    /* ======== */
 
-    /* ================================ */
     /* == Texture Memory Allocation === */
-    /* ================================ */
-
     if ((texture = calloc(1, sizeof(Texture))) == NULL) {
         return NULL;
     }
 
-    /* ================================ */
     /* ====== Loading a Texture ======= */
-    /* ================================ */
-
     if ((texture->t = IMG_LoadTexture(context, filename)) == NULL) {
 
         free(texture);
+        Error_set(SERR_SDL);
+        /* ======== */
         return NULL;
     }
 
     texture->r = context;
 
     /* ======== */
-
     return texture;
 }
 
@@ -36,23 +34,23 @@ Texture* Texture_new(SDL_Renderer* context, const char* filename) {
 
 int Texture_destroy(Texture** texture) {
 
+    /* ====== Do not dereference a NULL pointer ======= */
     if ((texture == NULL) || (*texture == NULL)) {
-        return -1;
+        
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
     }
 
     /* Destroying the `SDL_Texture` */
     SDL_DestroyTexture((*texture)->t);
 
-    /* ================================ */
     /* === Deallocating a Container === */
-    /* ================================ */
-
     free(*texture);
     *texture = NULL;
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================ */

@@ -10,6 +10,11 @@
 #include "../include/Window.h"
 #include "../include/Clock.h"
 #include "../include/File/conf.h"
+#include "../include/Error.h"
+
+/* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
+/* ================================================================ */
 
 /* Default configuration file */
 #define DEFAULT_CONFIGURATION_FILE "application.conf"
@@ -21,9 +26,7 @@
     strcat((buffer), DEFAULT_CONFIGURATION_FILE); \
     (buffer)[strlen((buffer))] = '\0'; \
 
-/* ================================================================ */
-/* ========================= DEFINITIONS ========================== */
-/* ================================================================ */
+/* ================ */
 
 struct application {
 
@@ -49,7 +52,7 @@ struct application {
     void* state;
 };
 
-/* ================================================================ */
+/* ================ */
 
 struct default_app {
 
@@ -122,12 +125,12 @@ static int _read_default_configuration_file(struct default_app* _app) {
     config_t config;
     config_setting_t* array;
 
+    int status;
     int length, i;
     int temp;
     int flag;
 
     char filepath[64];
-
     /* ======== */
 
     combine(filepath);
@@ -140,13 +143,12 @@ static int _read_default_configuration_file(struct default_app* _app) {
     /* ======= the application ======== */
     /* ================================ */
 
-    if (Conf_parse_file(&config, filepath) != 0) {
+    if ((status = Conf_parse_file(&config, filepath)) != SSUCCESS) {
 
         config_destroy(&config);
-
+        Error_set(status);
         /* ======== */
-
-        return -2;
+        return status;
     }
 
     /* ================================ */
@@ -189,8 +191,7 @@ static int _read_default_configuration_file(struct default_app* _app) {
     }
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================================================ */
@@ -219,44 +220,34 @@ static int _write_default_configuration_file_(void) {
         char* title;
         int width;
         int height;
-    } default_app;
-
+    } default_app = {
+        {"SDL_WINDOW_SHOWN"},
+        {"SDL_RENDERER_ACCELERATED"},
+        "Start",
+        640,
+        480,
+    };
     /* ======== */
 
     combine(filepath);
-
-    default_app.wflags[0] = "SDL_WINDOW_SHOWN";
-    default_app.rflags[0] = "SDL_RENDERER_ACCELERATED";
-    default_app.width = 640;
-    default_app.height = 480;
-    default_app.title = "Start";
 
     config_init(&config);
 
     /* Create a new setting for the application configuration */
     setting = config_setting_add(config_root_setting(&config), "application", CONFIG_TYPE_GROUP);
 
-    /* ================================ */
     /* ============ TITLE ============= */
-    /* ================================ */
-
     elm = config_setting_add(setting, "title", CONFIG_TYPE_STRING);
     config_setting_set_string(elm, default_app.title);
 
-    /* ================================ */
     /* ========= WIDTH&HEIGHT ========= */
-    /* ================================ */
-
     elm = config_setting_add(setting, "width", CONFIG_TYPE_INT);
     config_setting_set_int(elm, default_app.width);
 
     elm = config_setting_add(setting, "height", CONFIG_TYPE_INT);
     config_setting_set_int(elm, default_app.height);
 
-    /* ================================ */
     /* ======== WFLAGS&RFLAGS ========= */
-    /* ================================ */
-
     array = config_setting_add(setting, "Window", CONFIG_TYPE_ARRAY);
 
     /* Set window flags */
@@ -285,17 +276,18 @@ static int _write_default_configuration_file_(void) {
     config_destroy(&config);
     
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
+/* ================================================================ */
+/* ==================== FUNCTIONS DEFENITIONS ===================== */
 /* ================================================================ */
 
 int App_init(void) {
 
     struct default_app _app;
-    char filepath[64];
 
+    char filepath[64];
     /* ======== */
 
     combine(filepath);
@@ -309,10 +301,7 @@ int App_init(void) {
 
     _read_default_configuration_file(&_app);
 
-    /* ================================================ */
     /* ============== CREATING A WINDOW =============== */
-    /* ================================================ */
-
     if ((app.window = Window_new(_app.title, _app.width, _app.height, _app.wflags, _app.rflags)) == NULL) {
         return -1;
     }
@@ -325,8 +314,7 @@ int App_init(void) {
     app.frame_period = 1.0f / app.desired_fps;
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================================================ */
@@ -351,12 +339,10 @@ void App_render(void) {
     double delay_time;
     /* Frame end time */
     double end;
-
     static double sec_timer = 0;
 
     /* A variable that accumulates the number of frames within each second */
     static int fps_accumulator = 0;
-
     /* ======== */
 
     /* Mark the end of a frame */
@@ -431,16 +417,18 @@ int get_fps(void) {
 int take_screenshot(const char* filename) {
 
     SDL_Surface* surface;
+
     int width;
     int height;
+
     struct stat st;
+
     char filepath[64];
+    /* ======== */
 
-    /* ================================================ */
     /* === Creating a directory if it doesn't exist === */
-    /* ================================================ */
-
     memset(&st, 0, sizeof(st));
+    memset(filepath, 0, sizeof(filepath));
 
     if (stat("screenshots", &st) == -1) {
         mkdir("screenshots", 0755);
@@ -450,50 +438,49 @@ int take_screenshot(const char* filename) {
 
     /* ================================================ */
 
-    /* Do not use `NULL` */
+    /* ====== Do not dereference a NULL pointer ======= */
     if (filename == NULL) {
-        return -1;
+        
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
     }
 
     /* Getting window dimensions */
     SDL_GetWindowSize(Window_get_window(app.window), &width, &height);
 
     if ((surface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, SDL_PIXELFORMAT_RGBA32)) == NULL) {
-        return -1;
+
+        Error_set(SERR_SDL);
+        /* ========= */
+        return SERR_SDL;
     }
 
     if (SDL_RenderReadPixels(get_context(), NULL, SDL_PIXELFORMAT_RGBA32, surface->pixels, surface->pitch) != 0) {
 
         SDL_FreeSurface(surface);
-
+        Error_set(SERR_SDL);
         /* ======== */
-
-        return -2;
+        return SERR_SDL;
     }
 
-    /* ================================================ */
     /* ============ Updating the filename ============= */
-    /* ================================================ */
-
     strcat(filepath, filename);
     filepath[strlen(filepath)] = '\0';
 
-    /* ================================================ */
 
     if (IMG_SavePNG(surface, filepath) != 0) {
 
         SDL_FreeSurface(surface);
-
+        Error_set(SERR_SDL);
         /* ======== */
-
-        return -3;  
+        return SERR_SDL;
     }
 
     SDL_FreeSurface(surface);
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================================================ */

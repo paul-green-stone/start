@@ -1,8 +1,14 @@
 #ifndef _START_CLOCK_H
 #define _START_CLOCK_H
 
+/* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
+/* ================================================================ */
+
 typedef struct clock Clock;
 
+/* ================================================================ */
+/* ========================== INTERFACE =========================== */
 /* ================================================================ */
 
 /**
@@ -10,7 +16,7 @@ typedef struct clock Clock;
  * mechanism for managing time within a game. It allows you to
  * set timers, check if time is up, and adjust the clock's speed, among other features.
  * 
- * @return Returns the `Clock` that was created or NULL on failure.
+ * @return Returns the `Clock` that was created or NULL on failure; call `Error_get()` for more information.
  */
 Clock* Clock_new(void);
 
@@ -19,7 +25,7 @@ Clock* Clock_new(void);
  * 
  * @param clock the clock to destroy (`&clock`)
  * 
- * @return Returns 0 on success or -1 on failure.
+ * @return Returns the `Clock` that was created or NULL on failure; call `Error_get()` for more information
  */
 int Clock_destroy(Clock** clock);
 
@@ -59,7 +65,7 @@ void Clock_update(Clock* clock);
  * @param clock clock to adjust
  * @param speed the clock speed modifier
  * 
- * @return Returns 0 on success or -1 on failure.
+ * @return Returns the `Clock` that was created or NULL on failure; call `Error_get()` for more information
  */
 int Clock_setSpeed(Clock* clock, double speed);
 
@@ -95,7 +101,7 @@ void Clock_setTimer(Clock* clock, double seconds);
  * 
  * @param clock 
  * 
- * @return Delta time.
+ * @return Returns delta time since the last frame.
  */
 double Clock_getDelta(const Clock* clock);
 

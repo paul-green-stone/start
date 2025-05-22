@@ -3,8 +3,9 @@
 #include "../../include/State/_State.h"
 #include "../../include/State/State.h"
 #include "../../include/Error.h"
-#include "../../include/_error.h"
 
+/* ================================================================ */
+/* ==================== FUNCTIONS DEFENITIONS ===================== */
 /* ================================================================ */
 
 void* State_create(const void* _state_descriptor, ...) {
@@ -13,21 +14,21 @@ void* State_create(const void* _state_descriptor, ...) {
     const struct state* state_descriptor = _state_descriptor; /* Table of pointers to functions */
 
     va_list ap;
-    int status = SSUCCESS;
     /* ======== */
 
+    /* ====== Do not dereference a NULL pointer ====== */
     if (_state_descriptor == NULL) {
         
-        status = SERR_NULL_POINTER;
+        Error_set(SERR_NULL_POINTER);
         /* ======== */
-        goto ERROR;
+        return NULL;
     }
 
     if ((new_state = calloc(1, state_descriptor->size)) == NULL) {
         
-        status = SERR_SYSTEM;
+        Error_set(SERR_SYSTEM);
         /* ======== */
-        goto ERROR;
+        return NULL;
     }
 
     *(const struct state**) new_state = state_descriptor;
@@ -41,21 +42,6 @@ void* State_create(const void* _state_descriptor, ...) {
 
     /* ======== */
     return new_state;
-
-    /* ================ */
-    ERROR: {
-
-        /* Constructing and updating the error message */
-        __set_error__(status, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
-        /* ======== */
-        return new_state;
-    };
 }
 
 /* ================================================================ */
@@ -65,7 +51,11 @@ int State_destroy(void* _state) {
     const struct state* const* state_p = _state;
     /* ======== */
 
+    /* ====== Do not dereference a NULL pointer ====== */
     if ((_state != NULL) && (*state_p != NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
         return SERR_NULL_POINTER;
     }
 
@@ -88,7 +78,11 @@ int State_handle(void* state, ...) {
     va_list ap;
     /* ======== */
 
+    /* ====== Do not dereference a NULL pointer ====== */
     if ((state != NULL) && (*state_p != NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
         return SERR_NULL_POINTER;
     }
 
@@ -111,7 +105,11 @@ int State_update(void* state, ...) {
     va_list ap;
     /* ======== */
 
+    /* ====== Do not dereference a NULL pointer ====== */
     if ((state != NULL) && (state_p != NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
         return SERR_NULL_POINTER;
     }
 

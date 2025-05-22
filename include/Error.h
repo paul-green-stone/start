@@ -13,6 +13,8 @@
     Error_set((error_code)); \
     Error_set_func((name));
 
+#define FAILURE -1
+
 typedef enum error {
 
     SSUCCESS = 0,
@@ -23,9 +25,12 @@ typedef enum error {
     SERR_INVALID_RANGE = -5,
     SERR_SYSTEM = -6,
     SERR_SDL = -7,
-    SERR_NIMPLMNT = -8,
+    SERR_NOT_IMPLEMENTED = -8,
+    ERR_DIVIDE_ZERO = -9,
 } Error;
 
+/* ================================================================ */
+/* ========================== INTERFACE =========================== */
 /* ================================================================ */
 
 /**
@@ -36,23 +41,12 @@ void Error_set(Error error_code);
 /**
  * 
  */
-const char* Error_get_msg(void);
+const char* Error_string(void);
 
 /**
  * 
  */
-void Error_set_msg(const char* msg);
-
-/**
- * 
- */
-void Error_set_func(const char* name);
-
-/**
- * 
- */
-const char* Error_get_func(void);
-
+void Error_set_string(const char* string);
 
 /* ================================================================ */
 

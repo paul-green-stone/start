@@ -11,7 +11,6 @@
 #include "../include/File/conf.h"
 
 #include "../include/Error.h"
-#include "../include/_error.h"
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
@@ -131,15 +130,8 @@ static int _write_default_system_config_file(void) {
     if (config_write_file(&config, filepath) == CONFIG_FALSE) {
 
         config_destroy(&config);
-
-        /* Constructing the error message */
-        __set_error__(SERR_LIBCONFIG, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
+        
+        Error_set(SERR_LIBCONFIG);
         /* ======== */
         return SERR_LIBCONFIG;
     }
@@ -179,7 +171,10 @@ static int _read_default_system_config_file(struct flags* _flags) {
 
     /* ======== Parsing the configuration file ======== */
     if ((status = Conf_parse_file(&config, filepath)) != SSUCCESS) {
-        goto ERROR;
+        
+        Error_set(status);
+        /* ======== */
+        return status;
     }
 
     /* ================================ */
@@ -187,7 +182,10 @@ static int _read_default_system_config_file(struct flags* _flags) {
     /* ================================ */
 
     if ((status = Conf_lookup(&config, "system", &array)) != SSUCCESS) {
-        goto ERROR;
+        
+        Error_set(status);
+        /* ======== */
+        return status;
     }
 
     len = config_setting_length(array);
@@ -212,7 +210,10 @@ static int _read_default_system_config_file(struct flags* _flags) {
     /* ================================ */
 
     if ((status = Conf_lookup(&config, "graphics", &array)) != SSUCCESS) {
-        goto ERROR;
+        
+        Error_set(status);
+        /* ======== */
+        return status;
     }
 
     len = config_setting_length(array);
@@ -236,21 +237,6 @@ static int _read_default_system_config_file(struct flags* _flags) {
 
     /* ======== */
     return flags;
-
-    /* ================ */
-    ERROR: {
-
-        /* Constructing the error message */
-        __set_error__(status, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
-        /* ======== */
-        return status;
-    };
 }
 
 /* ================================================================ */
@@ -259,15 +245,10 @@ static int _read_default_system_config_file(struct flags* _flags) {
 
 int Start(void) {
 
-    struct flags flags;
-
-    int status;
-
     char filepath[64];
+    int status = SSUCCESS;
+    struct flags flags = {0, 0};
     /* ======== */
-
-    status = SSUCCESS;
-    flags.SDL_flags = flags.IMG_flags = 0;
 
     combine(filepath);
 
@@ -316,14 +297,8 @@ int Start(void) {
     /* ================ */
     ERROR: {
 
-        /* Constructing the error message */
-        __set_error__(status, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
+        Stop();
+        Error_set(status);
         /* ======== */
         return status;
     };
@@ -385,14 +360,7 @@ int lookup_table_find(struct lookup_table_entry* table, int table_size, const ch
     /* ================ */
     ERROR: {
 
-        /* Constructing the error message */
-        __set_error__(status, __func__);
-        __construct_error_msg__;
-
-        #ifdef STRICTMODE
-            error(stderr, "%s\n", Error_get_msg());
-        #endif
-
+        Error_set(status);
         /* ======== */
         return status;
     };
@@ -442,13 +410,7 @@ int directory_new(const char* path) {
         return SSUCCESS;
     }
     
-    /* Constructing and updating the error message */
-    __set_error__(SERR_SYSTEM, __func__);
-    __construct_error_msg__;
-
-    #ifdef STRICTMODE
-        error(stderr, "%s\n", Error_get_msg());
-    #endif
+    Error_set(SERR_SYSTEM);    
 
     /* ======== */
     return SERR_SYSTEM;

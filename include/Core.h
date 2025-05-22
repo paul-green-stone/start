@@ -51,7 +51,7 @@ int Start(void);
 /**
  * Cleans up and shuts down the subsystems by calling their respective quit functions.
  * 
- * @return Returns SSUCCESS (0) on success, or a negative error code on failure..
+ * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure. call `Error_get()` for more information.
  */
 int Stop(void);
 
@@ -67,7 +67,7 @@ int Stop(void);
  * @param flag the string key to search for in the table
  * @param dest output parameter where the found integer value is stored
  * 
- * @return Returns `SSUCCESS` on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure. call `Error_get()` for more information.
  */
 int lookup_table_find(struct lookup_table_entry* table, int table_size, const char* flag, int* dest);
 

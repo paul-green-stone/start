@@ -31,6 +31,8 @@ typedef struct vector2 Vector2;
 #define v2_sub(a, b, dst) Vector2_subtract((a), (b), (dst))
 
 /* ================================================================ */
+/* ========================== INTERFACE =========================== */
+/* ================================================================ */
 
 /**
  * Dynamically create a new vector with the given components.
@@ -38,7 +40,7 @@ typedef struct vector2 Vector2;
  * @param x x component
  * @param y y component
  * 
- * @return Returns the `Vector2` or NULL on failure.
+ * @return Returns the `Vector2` or `NULL` on failure; call `Error_get()` for more information.
  */
 Vector2* Vector2_create(float x, float y);
 
@@ -47,7 +49,7 @@ Vector2* Vector2_create(float x, float y);
  * 
  * @param vector_ptr the address of a dynamically allocated vector
  * 
- * @return 0 on success or a negative error code on failure.
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int Vector2_destroy(Vector2** vector_ptr);
 
@@ -55,10 +57,10 @@ int Vector2_destroy(Vector2** vector_ptr);
  * Multiply a vector by a scalar.
  * 
  * @param vector the vector to multiply
- * @param dst_vector the vector in which to store the result. If it is NULL, the `vector` is updated
+ * @param dst_vector the vector in which to store the result. If it is `NULL`, the `vector` is updated
  * @param scalar the scalar value to multiply by
  * 
- * @return 0 on success or a negative error code on failure.
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int Vector2_multiply(Vector2* vector, Vector2* dst_vector, float scalar);
 
@@ -66,10 +68,10 @@ int Vector2_multiply(Vector2* vector, Vector2* dst_vector, float scalar);
  * Divide a vector by a scalar.
  * 
  * @param vector the vector to divide
- * @param dst_vector the vector in which to store the result. If it is NULL, the `vector` is updated
+ * @param dst_vector the vector in which to store the result. If it is `NULL`, the `vector` is updated
  * @param scalar the scalar value to divide by
  * 
- * @return 0 on success or a negative error code on failure.
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int Vector2_divide(Vector2* vector, Vector2* dst_vector, float scalar);
 
@@ -78,7 +80,7 @@ int Vector2_divide(Vector2* vector, Vector2* dst_vector, float scalar);
  * 
  * @param vector the vector to negate
  * 
- * @return 0 on success or a negative error code on failure.
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int Vector2_negate(Vector2* vector);
 
@@ -88,7 +90,7 @@ int Vector2_negate(Vector2* vector);
  * @param vector the vector whose magnitude is to be found
  * @param dst the variable in which to store the result
  * 
- * @return 0 on success or a negative error code on failure.
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int Vector2_get_magnitude(const Vector2* vector, float* dst);
 
@@ -97,7 +99,7 @@ int Vector2_get_magnitude(const Vector2* vector, float* dst);
  * 
  * @param vector the vector to normalize
  * 
- * @return 0 on success or a negative error code on failure.
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int Vector2_normalize(Vector2* vector);
 
@@ -108,7 +110,7 @@ int Vector2_normalize(Vector2* vector);
  * @param b the summand vector 2
  * @param dst_vector the sum vector. If it is NULL, `b` becomes the vector that stores the sum
  * 
- * @return 0 on success or a negative error code on failure.
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int Vector2_add(const Vector2* a, Vector2* b, Vector2* dst_vector);
 
@@ -118,6 +120,8 @@ int Vector2_add(const Vector2* a, Vector2* b, Vector2* dst_vector);
  * @param a the minuend vector
  * @param b the subtrahend vector
  * @param dst_vector the difference vector. If it is NULL, `b` becomes the vector that stores the difference
+ * 
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int Vector2_subtract(const Vector2* a, Vector2* b, Vector2* dst_vector);
 

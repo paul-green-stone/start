@@ -9,7 +9,6 @@
 #include "../../include/Application.h"
 #include "../../include/Input.h"
 #include "../../include/Error.h"
-#include "../../include/_error.h"
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
@@ -52,18 +51,24 @@ Menu* Menu_new(int _num_widgets, Vector2* position) {
 
     Menu* menu = NULL;
 
-    int status = SSUCCESS;
     int num_widgets = (_num_widgets < 1) ? 1 : _num_widgets;
     /* ======== */
 
     /* ==== Menu Memory Allocation ==== */
-    if ((menu = calloc(1, sizeof(struct menu))) == NULL) { return SERR_SYSTEM; }
+    if ((menu = calloc(1, sizeof(struct menu))) == NULL) {
+
+        Error_set(SERR_SYSTEM);
+        /* ======== */
+        return NULL; 
+    }
 
     /* ==== Array of Widgets Allocation ==== */
     if ((menu->widgets = calloc(num_widgets, sizeof(struct widget*))) == NULL) {
 
         free(menu);
-        return SERR_SYSTEM;
+        Error_set(SERR_SYSTEM);
+        /* ======== */
+        return NULL;
     }
 
     menu->active_widget = -1;
@@ -85,7 +90,12 @@ int Menu_destroy(Menu** menu) {
     size_t i;
     /* ======== */
 
-    if ((menu == NULL) || (*menu == NULL)) { return SERR_NULL_POINTER; }
+    if ((menu == NULL) || (*menu == NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
 
     /* If there are widgets in the menu */
     if ((*menu)->num_widgets > 0) {
@@ -110,13 +120,22 @@ int Menu_destroy(Menu** menu) {
 
 int Menu_pack(Menu* menu, const void* widget) {
 
-    int status = SSUCCESS;
     Vector2 widget_dimensions;
     /* ======== */
 
-    if ((menu == NULL) || (widget == NULL)) { return SERR_NULL_POINTER; }
+    if ((menu == NULL) || (widget == NULL)) {
 
-    if ((size_t) menu->num_widgets >= menu->max_num_widgets) { return SERR_INVALID_RANGE; }
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    if ((size_t) menu->num_widgets >= menu->max_num_widgets) {
+        
+        Error_set(SERR_INVALID_RANGE);
+        /* ======== */
+        return SERR_INVALID_RANGE;
+    }
 
     menu->widgets[menu->free_widget_slot++] = (struct widget*) widget;
     menu->num_widgets++;
@@ -143,7 +162,12 @@ int Menu_pack(Menu* menu, const void* widget) {
 
 int Menu_get_size(const Menu* menu) {
 
-    if (menu == NULL) { return SERR_NULL_POINTER; }
+    if (menu == NULL) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
 
     /* ======== */
     return menu->num_widgets;
@@ -153,7 +177,12 @@ int Menu_get_size(const Menu* menu) {
 
 int Menu_set_padding(Menu* menu, Vector2* padding) {
 
-    if ((menu == NULL) || (padding = NULL)) { return SERR_NULL_POINTER; }
+    if ((menu == NULL) || (padding = NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
 
     menu->padding = *padding;
 
@@ -172,7 +201,12 @@ int Menu_draw(const Menu* menu, Alignment a) {
     Text* label = NULL;
     /* ======== */
 
-    if (menu == NULL) { return SERR_NULL_POINTER; }
+    if (menu == NULL) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
 
     if (menu->num_widgets > 0) {
 
@@ -221,7 +255,12 @@ int Menu_update(Menu* menu) {
     int i;
     /* ======== */
 
-    if (menu == NULL) { return SERR_NULL_POINTER; }
+    if (menu == NULL) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
 
     if (Input_wasKey_pressed(SDL_SCANCODE_UP)) {
 
@@ -260,7 +299,12 @@ int Menu_update(Menu* menu) {
 
 int Menu_get_dimensions(const Menu* menu, Vector2* dimensions) {
 
-    if ((menu == NULL) || (dimensions == NULL)) { return SERR_NULL_POINTER; }
+    if ((menu == NULL) || (dimensions == NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
 
     dimensions->x = menu->width;
     dimensions->y = menu->height;
@@ -273,7 +317,12 @@ int Menu_get_dimensions(const Menu* menu, Vector2* dimensions) {
 
 int Menu_set_position(Menu* menu, int x, int y) {
 
-    if (menu == NULL) { return SERR_NULL_POINTER; }
+    if (menu == NULL) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
 
     menu->position.x = x;
     menu->position.y = y;

@@ -1,5 +1,8 @@
 #include "../include/Input.h"
+#include "../include/Error.h"
 
+/* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
 
 struct input_manager {
@@ -17,12 +20,18 @@ struct input_manager {
     int y;
 };
 
-/* ================================ */
+/* ======== */
 
 typedef struct input_manager Input;
 
+/* ================================================================ */
+/* ======================== STATIC STORAGE ======================== */
+/* ================================================================ */
+
 static Input IO_Manager;
 
+/* ================================================================ */
+/* ==================== FUNCTIONS DEFENITIONS ===================== */
 /* ================================================================ */
 
 void Input_update(void) {
@@ -62,11 +71,13 @@ int Input_isBtn_pressed(MouseButton btn) {
 
     /* Prevent access to memory areas beyond the array */
     if ((btn < 0) || (btn > 2)) {
-        return 0;
+        
+        Error_set(SERR_INVALID_RANGE);
+        /* ======== */
+        return SERR_INVALID_RANGE;
     }
 
     /* ======== */
-
     return IO_Manager.current_BTN_state[btn];
 }
 
@@ -76,11 +87,13 @@ int Input_wasBtn_pressed(MouseButton btn) {
 
     /* Prevent access to memory areas beyond the array */
     if ((btn < 0) || (btn > 2)) {
-        return 0;
+
+        Error_set(SERR_INVALID_RANGE);
+        /* ======== */
+        return SERR_INVALID_RANGE;
     }
 
     /* ======== */
-
     return IO_Manager.current_BTN_state[btn] && !IO_Manager.previous_BTN_state[btn];
 }
 
