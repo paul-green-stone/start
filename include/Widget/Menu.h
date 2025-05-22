@@ -7,7 +7,9 @@
 
 #include "../Math/Vector2D.h"
 
-/* ================================ */
+/* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
+/* ================================================================ */
 
 typedef struct menu Menu;
 
@@ -20,6 +22,8 @@ typedef struct menu Menu;
  */
 typedef enum {LEFT, RIGHT, CENTER} Alignment;
 
+/* ================================================================ */
+/* ========================== INTERFACE =========================== */
 /* ================================================================ */
 
 /**
@@ -38,7 +42,7 @@ Menu* Menu_new(int num_widgets, Vector2* position);
  * 
  * @param menu a pointer to a pointer to the `Menu` instance to be destroyed
  * 
- * @return Returns 0 on success or -1 on failure.
+ * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure.
  */
 int Menu_destroy(Menu** menu);
 
@@ -48,7 +52,7 @@ int Menu_destroy(Menu** menu);
  * @param menu pointer to the menu instance to add the widget to
  * @param widget pointer to the widget instance to be added
  * 
- * @return Returns 0 when the widget is successfully added or a negative error code on failure.
+ * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure.
  */
 int Menu_pack(Menu* menu, const void* widget);
 
@@ -57,7 +61,7 @@ int Menu_pack(Menu* menu, const void* widget);
  * 
  * @param menu pointer to the menu instance to query
  * 
- * @return Returns the number of widgets currently in the menu, -1 if the menu pointer is NULL.
+ * @return Returns the number of widgets in the menu on success, or a negative error code on failure.
  */
 int Menu_get_size(const Menu* menu);
 
@@ -68,17 +72,17 @@ int Menu_get_size(const Menu* menu);
  * @param menu pointer to the menu instance to modify
  * @param padding pointer to a `Vector2` struct containing the new padding values
  * 
- * @return Returns 0 on success, -1 on failure.
+ * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure.
  */
 int Menu_set_padding(Menu* menu, Vector2* padding);
 
 /**
- * Draws all widgets contained within a menu, positioning them vertically with specified alignment along the X axis.
+ * Draws all widgets contained within a menu, positioning them horizontally with specified alignment along the X axis.
  * 
  * @param menu pointer to the menu instance containing widgets to draw
  * @param a alignment mode for horizontal positioning of widgets
  * 
- * @return Returns 0 on success, -1 on failure.
+ * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure.
  */
 int Menu_draw(const Menu* menu, Alignment a);
 
@@ -86,31 +90,29 @@ int Menu_draw(const Menu* menu, Alignment a);
  * Updates the active widget selection in the menu based on keyboard input.
  * 
  * @param menu pointer to the menu instance to update
- * @param up_key `SDL_Scancode` representing the key to move selection up
- * @param down_key `SDL_Scancode` representing the key to move selection down
  * 
- * @return Returns 0 on success, -1 on failure.
+ * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure.
  */
 int Menu_update(Menu* menu);
 
 /**
- * Retrieves the width and height dimensions of the given menu and stores them in the provided `Vector2` struct.
+ * Retrieves the width and height of the given menu and stores them in the provided `dimensions`.
  * 
  * @param menu pointer to the menu instance to query
- * @param dimensions pointer to a Vector2 struct to store the dimensions
+ * @param dimensions pointer to a `Vector2` struct to store the dimensions
  * 
- * @return Returns 0 on success, -1 on failure.
+ * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure.
  */
 int Menu_get_dimensions(const Menu* menu, Vector2* dimensions);
 
 /**
- * Sets the position of the menu by updating its x and y coordinates.
+ * Sets the position of the menu.
  * 
  * @param menu pointer to the menu instance to modify
  * @param x new horizontal position of the menu
  * @param y new vertical position of the menu
  * 
- * @return Returns 0 on success, -1 on failure.
+ * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure.
  */
 int Menu_set_position(Menu* menu, int x, int y);
 

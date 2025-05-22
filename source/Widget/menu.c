@@ -8,7 +8,11 @@
 #include "../../include/Math/Vector2D.h"
 #include "../../include/Application.h"
 #include "../../include/Input.h"
+#include "../../include/Error.h"
+#include "../../include/_error.h"
 
+/* ================================================================ */
+/* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
 
 struct menu {
@@ -21,6 +25,7 @@ struct menu {
     /* The array of widgets */
     struct widget** widgets;
 
+    /* A widget that is being focused on */
     int active_widget;
     int free_widget_slot;
 
@@ -35,39 +40,30 @@ struct menu {
     /* Distance between menu's widgets and its border */
     Vector2 padding;
 
+    /* Menu position on the screen */
     Vector2 position;
 };
 
 /* ================================================================ */
+/* ==================== FUNCTIONS DEFENITIONS ===================== */
+/* ================================================================ */
 
 Menu* Menu_new(int _num_widgets, Vector2* position) {
 
-    Menu* menu;
-    int num_widgets;
+    Menu* menu = NULL;
 
+    int status = SSUCCESS;
+    int num_widgets = (_num_widgets < 1) ? 1 : _num_widgets;
     /* ======== */
 
-    num_widgets = (_num_widgets < 1) ? 1 : _num_widgets;
-
-    /* ================================ */
     /* ==== Menu Memory Allocation ==== */
-    /* ================================ */
+    if ((menu = calloc(1, sizeof(struct menu))) == NULL) { return SERR_SYSTEM; }
 
-    if ((menu = calloc(1, sizeof(struct menu))) == NULL) {
-        return NULL;
-    }
-
-    /* ================================ */
-    /* ======= Array of Widgets ======= */
-    /* ================================ */
-
+    /* ==== Array of Widgets Allocation ==== */
     if ((menu->widgets = calloc(num_widgets, sizeof(struct widget*))) == NULL) {
 
         free(menu);
-
-        /* ======== */
-
-        return NULL;
+        return SERR_SYSTEM;
     }
 
     menu->active_widget = -1;
@@ -75,18 +71,10 @@ Menu* Menu_new(int _num_widgets, Vector2* position) {
     menu->padding.y = 16;
     menu->padding.x = 0;
     menu->position = *position;
-
-    /* Active color */
-    menu->active_widget_color.r = 255;
-    menu->active_widget_color.g = 0;
-    menu->active_widget_color.b = 0;
-    menu->active_widget_color.a = 255;
-
-    /* Regular Color */
+    menu->active_widget_color = (SDL_Color) {255, 0, 0, 255};
     menu->widget_color.a = 255;
 
     /* ======== */
-
     return menu;
 }
 
@@ -95,14 +83,12 @@ Menu* Menu_new(int _num_widgets, Vector2* position) {
 int Menu_destroy(Menu** menu) {
 
     size_t i;
+    /* ======== */
 
-    if ((menu == NULL) || (*menu == NULL)) {
-        return -1;
-    }
+    if ((menu == NULL) || (*menu == NULL)) { return SERR_NULL_POINTER; }
 
     /* If there are widgets in the menu */
     if ((*menu)->num_widgets > 0) {
-
         for (i = 0; i < (*menu)->max_num_widgets; i++) {
 
             if ((*menu)->widgets[i] == NULL) {
@@ -117,51 +103,49 @@ int Menu_destroy(Menu** menu) {
     *menu = NULL;
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================================================ */
 
 int Menu_pack(Menu* menu, const void* widget) {
 
+    int status = SSUCCESS;
     Vector2 widget_dimensions;
+    /* ======== */
 
-    if ((menu == NULL) || (widget == NULL)) {
-        return -1;
-    }
+    if ((menu == NULL) || (widget == NULL)) { return SERR_NULL_POINTER; }
 
-    if ((size_t) menu->num_widgets >= menu->max_num_widgets) {
-        return -3;
-    }
+    if ((size_t) menu->num_widgets >= menu->max_num_widgets) { return SERR_INVALID_RANGE; }
 
     menu->widgets[menu->free_widget_slot++] = (struct widget*) widget;
     menu->num_widgets++;
 
-    Widget_get_dimensions(widget, &widget_dimensions);
+    if (Widget_get_dimensions(widget, &widget_dimensions) == SSUCCESS) {
 
-    if (menu->num_widgets == 1) {
-        menu->width = widget_dimensions.x;
-        menu->height = widget_dimensions.y;
-    }
-    else {
-        menu->width = (menu->width >= widget_dimensions.x) ? menu->width + menu->padding.x : widget_dimensions.x;
-        menu->height += widget_dimensions.y + menu->padding.y;
+        if (menu->num_widgets == 1) {
+
+            menu->width = widget_dimensions.x;
+            menu->height = widget_dimensions.y;
+        }
+        else {
+
+            menu->width = (menu->width >= widget_dimensions.x) ? menu->width + menu->padding.x : widget_dimensions.x;
+            menu->height += widget_dimensions.y + menu->padding.y;
+        }
     }
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================================================ */
 
 int Menu_get_size(const Menu* menu) {
 
-    if (menu == NULL) {
-        return -1;
-    }
+    if (menu == NULL) { return SERR_NULL_POINTER; }
 
+    /* ======== */
     return menu->num_widgets;
 }
 
@@ -169,15 +153,12 @@ int Menu_get_size(const Menu* menu) {
 
 int Menu_set_padding(Menu* menu, Vector2* padding) {
 
-    if (menu == NULL) {
-        return -1;
-    }
+    if ((menu == NULL) || (padding = NULL)) { return SERR_NULL_POINTER; }
 
     menu->padding = *padding;
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================================================ */
@@ -188,13 +169,10 @@ int Menu_draw(const Menu* menu, Alignment a) {
     int previous_Y_position;
     SDL_Rect rect;
 
-    Text* label;
-
+    Text* label = NULL;
     /* ======== */
 
-    if (menu == NULL) {
-        return -1;
-    }
+    if (menu == NULL) { return SERR_NULL_POINTER; }
 
     if (menu->num_widgets > 0) {
 
@@ -232,16 +210,8 @@ int Menu_draw(const Menu* menu, Alignment a) {
         }
     }
 
-    /* rect.x = menu->position.x;
-    rect.y = menu->position.y;
-    rect.w = menu->width + (menu->padding.x * 2);
-    rect.h = menu->height;
-
-    SDL_RenderDrawRect(get_context(), &rect); */
-
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================================================ */
@@ -249,10 +219,9 @@ int Menu_draw(const Menu* menu, Alignment a) {
 int Menu_update(Menu* menu) {
 
     int i;
+    /* ======== */
 
-    if (menu == NULL) {
-        return -1;
-    }
+    if (menu == NULL) { return SERR_NULL_POINTER; }
 
     if (Input_wasKey_pressed(SDL_SCANCODE_UP)) {
 
@@ -278,51 +247,39 @@ int Menu_update(Menu* menu) {
         for (i = 0; i < menu->num_widgets; i++) {
 
             if (menu->active_widget == i) {
-                
-                Widget_handle_click(menu->widgets[i], get_state());
-
-                /* ======== */
-
-                return 0;
+                return Widget_handle_click(menu->widgets[i], get_state());
             }
         }
     }
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================================================ */
 
 int Menu_get_dimensions(const Menu* menu, Vector2* dimensions) {
 
-    if ((menu == NULL) || (dimensions == NULL)) {
-        return -1;
-    }
+    if ((menu == NULL) || (dimensions == NULL)) { return SERR_NULL_POINTER; }
 
     dimensions->x = menu->width;
     dimensions->y = menu->height;
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================================================ */
 
 int Menu_set_position(Menu* menu, int x, int y) {
 
-    if (menu == NULL) {
-        return -1;
-    }
+    if (menu == NULL) { return SERR_NULL_POINTER; }
 
     menu->position.x = x;
     menu->position.y = y;
 
     /* ======== */
-
-    return 0;
+    return SSUCCESS;
 }
 
 /* ================================================================ */
