@@ -4,6 +4,17 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [1.1.0] - 2025-05-
+
+### Added
+- A header file that contains escape sequences for color output
+- A simple error handling mechanism
+- Default `SDL_image` module initialization
+- Simple error handling mechanism
+
+### Fixed
+- A bug with unrecognized characters in the name of the filepath in `take_screenshot` function
+
 ## [1.0.0] - 2025-05-09
 
 ### Added
