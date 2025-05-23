@@ -9,22 +9,25 @@ int main(int argc, char** argv) {
     config_t config;
     config_setting_t* setting;
 
-    int name;
+    char* name;
     /* ======== */
 
-    // config_init(&config);
+    config_init(&config);
 
-    // if ((status = Conf_parse_file(&config, filename)) != SSUCCESS) {
+    if ((status = Conf_parse_file(&config, filename)) != SSUCCESS) {
 
-    //     config_destroy(&config);
-    //     error(stderr, "%s\n", Error_get_msg());
+        config_destroy(&config);
+        error(stderr, "%s\n", Error_string());
 
-    //     /* ======== */
-    //     return status;
-    // }
+        /* ======== */
+        return status;
+    }
+    else {
+        printf("OK\n");
+    }
 
-    // if (Conf_extract(&config, "name", FLOAT, &name) == SSUCCESS) {
-    //     printf("Name = %d\n", name);
+    // if (Conf_extract(&config, "name", 8, &name) == SSUCCESS) {
+    //     printf("Name = %s\n", name);
     // }
     // else {
     //     error(stderr, "%s\n", Error_get_msg());
@@ -49,12 +52,11 @@ int main(int argc, char** argv) {
     //     error(stderr, "%s\n", Error_get_msg());
     // }
     
+    // if (Start() != SSUCCESS) {
+    //     error(stderr, "%s\n", Error_get_msg(), "");
+    // }
 
-    if (Start() != SSUCCESS) {
-        error(stderr, "%s\n", Error_get_msg(), "");
-    }
-
-    Stop();
+    // Stop();
 
     //config_destroy(&config);
 
