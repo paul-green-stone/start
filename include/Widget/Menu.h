@@ -16,7 +16,7 @@ typedef struct menu Menu;
 /**
  * Defines the possible alignment options for arranging widgets inside a menu
  * 
- * @param LEFT align widgets to the left edge of the menu or container
+ * @param LEFT align widgets to the left edge of the menu or container.
  * @param RIGHT align widgets to the right edge of the menu or container.
  * @param CENTER center widgets horizontally within the menu or container.
  */
