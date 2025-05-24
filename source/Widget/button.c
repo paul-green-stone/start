@@ -69,9 +69,8 @@ static void* Button_ctor(void* _self, va_list* app) {
     }
 
     self->position = *position;
-
+    
     /* ======== */
-
     return self;
 }
 
@@ -95,7 +94,6 @@ static void* Button_dtor(void* _self) {
     Text_destroy(&(self->label));
 
     /* ======== */
-
     return self;
 }
 
@@ -155,7 +153,6 @@ Vector2 Button_get_dimensions(const void* _self) {
     dimensions.y = self->label->height;
 
     /* ======== */
-
     return dimensions;
 }
 
@@ -174,7 +171,6 @@ Text* Button_get_label(const void* _self) {
     self = _self;
 
     /* ======== */
-
     return self->label;
 }
 

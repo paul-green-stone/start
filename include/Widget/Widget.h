@@ -89,6 +89,11 @@ int Widget_bind_callback(void* widget, action callback);
  */
 int Widget_handle_click(const void* widget, ...);
 
+/**
+ * 
+ */
+int Widget_on_hover(void* widget, action callback);
+
 /* ================================================================ */
 
 #endif /* _START_WIDGET_INTERFACE_H */

@@ -86,7 +86,7 @@ int Widget_draw(const void* widget, const SDL_Rect* dst) {
     widget_descriptor_p = widget;
     /* ======== */
 
-    if ((widget != NULL) && (*widget_descriptor_p != NULL)) {
+    if ((widget == NULL) && (*widget_descriptor_p == NULL)) {
 
         Error_set(SERR_NULL_POINTER);
         /* ======== */
@@ -111,7 +111,7 @@ int Widget_get_dimensions(const void* widget, Vector2* dimensions) {
     widget_descriptor_p = widget;
     /* ========= */
 
-    if ((widget != NULL) && (*widget_descriptor_p != NULL) && (dimensions != NULL)) {
+    if ((widget == NULL) && (*widget_descriptor_p == NULL) && (dimensions == NULL)) {
         
         Error_set(SERR_NULL_POINTER);
         /* ======== */
@@ -178,7 +178,7 @@ int Widget_handle_click(const void* widget, ...) {
     va_list ap;
     /* ======== */
 
-    if ((widget != NULL) && (*widget_p != NULL)) {
+    if ((widget == NULL) && (*widget_p == NULL)) {
         return SERR_NULL_POINTER;
     }
     

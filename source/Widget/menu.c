@@ -142,6 +142,8 @@ int Menu_pack(Menu* menu, const void* widget) {
 
     if (Widget_get_dimensions(widget, &widget_dimensions) == SSUCCESS) {
 
+        printf("Computing\n");
+
         if (menu->num_widgets == 1) {
 
             menu->width = widget_dimensions.x;
