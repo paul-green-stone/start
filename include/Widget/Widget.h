@@ -92,6 +92,11 @@ int Widget_handle_click(const void* widget, ...);
 /**
  * 
  */
+int Widget_set_position(void* widget, const Vector2* position);
+
+/**
+ * 
+ */
 int Widget_on_hover(void* widget, action callback);
 
 /* ================================================================ */

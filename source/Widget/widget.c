@@ -199,3 +199,30 @@ int Widget_handle_click(const void* widget, ...) {
 }
 
 /* ================================================================ */
+
+int Widget_set_position(void* _widget, const Vector2* position) {
+
+    const struct widget* const* widget_p = _widget;
+    /* ======== */
+
+    if ((_widget == NULL) || (widget_p == NULL) || (position == NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    if ((*widget_p)->set_position != NULL) {
+
+        (*widget_p)->set_position(_widget, position);
+        /* ======== */
+        return SSUCCESS;
+    }
+
+    Error_set(SERR_NOT_IMPLEMENTED);
+
+    /* ========= */
+    return SERR_NOT_IMPLEMENTED;      /* Method is not implemented */
+}
+
+/* ================================================================ */

@@ -202,7 +202,7 @@ void Button_bind_callback(void* _self, action callback) {
  * 
  * @return None (for now).
  */
-void Button_handle_click(const void* _self, va_list* app) {
+static void Button_handle_click(const void* _self, va_list* app) {
 
     const struct button* self;
     self = _self;
@@ -212,6 +212,19 @@ void Button_handle_click(const void* _self, va_list* app) {
     }
 
     self->on_click(app);
+}
+
+/* ================================================================ */
+
+static void Button_set_position(void* _self, const Vector2* position) {
+
+    struct button* self;
+    self = _self;
+    /* ======== */
+
+    self->position = *position;
+
+    printf("[%.0f; %.0f]\n", self->position.x, self->position.y);
 }
 
 /* ================================================================ */
@@ -232,6 +245,8 @@ static const struct widget _Button = {
 
     Button_bind_callback,   /* bind */
     Button_handle_click,    /* handle_click */
+
+    .set_position = Button_set_position,
 };
 
 const void* Button = &_Button;
