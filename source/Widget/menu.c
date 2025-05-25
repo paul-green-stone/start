@@ -41,7 +41,43 @@ struct menu {
 
     /* Menu position on the screen */
     Vector2 position;
+
+    Alignment alignnment;
 };
+
+/* ================================================================ */
+/* ===================== AUXILIARY FUNCTIONS ====================== */
+/* ================================================================ */
+
+/**
+ * 
+ */
+static void _Menu_align_(const Menu* menu) {
+
+    Vector2 widget_size;
+
+    int x;
+    int y;
+    size_t i;
+    /* ======== */
+
+    if (menu->num_widgets > 0) {
+
+        for (i = 0; i < menu->num_widgets; i++) {
+
+            /* Skip the empty widget */
+            if (menu->widgets[i] == NULL) { continue ; }
+
+            Widget_get_dimensions(menu->widgets[i], &widget_size);
+
+            x = (menu->alignnment == CENTER) ? menu->position.x + (menu->width / 2) - (widget_size.x / 2) : 
+                (menu->alignnment == LEFT) ? (menu->position.x + menu->width) - widget_size.x : menu->position.x;
+            y = (i == 0) ? menu->position.y : y + widget_size.y + menu->padding.y;
+
+            Widget_set_position(menu->widgets[i], &(Vector2) {x, y});
+        }
+    }
+} 
 
 /* ================================================================ */
 /* ==================== FUNCTIONS DEFENITIONS ===================== */
@@ -78,6 +114,7 @@ Menu* Menu_new(int _num_widgets, Vector2* position) {
     menu->position = *position;
     menu->active_widget_color = (SDL_Color) {255, 0, 0, 255};
     menu->widget_color.a = 255;
+    menu->alignnment = CUSTOM;
 
     /* ======== */
     return menu;
@@ -121,15 +158,21 @@ int Menu_destroy(Menu** menu) {
 int Menu_pack(Menu* menu, const void* widget) {
 
     Vector2 widget_dimensions;
+    Vector2 widget_previous_pos;
+    
+    int previous_Y = 0;
+    size_t i;
     /* ======== */
 
-    if ((menu == NULL) || (widget == NULL)) {
+    /* Do not dereference `NULL` */
+    if (menu == NULL) {
 
         Error_set(SERR_NULL_POINTER);
         /* ======== */
         return SERR_NULL_POINTER;
     }
 
+    /* Make sure there is room for a new widget */
     if ((size_t) menu->num_widgets >= menu->max_num_widgets) {
         
         Error_set(SERR_INVALID_RANGE);
@@ -137,23 +180,22 @@ int Menu_pack(Menu* menu, const void* widget) {
         return SERR_INVALID_RANGE;
     }
 
+    /* ================================ */
+
     menu->widgets[menu->free_widget_slot++] = (struct widget*) widget;
     menu->num_widgets++;
 
-    if (Widget_get_dimensions(widget, &widget_dimensions) == SSUCCESS) {
+    Widget_get_dimensions(widget, &widget_dimensions);
 
-        printf("Computing\n");
+    if (menu->num_widgets == 1) {
 
-        if (menu->num_widgets == 1) {
+        menu->width = widget_dimensions.x;
+        menu->height = widget_dimensions.y;
+    }
+    else {
 
-            menu->width = widget_dimensions.x;
-            menu->height = widget_dimensions.y;
-        }
-        else {
-
-            menu->width = (menu->width >= widget_dimensions.x) ? menu->width + menu->padding.x : widget_dimensions.x;
-            menu->height += widget_dimensions.y + menu->padding.y;
-        }
+        menu->width = (menu->width >= widget_dimensions.x) ? menu->width + menu->padding.x : widget_dimensions.x;
+        menu->height += widget_dimensions.y + (menu->padding.y * 2);
     }
 
     /* ======== */
@@ -179,7 +221,12 @@ int Menu_get_size(const Menu* menu) {
 
 int Menu_set_padding(Menu* menu, Vector2* padding) {
 
-    if ((menu == NULL) || (padding = NULL)) {
+    size_t i;
+
+    Vector2 widget_size;
+    /* ======== */
+
+    if ((menu == NULL) || (padding == NULL)) {
 
         Error_set(SERR_NULL_POINTER);
         /* ======== */
@@ -188,17 +235,29 @@ int Menu_set_padding(Menu* menu, Vector2* padding) {
 
     menu->padding = *padding;
 
+    if (menu->num_widgets > 0) {
+        menu->height = 0;
+
+        for (i = 0; i < menu->max_num_widgets; i++) {
+
+            if (menu->widgets[i] == NULL) { continue ; }
+
+            Widget_get_dimensions(menu->widgets[i], &widget_size);
+            menu->height += widget_size.y;
+        }
+
+        menu->height += menu->padding.y * (menu->num_widgets - 1);
+    }
+    
     /* ======== */
     return SSUCCESS;
 }
 
 /* ================================================================ */
 
-int Menu_draw(const Menu* menu, Alignment a) {
+int Menu_draw(const Menu* menu) {
 
     int i;
-    int previous_Y_position;
-    SDL_Rect rect;
 
     Text* label = NULL;
     /* ======== */
@@ -212,25 +271,12 @@ int Menu_draw(const Menu* menu, Alignment a) {
 
     if (menu->num_widgets > 0) {
 
-        previous_Y_position = menu->position.y;
-
-        /* For every widget in the menu */
         for (i = 0; i < menu->num_widgets; i++) {
 
-            if (menu->widgets[i] == NULL) {
-                continue ;
-            }
+            if (menu->widgets[i] == NULL) { continue ; }
 
             /* Retrieving the widget's label */
             label = Widget_get_label(menu->widgets[i]);
-
-            /* rect.x = menu->position.x + menu->padding.x; */
-            rect.y = previous_Y_position;
-            rect.w = label->width;
-            rect.h = label->height;
-
-            /* Align the widget across the X axis */
-            rect.x = (a == CENTER) ? menu->position.x + menu->padding.x + ((menu->width / 2) - (label->width / 2)) : (a == RIGHT) ? menu->position.x + menu->padding.x : menu->position.x + menu->padding.x + menu->width - label->width;
 
             if (menu->active_widget == i) {
                 Text_set_color(label, &menu->active_widget_color);
@@ -240,11 +286,13 @@ int Menu_draw(const Menu* menu, Alignment a) {
             }
 
             /* Draw the widget */
-            Widget_draw(menu->widgets[i], &rect);
-
-            previous_Y_position += label->height + menu->padding.y;
+            Widget_draw(menu->widgets[i], NULL);
         }
     }
+
+    SDL_SetRenderDrawColor(get_context(), 255, 0, 0, 255);
+    SDL_RenderDrawRect(get_context(), &(SDL_Rect) {menu->position.x, menu->position.y, menu->width, menu->height});
+
 
     /* ======== */
     return SSUCCESS;
@@ -328,6 +376,60 @@ int Menu_set_position(Menu* menu, int x, int y) {
 
     menu->position.x = x;
     menu->position.y = y;
+
+    if (menu->alignnment != CUSTOM) { _Menu_align_(menu); }
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ================================================================ */
+
+int Menu_set_color(Menu* menu, SDL_Color* color) {
+
+    if (menu == NULL) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    menu->widget_color = *color;
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ================================================================ */
+
+int Menu_set_activeColor(Menu* menu, SDL_Color* color) {
+
+    if (menu == NULL) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    menu->active_widget_color = *color;
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ================================================================ */
+
+int Menu_set_alignment(Menu* menu, Alignment a) {
+
+    if (menu == NULL) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    menu->alignnment = a;
+    _Menu_align_(menu);
 
     /* ======== */
     return SSUCCESS;
