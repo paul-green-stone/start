@@ -58,6 +58,16 @@ int Input_isBtn_pressed(MouseButton btn);
  */
 int Input_wasBtn_pressed(MouseButton btn);
 
+/**
+ * Retrieves the current position of the mouse cursor.
+ * 
+ * @param[out] x Pointer to an integer where the cursor's X coordinate will be stored
+ * @param[out] y Pointer to an integer where the cursor's Y coordinate will be stored
+ * 
+ * @return None.
+ */
+void Input_get_cursorPos(int* x, int* y);
+
 /* ================================================================ */
 
 #endif /* _START_INPUT_H */

@@ -98,3 +98,11 @@ int Input_wasBtn_pressed(MouseButton btn) {
 }
 
 /* ================================================================ */
+
+void Input_get_cursorPos(int* x, int* y) {
+
+    *x = IO_Manager.x;
+    *y = IO_Manager.y;
+}
+
+/* ================================================================ */
