@@ -226,3 +226,60 @@ int Widget_set_position(void* _widget, const Vector2* position) {
 }
 
 /* ================================================================ */
+
+int Widget_handle_onHover(const void* widget, ...) {
+
+    const struct widget* const* widget_p = widget;
+    va_list ap;
+    /* ======== */
+
+    if ((widget == NULL) && (*widget_p == NULL)) {
+        return SERR_NULL_POINTER;
+    }
+    
+    if ((*widget_p)->on_hover != NULL) {
+
+        va_start(ap, widget);
+        (*widget_p)->on_hover(widget, &ap);
+        va_end(ap);
+
+        /* ======== */
+        return SSUCCESS;
+    }
+
+    Error_set(SERR_NOT_IMPLEMENTED);
+
+    /* ========= */
+    return SERR_NOT_IMPLEMENTED;      /* Method is not implemented */
+}
+
+/* ================================================================ */
+
+int Widget_get_position(const void* widget, Vector2* pos) {
+
+    const struct widget* const* widget_p;
+    widget_p = widget;
+    /* ========= */
+
+    if ((widget == NULL) || (*widget_p == NULL) || (pos == NULL)) {
+        
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    if ((*widget_p)->get_dimensions != NULL) {
+
+        (*widget_p)->get_position(widget, pos);
+
+        /* ======== */
+        return SSUCCESS;
+    }
+
+    Error_set(SERR_NOT_IMPLEMENTED);
+
+    /* ======== */
+    return SERR_NOT_IMPLEMENTED;    /* Method is not implemented */
+}
+
+/* ================================================================ */

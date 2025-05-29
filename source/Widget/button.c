@@ -21,6 +21,7 @@ struct button {
     Vector2 position;
     Text* label;
     action on_click;            /* What to do on a mouse click or key press */
+    action on_hover;            /* What to do when the mouse cursor is above the button */
 };
 
 /* ================================================================ */
@@ -127,7 +128,6 @@ static int Button_draw(const void* _self, const SDL_Rect* dst) {
     }
 
     /* ======== */
-
     return Text_draw(self->label, &rect);
 }
 
@@ -216,6 +216,20 @@ static void Button_handle_click(const void* _self, va_list* app) {
 
 /* ================================================================ */
 
+static void Button_handle_onHover(const void* _self, va_list* app) {
+
+    const struct button* self = _self;
+    /* ======== */
+
+    if (self->on_hover == NULL) {
+        return ;
+    }
+
+    self->on_hover(app);
+}
+
+/* ================================================================ */
+
 static void Button_set_position(void* _self, const Vector2* position) {
 
     struct button* self;
@@ -223,8 +237,16 @@ static void Button_set_position(void* _self, const Vector2* position) {
     /* ======== */
 
     self->position = *position;
+}
 
-    printf("[%.0f; %.0f]\n", self->position.x, self->position.y);
+/* ================================================================ */
+
+static void Button_get_position(const void* _self, Vector2* position) {
+
+    const struct button* self = _self;
+    /* ======== */
+
+    *position = self->position;
 }
 
 /* ================================================================ */
@@ -235,18 +257,20 @@ static const struct widget _Button = {
 
     sizeof(struct button),  /* .size */
 
-    Button_ctor,            /* .ctor */
-    Button_dtor,            /* .dtor */
+    .ctor = Button_ctor,            /* .ctor */
+    .dtor = Button_dtor,            /* .dtor */
 
-    Button_draw,            /* .draw */
+    .draw = Button_draw,            /* .draw */
 
-    Button_get_dimensions,  /* get_dimensions */
-    Button_get_label,       /* get_label */
+    .get_dimensions = Button_get_dimensions,  /* get_dimensions */
+    .get_label = Button_get_label,       /* get_label */
 
-    Button_bind_callback,   /* bind */
-    Button_handle_click,    /* handle_click */
+    .bind =  Button_bind_callback,   /* bind */
+    .handle_click = Button_handle_click,    /* handle_click */
+    .on_hover = Button_handle_onHover,
 
     .set_position = Button_set_position,
+    .get_position = Button_get_position,
 };
 
 const void* Button = &_Button;

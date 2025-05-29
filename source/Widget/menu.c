@@ -63,7 +63,7 @@ static void _Menu_align_(const Menu* menu) {
 
     if (menu->num_widgets > 0) {
 
-        for (i = 0; i < menu->num_widgets; i++) {
+        for (i = 0; (int) i < menu->num_widgets; i++) {
 
             /* Skip the empty widget */
             if (menu->widgets[i] == NULL) { continue ; }
@@ -71,7 +71,7 @@ static void _Menu_align_(const Menu* menu) {
             Widget_get_dimensions(menu->widgets[i], &widget_size);
 
             x = (menu->alignnment == CENTER) ? menu->position.x + (menu->width / 2) - (widget_size.x / 2) : 
-                (menu->alignnment == LEFT) ? (menu->position.x + menu->width) - widget_size.x : menu->position.x;
+                (menu->alignnment == RIGHT) ? (menu->position.x + menu->width) - widget_size.x : menu->position.x;
             y = (i == 0) ? menu->position.y : y + widget_size.y + menu->padding.y;
 
             Widget_set_position(menu->widgets[i], &(Vector2) {x, y});
@@ -158,10 +158,6 @@ int Menu_destroy(Menu** menu) {
 int Menu_pack(Menu* menu, const void* widget) {
 
     Vector2 widget_dimensions;
-    Vector2 widget_previous_pos;
-    
-    int previous_Y = 0;
-    size_t i;
     /* ======== */
 
     /* Do not dereference `NULL` */
@@ -290,10 +286,6 @@ int Menu_draw(const Menu* menu) {
         }
     }
 
-    SDL_SetRenderDrawColor(get_context(), 255, 0, 0, 255);
-    SDL_RenderDrawRect(get_context(), &(SDL_Rect) {menu->position.x, menu->position.y, menu->width, menu->height});
-
-
     /* ======== */
     return SSUCCESS;
 }
@@ -303,6 +295,13 @@ int Menu_draw(const Menu* menu) {
 int Menu_update(Menu* menu) {
 
     int i;
+    int x, y;
+    int t;
+
+    SDL_Rect widget_d;
+    
+    Vector2 pos;
+    Vector2 size;
     /* ======== */
 
     if (menu == NULL) {
@@ -338,6 +337,26 @@ int Menu_update(Menu* menu) {
             if (menu->active_widget == i) {
                 return Widget_handle_click(menu->widgets[i], get_state());
             }
+        }
+    }
+
+    Input_get_cursorPos(&x, &y);
+
+    for (i = 0; i < menu->num_widgets; i++) {
+
+        Widget_get_dimensions(menu->widgets[i], &size);
+        Widget_get_position(menu->widgets[i], &pos);
+
+        widget_d = (SDL_Rect) {pos.x, pos.y, size.x, size.y};
+
+        t = PinR(x, y, &widget_d);
+
+        if (t) {
+            menu->active_widget = i;
+        }
+
+        if (t && Input_wasBtn_pressed(LMB)) {
+            return Widget_handle_click(menu->widgets[i], get_state());
         }
     }
 

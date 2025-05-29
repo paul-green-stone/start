@@ -14,6 +14,7 @@
 #include "File/conf.h"
 #include "File/Color.h"
 #include "State/State.h"
+#include "Math/Core.h"
 #include "Math/Vector2D.h"
 #include "Widget/Button.h"
 #include "Widget/Menu.h"

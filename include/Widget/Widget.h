@@ -58,7 +58,7 @@ int Widget_draw(const void* widget, const SDL_Rect* dst);
  * 
  * @return Returns `SUCCESS` (0) and writes the widget dimensions to `dimensions or a negative error code on failure; call `Error_get()` for more information.
  */
-int  Widget_get_dimensions(const void* widget, Vector2* dimensions);
+int Widget_get_dimensions(const void* widget, Vector2* dimensions);
 
 /**
  * Retrieves the label text object associated with a widget.
@@ -73,7 +73,7 @@ Text* Widget_get_label(const void* widget);
  * Binds a callback function to a widget.
  * 
  * @param widget pointer to the widget instance
- * @param callbakc function pointer to the callback to bind to the widget
+ * @param callback function pointer to the callback to bind to the widget
  * 
  * @return Returns `SUCCESS` (0) if the widget's bind method is called successfully, a negative error code otherwise; call `Error_get()` for more information.
  */
@@ -90,14 +90,34 @@ int Widget_bind_callback(void* widget, action callback);
 int Widget_handle_click(const void* widget, ...);
 
 /**
+ * Sets the position of a widget.
  * 
+ * @param widget pointer to the widget instance. Expected to be a pointer to a pointer to a widget struct
+ * @param position pointer to a `Vector2` struct containing the new position coordinates
+ * 
+ * @return Returns `SUCCESS` (0) if the widget's callback function is successfully called, -1 otherwise; call `Error_get()` for more information.
  */
 int Widget_set_position(void* widget, const Vector2* position);
 
 /**
+ * Retrieves the position of a widget.
  * 
+ * @param widget pointer to the widget instance. Expected to be a pointer to a pointer to a widget struct
+ * @param pos pointer to a Vector2 struct where the position will be stored
+ * 
+ * @return Returns `SUCCESS` (0) if the widget's callback function is successfully called, -1 otherwise; call `Error_get()` for more information.
  */
-int Widget_on_hover(void* widget, action callback);
+int Widget_get_position(const void* self, Vector2* pos);
+
+/**
+ * Handles the hover event for a widget.
+ * 
+ * @param widget pointer to the widget instance. Expected to be a pointer to a pointer to a widget struct
+ * @param ... Variable arguments passed to the widget's `on_hover` handler
+ * 
+ * @return Returns `SUCCESS` (0) if the widget's callback function is successfully called, -1 otherwise; call `Error_get()` for more information.
+ */
+int Widget_handle_onHover(const void* widget, ...);
 
 /* ================================================================ */
 

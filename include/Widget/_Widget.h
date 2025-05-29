@@ -30,9 +30,10 @@ struct widget {
 
     void (*bind)(void* self, void (*callback)(va_list* app));
     void (*handle_click)(const void* self, va_list* app);
-    void (*on_hover)(const void* self, void (*callback)(va_list* app));
+    void (*on_hover)(const void* self, va_list* app);
 
     void (*set_position)(void* self, const Vector2* position);
+    void (*get_position)(const void* self, Vector2* position);
 };
 
 /* ================================================================ */
