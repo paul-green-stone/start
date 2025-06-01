@@ -10,12 +10,9 @@
 
 int main(int argc, char** argv) {
 
-    /* SDL Library Initialization */
-	SDL_Init(SDL_INIT_TIMER);
-	/* TTF Library Initialization */
-	TTF_Init();
-
-    App_init("Start Application");
+    
+    Start();
+    App_init();
 
     /* ================================ */
 
@@ -61,11 +58,9 @@ int main(int argc, char** argv) {
     /* ================================ */
 
     App_quit();
-
-    TTF_CloseFont(font);
+    Stop();
 
     /* ======== */
-
     return 0;
 }
 
