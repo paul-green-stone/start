@@ -4,6 +4,25 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [1.1.1] - 2025-06-02
+
+### Added
+- Added functions to customize the menu widget color and the highlight color for the focused menu item
+- Added function to set the position of a widget
+- Added `CUSTOM` alignment option for menus to allow free positioning of widgets
+- Added function to set the menu's alignment that also recalculates and updates the positions of widgets within the menu
+- Added  `on_hover` callback method to widget interface to handle hover events
+- Added `get_position` function to the widget interface for retrieving the current position of widgets
+- Added function to retrieve the current mouse cursor state/position
+- Implemented hover behavior for menu and buttons to provide visual feedback on mouse-over (default)
+- Add `PinR` macro to check if a point `(x, y)` lies inside a rectangle with origin at top-left and y-axis increasing downwards
+
+### Fixed
+- Fixed an issue where an error was incorrectly set when objects were present (non-null), instead of only when they were null
+- `Menu_set_position` now recalculates widget positions correctly when the alignment is not set to `CUSTOM`
+- `Menu_set_padding` now correctly recalculates the menu height
+- orrected hash function to return 1 on collision instead of 0, ensuring accurate collision detection
+
 ## [1.1.0] - 2025-05-
 
 ### Added
