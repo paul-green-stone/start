@@ -191,7 +191,7 @@ int Menu_pack(Menu* menu, const void* widget) {
     else {
 
         menu->width = (menu->width >= widget_dimensions.x) ? menu->width + menu->padding.x : widget_dimensions.x;
-        menu->height += widget_dimensions.y + (menu->padding.y * 2);
+        menu->height += widget_dimensions.y + (menu->padding.y);
     }
 
     /* ======== */
@@ -240,9 +240,9 @@ int Menu_set_padding(Menu* menu, Vector2* padding) {
 
             Widget_get_dimensions(menu->widgets[i], &widget_size);
             menu->height += widget_size.y;
-        }
 
-        menu->height += menu->padding.y * (menu->num_widgets - 1);
+            if (i + 1 != menu->max_num_widgets) menu->height += menu->padding.y;
+        }
     }
     
     /* ======== */

@@ -52,7 +52,7 @@ int State_destroy(void* _state) {
     /* ======== */
 
     /* ====== Do not dereference a NULL pointer ====== */
-    if ((_state == NULL) && (*state_p == NULL)) {
+    if ((_state == NULL) || (*state_p == NULL)) {
 
         Error_set(SERR_NULL_POINTER);
         /* ======== */
@@ -79,7 +79,7 @@ int State_handle(void* state, ...) {
     /* ======== */
 
     /* ====== Do not dereference a NULL pointer ====== */
-    if ((state == NULL) && (*state_p == NULL)) {
+    if ((state == NULL) || (*state_p == NULL)) {
 
         Error_set(SERR_NULL_POINTER);
         /* ======== */
@@ -106,7 +106,7 @@ int State_update(void* state, ...) {
     /* ======== */
 
     /* ====== Do not dereference a NULL pointer ====== */
-    if ((state == NULL) && (state_p == NULL)) {
+    if ((state == NULL) || (state_p == NULL)) {
 
         Error_set(SERR_NULL_POINTER);
         /* ======== */
