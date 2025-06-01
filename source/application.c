@@ -26,7 +26,7 @@
     strcat((buffer), DEFAULT_CONFIGURATION_FILE); \
     (buffer)[strlen((buffer))] = '\0'; \
 
-/* ================ */
+/* ================================================================ */
 
 struct application {
 
@@ -52,7 +52,7 @@ struct application {
     void* state;
 };
 
-/* ================ */
+/* ================================================================ */
 
 struct default_app {
 
@@ -95,7 +95,7 @@ static struct lookup_table_entry SDL_CreateWindow__flags[] = {
     {"SDL_WINDOW_INPUT_GRABBED", SDL_WINDOW_MOUSE_GRABBED}
 };
 
-/* ======== */
+/* ================================================================ */
 
 static struct lookup_table_entry SDL_CreateRenderer__flags[] = {
     {"SDL_RENDERER_SOFTWARE", SDL_RENDERER_SOFTWARE},
@@ -104,7 +104,7 @@ static struct lookup_table_entry SDL_CreateRenderer__flags[] = {
     {"SDL_RENDERER_TARGETTEXTURE", SDL_RENDERER_TARGETTEXTURE}
 };
 
-/* ======== */
+/* ================================================================ */
 
 static struct application app;
 
@@ -114,19 +114,20 @@ static struct application app;
 
 /**
  * Reads a configuration file containing application settings and SDL flags,
- * then populates a default_app structure with the parsed values.
+ * then populates a `default_app` structure with the parsed values.
  * 
- * @param _app output parameter. Pointer to a structure that will store parsed configuration values
+ * @param _app [output parameter] Pointer to a structure that will store parsed configuration values
  * 
- * @return Returns 0 on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */
 static int _read_default_configuration_file(struct default_app* _app) {
 
     config_t config;
-    config_setting_t* array;
+    config_setting_t* array = NULL;
 
     int status;
-    int length, i;
+    int length;
+    int i;
     int temp;
     int flag;
 
@@ -137,12 +138,7 @@ static int _read_default_configuration_file(struct default_app* _app) {
 
     config_init(&config);
 
-    /* ================================ */
-    /* = Parsing a file that contains = */
-    /* == initial information about === */
-    /* ======= the application ======== */
-    /* ================================ */
-
+    /* === Parsing the file containing the settings === */
     if ((status = Conf_parse_file(&config, filepath)) != SSUCCESS) {
 
         config_destroy(&config);
@@ -151,42 +147,38 @@ static int _read_default_configuration_file(struct default_app* _app) {
         return status;
     }
 
-    /* ================================ */
-
+    /* === Extractint he dimensions of the window === */
     Conf_extract(&config, "application.width", INT, &_app->width);
     Conf_extract(&config, "application.height", INT, &_app->height);
-
+    
+    /* === Extracting the window's title === */
     Conf_extract(&config, "application.title", STRING, &_app->title);
 
-    /* ================================ */
-
-    /* Extracting an array of `SDL_Window` flags */
+    /* === Extracting an array of `SDL_Window` flags === */
     Conf_lookup(&config, "application.Window", &array);
-    /* and getting the number of elements it contains */
+    /* === and getting the number of elements it contains === */
     length = config_setting_length(array);
 
     for (i = 0; i < length; i++) {
 
-        /* Map a string to its integral counterpart */
+        /* === Map a string to its integral counterpart === */
         temp = lookup_table_find(SDL_CreateWindow__flags, sizeof(SDL_CreateWindow__flags) / sizeof(SDL_CreateWindow__flags[0]), config_setting_get_string_elem(array, i), &flag);
 
-        /* Combining flags */
+        /* === Combining flags === */
         _app->wflags |= (temp == 0) ? flag : 0;
     }
 
-    /* ================================ */
-
-    /* Extracting an array of `SDL_Renderer` flags */
+    /* === Extracting an array of `SDL_Renderer` flags === */
     Conf_lookup(&config, "application.Renderer", &array);
-    /* and getting the number of elements it contains */
+    /* === and getting the number of elements it contains === */
     length = config_setting_length(array);
 
     for (i = 0; i < length; i++) {
 
-        /* Map a string to its integral counterpart */
+        /* === Map a string to its integral counterpart === */
         temp = lookup_table_find(SDL_CreateRenderer__flags, sizeof(SDL_CreateRenderer__flags) / sizeof(SDL_CreateRenderer__flags[0]), config_setting_get_string_elem(array, i), &flag);
 
-        /* Combining flags */
+        /* === Combining flags === */
         _app->rflags |= (temp == 0) ? flag : 0;
     }
 
@@ -199,14 +191,14 @@ static int _read_default_configuration_file(struct default_app* _app) {
 /**
  * Creates a default configuration file with predefined window and renderer settings using the libconfig library.
  * 
- * @return Returns 0 on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` (0) on success or a negative error code on failure.
  */
 static int _write_default_configuration_file_(void) {
 
     config_t config;
-    config_setting_t* setting;
-    config_setting_t* array;
-    config_setting_t* elm;
+    config_setting_t* setting = NULL;
+    config_setting_t* array = NULL;
+    config_setting_t* elm = NULL;
 
     size_t i;
 
@@ -233,24 +225,24 @@ static int _write_default_configuration_file_(void) {
 
     config_init(&config);
 
-    /* Create a new setting for the application configuration */
+    /* === Create a new setting for the application configuration === */
     setting = config_setting_add(config_root_setting(&config), "application", CONFIG_TYPE_GROUP);
 
-    /* ============ TITLE ============= */
+    /* === TITLE === */
     elm = config_setting_add(setting, "title", CONFIG_TYPE_STRING);
     config_setting_set_string(elm, default_app.title);
 
-    /* ========= WIDTH&HEIGHT ========= */
+    /* === WIDTH&HEIGHT === */
     elm = config_setting_add(setting, "width", CONFIG_TYPE_INT);
     config_setting_set_int(elm, default_app.width);
 
     elm = config_setting_add(setting, "height", CONFIG_TYPE_INT);
     config_setting_set_int(elm, default_app.height);
 
-    /* ======== WFLAGS&RFLAGS ========= */
+    /* === WFLAGS&RFLAGS === */
     array = config_setting_add(setting, "Window", CONFIG_TYPE_ARRAY);
 
-    /* Set window flags */
+    /* === Set window flags === */
     for (i = 0; i < sizeof(default_app.wflags) / sizeof(default_app.wflags[0]); i++) {
 
         elm = config_setting_add(array, NULL, CONFIG_TYPE_STRING);
@@ -259,18 +251,16 @@ static int _write_default_configuration_file_(void) {
 
     array = config_setting_add(setting, "Renderer", CONFIG_TYPE_ARRAY);
 
-    /* Set renderer flags */
+    /* === Set renderer flags === */
     for (i = 0; i < sizeof(default_app.rflags) / sizeof(default_app.rflags[0]); i++) {
 
         elm = config_setting_add(array, NULL, CONFIG_TYPE_STRING);
         config_setting_set_string(elm, default_app.rflags[i]);
     }
-
-    /* ================================ */
-
-    /* Write the configuration to a file */
+    
+    /* === Write the configuration to a file === */
     if (!config_write_file(&config, filepath)) {
-        return -2;
+        return SERR_LIBCONFIG;
     }
 
     config_destroy(&config);
@@ -292,7 +282,7 @@ int App_init(void) {
 
     combine(filepath);
 
-    /* Clearing the struct */
+    /* === Clearing the struct === */
     memset(&_app, 0, sizeof(struct default_app));
 
     if (!file_exists(filepath)) {
@@ -301,15 +291,15 @@ int App_init(void) {
 
     _read_default_configuration_file(&_app);
 
-    /* ============== CREATING A WINDOW =============== */
+    /* === CREATING A WINDOW === */
     if ((app.window = Window_new(_app.title, _app.width, _app.height, _app.wflags, _app.rflags)) == NULL) {
-        return -1;
+        
+        Error_set(SERR_SDL);
+        /* ======== */
+        return SERR_SDL;
     }
 
-    /* ================================================ */
-
     app.is_running = 1;
-
     app.desired_fps = 60;
     app.frame_period = 1.0f / app.desired_fps;
 
@@ -345,12 +335,12 @@ void App_render(void) {
     static int fps_accumulator = 0;
     /* ======== */
 
-    /* Mark the end of a frame */
+    /* === Mark the end of a frame === */
     end = SDL_GetPerformanceCounter();
-    /* and compute delta time (the amount of time between two frames in seconds )*/
+    /* === and compute delta time (the amount of time between two frames in seconds) === */
     app.delta_time = (end - app.fst) / (float) SDL_GetPerformanceFrequency();
 
-    /* Delay time in milliseconds */
+    /* === Delay time in milliseconds === */
     delay_time = (app.frame_period - app.delta_time) * 1000.0f;
 
     SDL_RenderPresent(Window_get_context(app.window));
@@ -369,7 +359,7 @@ void App_render(void) {
         app.delta_time += (app.frame_period - app.delta_time);
     }
 
-    /* New frame starts */
+    /* === New frame starts === */
     app.fst = SDL_GetPerformanceCounter();
     fps_accumulator++;
 }
@@ -378,7 +368,7 @@ void App_render(void) {
 
 void App_setFPS(int fps) {
 
-    app.desired_fps = (fps < 1) ? 1 : (fps > 60) ? 60 : fps;
+    app.desired_fps = (fps < 1) ? 1 : (fps > 120) ? 120 : fps;
     app.frame_period = 1.0f / app.desired_fps;
 }
 
@@ -416,7 +406,7 @@ int get_fps(void) {
 
 int take_screenshot(const char* filename) {
 
-    SDL_Surface* surface;
+    SDL_Surface* surface = NULL;
 
     int width;
     int height;
@@ -436,9 +426,7 @@ int take_screenshot(const char* filename) {
 
     strcat(filepath, "screenshots/");
 
-    /* ================================================ */
-
-    /* ====== Do not dereference a NULL pointer ======= */
+    /* === Do not dereference a NULL pointer === */
     if (filename == NULL) {
         
         Error_set(SERR_NULL_POINTER);
@@ -446,7 +434,7 @@ int take_screenshot(const char* filename) {
         return SERR_NULL_POINTER;
     }
 
-    /* Getting window dimensions */
+    /* === Getting window dimensions === */
     SDL_GetWindowSize(Window_get_window(app.window), &width, &height);
 
     if ((surface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, SDL_PIXELFORMAT_RGBA32)) == NULL) {
@@ -464,7 +452,7 @@ int take_screenshot(const char* filename) {
         return SERR_SDL;
     }
 
-    /* ============ Updating the filename ============= */
+    /* === Updating the filename === */
     strcat(filepath, filename);
     filepath[strlen(filepath)] = '\0';
 
