@@ -9,7 +9,6 @@
 #include "../include/Start.h"
 #include "../include/Core.h"
 #include "../include/File/conf.h"
-
 #include "../include/Error.h"
 
 /* ================================================================ */
@@ -19,7 +18,7 @@
 #define DEFAULT_CONFIGURATION_FILE "system.conf"
 #define BUFFER_SIZE 128
 
-/* ======== */
+/* ================================================================ */
 
 /**
  * Concatenates the default configuration directory path and filename into the provided buffer
@@ -31,7 +30,7 @@
     strcat((buffer), DEFAULT_CONFIGURATION_FILE); \
     (buffer)[strlen((buffer))] = '\0'; \
 
-/* ======== */
+/* ================================================================ */
 
 /**
  * Encapsulates SDL and SDL_image initialization flags into a single structure
@@ -62,7 +61,7 @@ static struct lookup_table_entry SDL_Init__flags[] = {
     {"SDL_INIT_NOPARACHUTE", SDL_INIT_NOPARACHUTE},
 };
 
-/* ======== */
+/* ================================================================ */
 
 /**
  * Maps string names of image initialization flags
@@ -89,9 +88,9 @@ static struct lookup_table_entry IMG_Init__flags[] = {
 static int _write_default_system_config_file(void) {
 
     config_t config;
-    config_setting_t* root;
-    config_setting_t* system_array;
-    config_setting_t* elm;
+    config_setting_t* root = NULL;
+    config_setting_t* system_array = NULL;
+    config_setting_t* elm = NULL;
 
     char filepath[64];
     /* ======== */
@@ -101,18 +100,26 @@ static int _write_default_system_config_file(void) {
     /* ================================================ */
     /* = Creating an array & populating it with data == */
     /* ================================================ */
+    
+    /**
+     * system: ["SDL_INIT_TIMER", "SDL_INIT_VIDEO"];
+     */ 
 
-    /* There is no need to check for an error because the function is static and cannot be modified from outside */
+    /* === There is no need to check for an error because the function is static and cannot be modified from outside === */
     root = config_root_setting(&config);
     system_array = config_setting_add(root, "system", CONFIG_TYPE_ARRAY);
 
-    /* Adding data to the array */
+    /* === Adding data to the array === */
     elm = config_setting_add(system_array, NULL, CONFIG_TYPE_STRING);
     config_setting_set_string(elm, "SDL_INIT_TIMER");
 
     elm = config_setting_add(system_array, NULL, CONFIG_TYPE_STRING);
     config_setting_set_string(elm, "SDL_INIT_VIDEO");
     /* ======== */
+    
+    /**
+     * graphics: ["IMG_INIT_PNG", "IMG_INIT_JPG"];
+     */ 
 
     system_array = config_setting_add(root, "graphics", CONFIG_TYPE_ARRAY);
 
@@ -121,7 +128,7 @@ static int _write_default_system_config_file(void) {
     config_setting_set_string(elm, "IMG_INIT_PNG");
 
     elm = config_setting_add(system_array, NULL, CONFIG_TYPE_STRING);
-    config_setting_set_string(elm, "IMG_INIT_TIF");
+    config_setting_set_string(elm, "IMG_INIT_JPG");
     /* ======== */
 
     combine(filepath);
@@ -146,13 +153,15 @@ static int _write_default_system_config_file(void) {
 
 /**
  * Reads and parses the default system configuration file to extract SDL initialization flags.
+ *
+ * @param _flags pointer to a `struct flags` where SDL and IMG flags will be stored
  * 
- * @return Returns a bitmask representing the combined SDL initialization flags extracted from the configuration file. Returns a negative error code if an error occurs.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */
 static int _read_default_system_config_file(struct flags* _flags) {
 
     config_t config;
-    config_setting_t* array;
+    config_setting_t* array = NULL;
 
     int status;
     int len, i;
@@ -160,10 +169,8 @@ static int _read_default_system_config_file(struct flags* _flags) {
 
     char filepath[64];
 
-    Uint64 flags;
+    Uint64 flags = 0;
     /* ======== */
-
-    flags = 0;
     
     config_init(&config);
 
@@ -198,7 +205,7 @@ static int _read_default_system_config_file(struct flags* _flags) {
 
             continue ;
         }
-
+        
         flags |= (status == SSUCCESS) ? t : 0;
     }
 
@@ -231,12 +238,11 @@ static int _read_default_system_config_file(struct flags* _flags) {
     }
 
     _flags->IMG_flags = flags;
-    /* ======== */
 
     config_destroy(&config);
 
     /* ======== */
-    return flags;
+    return SSUCCESS;
 }
 
 /* ================================================================ */
@@ -252,53 +258,34 @@ int Start(void) {
 
     combine(filepath);
 
-    /* ======= Trying to create a new directory ======= */
-    if (!directory_exists(DEFAULT_CONFIGURATION_DIRECTORY) && (status = directory_new(DEFAULT_CONFIGURATION_DIRECTORY)) < 0) {
-        goto ERROR;
-    }
+    /* === Trying to create a new directory === */
+    if (!directory_exists(DEFAULT_CONFIGURATION_DIRECTORY) && (status = directory_new(DEFAULT_CONFIGURATION_DIRECTORY)) < 0) { goto ERROR; }
 
-    /* ==== Trying to create a configuration file ===== */
-    if (!file_exists(filepath) && (status = _write_default_system_config_file() != SSUCCESS)) {
-        goto ERROR;
-    }
+    /* === Trying to create a configuration file === */
+    if (!file_exists(filepath) && (status = _write_default_system_config_file() != SSUCCESS)) { goto ERROR; }
 
-    /* ==== Trying to read the configuration file ===== */
-    if ((status = _read_default_system_config_file(&flags)) < 0) {
-        goto ERROR;
-    }
+    /* === Trying to read the configuration file === */
+    if ((status = _read_default_system_config_file(&flags)) != SSUCCESS) { goto ERROR; }
 
     /* ============== Initializaing SDL =============== */
-    if (SDL_Init(flags.SDL_flags) != 0) {
-
-        status = SERR_SDL;
-        /* ======== */
-        goto ERROR;
-    }
+    if (SDL_Init(flags.SDL_flags) != 0) { goto ERROR; }
 
     /* ============== Initializaing IMG =============== */
-    if (!(IMG_Init(flags.IMG_flags) & flags.IMG_flags)) {
-        
-        status = SERR_SDL;
-        /* ======== */
-        goto ERROR;
-    }
+    if (!(IMG_Init(flags.IMG_flags) & flags.IMG_flags)) { goto ERROR; }
 
     /* ============== Initializaing TTF =============== */
-    if (TTF_Init() != 0) {
-
-        status = SERR_SDL;
-        /* ======== */
-        goto ERROR;
-    }
+    if (TTF_Init() != 0) { goto ERROR; }
     
     /* ======== */
     return SSUCCESS;
 
-    /* ================ */
     ERROR: {
+        
+        status = (status == SSUCCESS) ? SERR_SDL : status;
 
         Stop();
         Error_set(status);
+        
         /* ======== */
         return status;
     };
@@ -323,12 +310,10 @@ int Stop(void) {
 int lookup_table_find(struct lookup_table_entry* table, int table_size, const char* flag, int* dest) {
 
     int i;
-    int status;
+    int status = SSUCCESS;
     /* ======== */
 
-    status = SSUCCESS;
-
-    /* ====== Do not dereference a NULL pointer ======= */
+    /* === Do not dereference a NULL pointer === */
     if ((table == NULL) || (flag == NULL) || (dest == NULL)) {
 
         status = SERR_NULL_POINTER;
@@ -336,7 +321,7 @@ int lookup_table_find(struct lookup_table_entry* table, int table_size, const ch
         goto ERROR;
     }
 
-    /* ===== Prevent going past the array borders ===== */
+    /* === Prevent going past the array borders === */
     if ((table_size < 0) || (table_size > USHRT_MAX)) {
 
         status = SERR_INVALID_RANGE;
@@ -345,10 +330,10 @@ int lookup_table_find(struct lookup_table_entry* table, int table_size, const ch
     }
 
     for (i = 0; i < table_size; i++) {
+        
         if (strcmp((table + i)->str_value, flag) == 0) {
 
             *dest = (table + i)->int_value;
-
             /* ======== */
             return SSUCCESS;
         }
@@ -357,7 +342,6 @@ int lookup_table_find(struct lookup_table_entry* table, int table_size, const ch
     /* ======== */
     return SERR_ITEM_NOT_FOUND;
 
-    /* ================ */
     ERROR: {
 
         Error_set(status);
@@ -370,7 +354,7 @@ int lookup_table_find(struct lookup_table_entry* table, int table_size, const ch
 
 int file_exists(const char* filename) {
 
-    FILE* file;
+    FILE* file = NULL;
     /* ======== */
 
     if ((file = fopen(filename, "r")) != NULL) {
@@ -380,7 +364,7 @@ int file_exists(const char* filename) {
         return 1;
     }
 
-    /* File does not exist */
+    /* === File does not exist === */
     return 0;
 }
 
@@ -401,14 +385,10 @@ int directory_exists(const char* path) {
 
 int directory_new(const char* path) {
 
-    /* =============== Directory exists =============== */
-    if (directory_exists(path) == 1) {
-        return 1;
-    }
-    /* ============= Creating a directory ============= */
-    else if ((directory_exists(path) == 0) && (mkdir(path, 0755) == 0)) {
-        return SSUCCESS;
-    }
+    /* === Directory exists === */
+    if (directory_exists(path) == 1) { return 1; }
+    /* === Creating a directory === */
+    else if ((directory_exists(path) == 0) && (mkdir(path, 0755) == 0)) { return SSUCCESS; }
     
     Error_set(SERR_SYSTEM);    
 
@@ -430,13 +410,13 @@ void print_message(FILE* stream, Message_Type msg_type, const char* format, ...)
 
     va_start(args, format);
 
-    /* Determine the output stream: use `stderr` for ERROR, `stdout` otherwise */
+    /* === Determine the output stream: use `stderr` for ERROR, `stdout` otherwise === */
     stream = (!stream) ? ((msg_type == ERROR) ? stderr : stdout) : stream;
 
     /* Set the message prefix based on the message type */
     switch (msg_type) {
 
-        /* Adjacent string literals are concatenated automatically by the compiler */
+        /* === Adjacent string literals are concatenated automatically by the compiler === */
         
         case ERROR:
             prefix = BRED "Error" RESET;
@@ -451,7 +431,7 @@ void print_message(FILE* stream, Message_Type msg_type, const char* format, ...)
             break ;
     }
 
-    /* Format the prefix into the buffer and check for errors */
+    /* === Format the prefix into the buffer and check for errors  === */
     if (((bytes_written = snprintf(buffer, sizeof(buffer), "%s: ", prefix)) == 0) || (bytes_written >= sizeof(buffer))) {
 
         fprintf(stream, "%s%s%s: something bad happened while formatting the message\n", RED, "Error", RESET);
@@ -460,7 +440,7 @@ void print_message(FILE* stream, Message_Type msg_type, const char* format, ...)
         return ;
     }
 
-    /* Format the additional message into the buffer and check for errors */
+    /* === Format the additional message into the buffer and check for errors === */
     if ((bytes_written = vsnprintf(buffer + bytes_written, sizeof(buffer) - bytes_written, format, args) == 0) || (bytes_written >= sizeof(buffer) - bytes_written)) {
 
         fprintf(stream, "%s%s%s: something bad happened while formatting the message\n", RED, "Error", RESET);
