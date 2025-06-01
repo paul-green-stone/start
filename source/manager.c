@@ -74,7 +74,7 @@ static size_t pjw_hash(const char* key) {
  * 
  * @param key a pointer to a null-terminated string to be hashed
  * 
- * @return Returns the computed hash value, an integer in the range [0, TABLE_SIZE - 1]
+ * @return Returns the computed hash value, an integer in the range [1, TABLE_SIZE - 1]
  */
 static size_t multiplicative_hash(const char* key) {
 
@@ -90,7 +90,7 @@ static size_t multiplicative_hash(const char* key) {
     hash_coding = floor(TABLE_SIZE * (fmod(tmp * CONSTANT, 1)));
 
     /* ======== */
-    return hash_coding;
+    return (hash_coding == 0) ? 1 : hash_coding;
 }
 
 /* ================================================================ */
@@ -107,7 +107,7 @@ void* Manager_lookup(const char* key) {
 
         position = _hash(key, i) % TABLE_SIZE;
 
-        if (Manager.elements[position] == NULL) {
+        if (Manager.keys[position] == NULL) {
 
             /* Data was not found */
             return NULL;
