@@ -16,7 +16,7 @@ typedef struct clock Clock;
  * mechanism for managing time within a game. It allows you to
  * set timers, check if time is up, and adjust the clock's speed, among other features.
  * 
- * @return Returns the `Clock` that was created or NULL on failure; call `Error_get()` for more information.
+ * @return Returns the `Clock` that was created or `NULL` on failure; call `Error_get()` for more information.
  */
 Clock* Clock_new(void);
 
@@ -25,13 +25,12 @@ Clock* Clock_new(void);
  * 
  * @param clock the clock to destroy (`&clock`)
  * 
- * @return Returns the `Clock` that was created or NULL on failure; call `Error_get()` for more information
+ * @return Returns the `Clock` that was created or `NULL` on failure; call `Error_get()` for more information
  */
 int Clock_destroy(Clock** clock);
 
 /**
- * Start a clock. A clock has two states: `STARTED` and `STOPPED`.
- * When a clock is `STARTED`, it accumulates time passed and can be updated.
+ * Start a clock.
  * 
  * @param clock clock to start
  * 
@@ -65,7 +64,7 @@ void Clock_update(Clock* clock);
  * @param clock clock to adjust
  * @param speed the clock speed modifier
  * 
- * @return Returns the `Clock` that was created or NULL on failure; call `Error_get()` for more information
+ * @return Returns the `Clock` that was created or `NULL` on failure; call `Error_get()` for more information
  */
 int Clock_setSpeed(Clock* clock, double speed);
 
@@ -90,7 +89,7 @@ void Clock_reset(Clock* clock);
 /**
  * Set the clock's timer.
  * 
- * @param clock the timer on the `clock` that need to be set
+ * @param clock the timer on the clock that need to be set
  * 
  * @return None.
  */

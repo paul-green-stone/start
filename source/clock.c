@@ -49,7 +49,7 @@ Clock* Clock_new(void) {
 
 int Clock_destroy(Clock** clock) {
 
-    /* ====== Do not dereference a NULL pointer ======= */
+    /* === Do not dereference a NULL pointer === */
     if ((clock == NULL) || (*clock == NULL)) {
         
         Error_set(SERR_NULL_POINTER);
