@@ -24,7 +24,7 @@ static const char* error_descriptions[] = {
     "data not found",
     "input value is out of valid range",
     "",     /* reserved for system errors */
-    "",     /* resrved for SDL errors */
+    "",     /* resуrved for SDL errors */
     "method not implemented",
     "division by zero",
 };
@@ -55,6 +55,7 @@ const char* Error_string(void) {
 
 void Error_set_string(const char* string) {
     strncpy(_Error.error_string, string, sizeof(_Error.error_string) - 1);
+    _Error.error_string[strlen(_Error.error_string)] = '\0';
 }
 
 /* ================================================================ */

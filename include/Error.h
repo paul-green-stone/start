@@ -7,14 +7,6 @@
 /* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
 
-#define STRICTMODE
-
-#define __set_error__(error_code, name) \
-    Error_set((error_code)); \
-    Error_set_func((name));
-
-#define FAILURE -1
-
 typedef enum error {
 
     SSUCCESS = 0,
@@ -34,17 +26,27 @@ typedef enum error {
 /* ================================================================ */
 
 /**
+ * Sets the error state with the specified error code and corresponding error message.
  * 
+ * @param error_code the error code to set. If it equals `SERR_SYSTEM`, the system error message is used
+ * 
+ * @return None.
  */
 void Error_set(Error error_code);
 
 /**
+ * Retrieves the current error message string.
  * 
+ * @return None.
  */
 const char* Error_string(void);
 
 /**
+ * Sets the error message string to a custom user-provided string.
  * 
+ * @param string a pointer to a null-terminated string containing the custom error message
+ * 
+ * @return None.
  */
 void Error_set_string(const char* string);
 
