@@ -11,6 +11,20 @@
 /* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
 
+struct menu {
+
+    void* data;
+
+    /* The array of widgets */
+    struct widget** widgets;
+
+    /* A widget that is being focused on */
+    int active_widget;
+
+    SDL_Color widget_color;
+    SDL_Color active_widget_color;
+};
+
 typedef struct menu Menu;
 
 /**
@@ -103,7 +117,7 @@ int Menu_update(Menu* menu);
  * 
  * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
  */
-int Menu_get_dimensions(const Menu* menu, Vector2* dimensions);
+int Menu_get_dimensions(const Menu* menu, int* x, int* y);
 
 /**
  * Sets the position of the menu.
