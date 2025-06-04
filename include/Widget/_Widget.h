@@ -1,39 +1,26 @@
 #ifndef _START_WIDGET_CLASS_H
 #define _START_WIDGET_CLASS_H
 
-#include <stdio.h>
-#include <stdarg.h>
-#include <SDL2/SDL.h>
-
-#include "../Math/Vector2D.h"
-#include "../Text.h"
-#include "../Application.h"
+#include "_Class.h"
 
 /* ================================================================ */
 
 struct widget {
-    
-    /* The amount of memory to allocate (in bytes) */
-    size_t size;
 
-    /* Widget's constructor */
-    void* (*ctor)(void* self, va_list* app);
-    /* Widget's destructor */
-    void* (*dtor)(void* self);
+    const void* _class; /* This is a function pointers table */
 
-    /* How to draw a widget on the screen*/
-    int (*draw)(const void* self, const SDL_Rect* dst);
-    /* What are the widget's dimensions and how to retrieve them */
-    Vector2 (*get_dimensions)(const void* self);
-    /* How to retrieve the widget's label */
-    Text* (*get_label)(const void* self);
+    /* === Widget position on the screen === */
+    int x;
+    int y;
 
-    void (*bind)(void* self, void (*callback)(va_list* app));
-    void (*handle_click)(const void* self, va_list* app);
-    void (*on_hover)(const void* self, va_list* app);
+    int is_focused;
 
-    void (*set_position)(void* self, const Vector2* position);
-    void (*get_position)(const void* self, Vector2* position);
+    /* === Widget dimensions === */
+    int width;
+    int height;
+
+    /* === Actions associated with the widget === */
+    int (*on_click)(const void* self, va_list* args);
 };
 
 /* ================================================================ */
