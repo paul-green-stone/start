@@ -15,7 +15,7 @@
 
 #define _hash(key, i) (pjw_hash((key)) + ((i) * multiplicative_hash((key))))
 
-/* ======== */
+/* ================================================================ */
 
 struct resource_manager {
 
@@ -24,6 +24,10 @@ struct resource_manager {
 
     size_t size;                            /* The number of elements currently in the table */
 };
+
+/* ================================================================ */
+/* ======================== STATIC STORAGE ======================== */
+/* ================================================================ */
 
 static struct resource_manager Manager;
 
