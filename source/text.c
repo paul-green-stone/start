@@ -103,7 +103,7 @@ Text* Text_update(Text* text, const char* str) {
 int Text_set_color(Text* text, const SDL_Color* color) {
 
     /* ====== Do not dereference a NULL pointer ======= */
-    if (text == NULL) {
+    if ((text == NULL) || (color == NULL)) {
         
         Error_set(SERR_NULL_POINTER);
         /* ======== */
