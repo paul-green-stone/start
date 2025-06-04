@@ -1,78 +1,95 @@
 #include <stdlib.h>
 #include <SDL2/SDL.h>
 
-#include "../../include/Widget/Widget.h"
+#include "../../include/Widget/Widgets.h"
+#include "../../include/Widget/_Class.h"
 #include "../../include/Widget/_Widget.h"
-#include "../../include/Text.h"
+
 #include "../../include/Error.h"
 
 /* ================================================================ */
 /* ==================== FUNCTIONS DEFENITIONS ===================== */
 /* ================================================================ */
 
-void* Widget_create(const void* _widget_descriptor, ...) {
+void* Widget_create(const void* _class, ...) {
 
-    const struct widget* widget_descriptor = _widget_descriptor; /* Table of pointers to functions */ 
-    void* new_widget = NULL;
-    va_list ap;
+    /* === Table of pointers to functions. Each class of widgets has its own constructor === */
+    const struct Class* class = _class;
+    /* === The widget we are creating === */
+    void* widget = NULL;
+
     int status = SSUCCESS;
+
+    va_list ap;
     /* ======== */
 
-    if (_widget_descriptor == NULL) {
+    /* === Do not dereference `NULL` ===*/
+    if (_class == NULL) {
 
         status = SERR_NULL_POINTER;
         /* ======== */
         goto ERROR;
     }
 
-    if ((new_widget = calloc(1, widget_descriptor->size)) == NULL) {
+    /* === Allocating enough bytes of memory as specified by the widget's class description === */
+    if ((widget = calloc(1, class->size)) == NULL) {
 
         status = SERR_SYSTEM;
         /* ======== */
         goto ERROR;
     }
 
-    *(const struct widget**) new_widget = widget_descriptor;
+    *(const struct Class**) widget = class;
 
-    if (widget_descriptor->ctor) {
+    /* === Calling the widget's contructor if it has one === */
+    if (class->ctor) {
 
-        va_start(ap, _widget_descriptor);
-        new_widget = widget_descriptor->ctor(new_widget, &ap);
+        va_start(ap, _class);
+        
+        /* === Make sure the constructor runs successfully === */
+        if ((widget = class->ctor(widget, &ap)) == NULL) {
+
+            /* === `Widget_destroy()` will deallocate memory allocated by the previous `calloc` call === */
+            Widget_destroy(widget);
+            widget = NULL;
+        }
+
         va_end(ap);
     }
 
     /* ======== */
-    return new_widget;
+    return widget;
 
-    /* ================ */
     ERROR: {
 
         Error_set(status);
         /* ======== */
-        return new_widget;
+        return widget;
     };
 }
 
 /* ================================================================ */
 
-int Widget_destroy(void* widget) {
+int Widget_destroy(void* _widget) {
 
-    const struct widget** widget_descriptor_p;
-    widget_descriptor_p = widget;
+    const struct Class** class_p = _widget;
     /* ======== */
 
-    if ((widget != NULL) && (*widget_descriptor_p != NULL)) {
+    /* === Do not dereference `NULL` === */
+    if ((_widget == NULL) || (class_p == NULL)) {
 
         Error_set(SERR_NULL_POINTER);
         /* ======== */
         return SERR_NULL_POINTER;
     }
 
-    if ((*widget_descriptor_p)->dtor != NULL) {
-        widget = (*widget_descriptor_p)->dtor(widget);
+    /* === Calling the widget's destructor if it has one === */
+    if ((*class_p)->dtor != NULL) {
+        _widget = (*class_p)->dtor(_widget);
     }
 
-    free(widget);
+    /* === Freeing the space occupied by the `Widget` widget === */
+    free(_widget);
 
     /* ======== */
     return SSUCCESS;
@@ -80,21 +97,29 @@ int Widget_destroy(void* widget) {
 
 /* ================================================================ */
 
-int Widget_draw(const void* widget, const SDL_Rect* dst) {
+int Widget_draw(const void* _widget, const SDL_Rect* src, const SDL_Rect* dst) {
 
-    const struct widget* const* widget_descriptor_p;
-    widget_descriptor_p = widget;
+    const struct Class* const* class_p = _widget;
+    struct widget* widget = (struct widget*) _widget;
     /* ======== */
 
-    if ((widget == NULL) && (*widget_descriptor_p == NULL)) {
+    /* === Do not dereference `NULL` === */
+    if ((_widget == NULL) && (*class_p == NULL)) {
 
         Error_set(SERR_NULL_POINTER);
         /* ======== */
         return SERR_NULL_POINTER;
     }
 
-    if ((*widget_descriptor_p)->draw != NULL) {
-        return (*widget_descriptor_p)->draw(widget, dst);
+    /* === Update the widget's dimensions to properly handle its callbacks === */
+    if (dst != NULL) {
+        widget->width = dst->w;
+        widget->height = dst->h;
+    }
+
+    /* === Let the widget's descriptor decide how to draw itself === */
+    if ((*class_p)->draw != NULL) {
+        return (*class_p)->draw(_widget, src, dst);
     }
 
     Error_set(SERR_NOT_IMPLEMENTED);
@@ -105,181 +130,170 @@ int Widget_draw(const void* widget, const SDL_Rect* dst) {
 
 /* ================================================================ */
 
-int Widget_get_dimensions(const void* widget, Vector2* dimensions) {
+int Widget_set_position(void* _self, int x, int y) {
 
-    const struct widget* const* widget_descriptor_p;
-    widget_descriptor_p = widget;
-    /* ========= */
+    struct widget* self = _self;
+    /* ======== */
 
-    if ((widget == NULL) && (*widget_descriptor_p == NULL) && (dimensions == NULL)) {
-        
+    /* === Do not dereference `NULL` === */
+    if ((_self == NULL) || (self == NULL)) {
+
         Error_set(SERR_NULL_POINTER);
         /* ======== */
         return SERR_NULL_POINTER;
     }
 
-    if ((*widget_descriptor_p)->get_dimensions != NULL) {
+    /* ================================ */
 
-        *dimensions = (*widget_descriptor_p)->get_dimensions(widget);
+    self->x = x;
+    self->y = y;
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ================================================================ */
+
+int Widget_get_position(const void* _self, int* x, int* y) {
+
+    const struct widget* self = _self;
+    /* ======== */
+
+    /* === Do not dereference `NULL` === */
+    if ((_self == NULL) || (self == NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
         /* ======== */
-        return SSUCCESS;
+        return SERR_NULL_POINTER;
     }
 
-    Error_set(SERR_NOT_IMPLEMENTED);
+    /* ================================ */
+    
+    if (x != NULL) { *x = self->x; }
+    if (y != NULL) { *y = self->y; }
 
     /* ======== */
-    return SERR_NOT_IMPLEMENTED;    /* Method is not implemented */
+    return SSUCCESS;
 }
 
 /* ================================================================ */
 
-Text* Widget_get_label(const void* widget) {
+int Widget_get_dimensions(const void* _self, int* w, int* h) {
 
-    const struct widget* const* widget_descriptor_p;
-    widget_descriptor_p = widget;
-    /* ======== */
-
-    if ((widget != NULL) && (*widget_descriptor_p != NULL) && ((*widget_descriptor_p)->get_label != NULL)) {
-        return (*widget_descriptor_p)->get_label(widget);
-    }
-
-    Error_set(SERR_NOT_IMPLEMENTED);
+    const struct widget* self = _self;
 
     /* ======== */
-    return NULL;    /* Method is not implemented */
-}
 
-/* ================================================================ */
+    /* === Do not dereference `NULL` === */
+    if ((_self == NULL) || (self == NULL)) {
 
-int Widget_bind_callback(void* widget, action callback) {
-
-    const struct widget* const* widget_p;
-    widget_p = widget;
-    /* ======== */
-
-    if ((widget != NULL) && (*widget_p != NULL) && ((*widget_p)->bind != NULL)) {
-
-        (*widget_p)->bind(widget, callback);
+        Error_set(SERR_NULL_POINTER);
         /* ======== */
-        return SSUCCESS;
+        return SERR_NULL_POINTER;
     }
 
-    Error_set(SERR_NOT_IMPLEMENTED);
+    /* ================================ */
+
+    if (w != NULL) { *w = self->width; }
+    if (h != NULL) { *h = self->height; }
 
     /* ======== */
-    return SERR_NOT_IMPLEMENTED;    /* Method is not implemented */
+    return SSUCCESS;
 }
 
 /* ================================================================ */
 
-int Widget_handle_click(const void* widget, ...) {
+int Widget_bind_callback(void* _self, int (callback)(const void* widget, va_list* args)) {
 
-    const struct widget* const* widget_p = widget;
+    struct widget* self = _self;
+    /* ======== */
+
+    /* === Do not dereference `NULL` === */
+    if ((_self == NULL) || (self == NULL)) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    /* ================================ */
+
+    /* === Binding `NULL` will simply remove a callback function from a widget === */
+    self->on_click = callback;
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ================================================================ */
+
+int Widget_click(const void* _self, ...) {
+
+    const struct widget* self = _self;
+
+    int x;
+    int y;
+
+    SDL_Rect widget_rect;
+
     va_list ap;
     /* ======== */
 
-    if ((widget == NULL) && (*widget_p == NULL)) {
-        return SERR_NULL_POINTER;
-    }
-    
-    if ((*widget_p)->handle_click != NULL) {
-
-        va_start(ap, widget);
-        (*widget_p)->handle_click(widget, &ap);
-        va_end(ap);
-
-        /* ======== */
-        return SSUCCESS;
-    }
-
-    Error_set(SERR_NOT_IMPLEMENTED);
-
-    /* ========= */
-    return SERR_NOT_IMPLEMENTED;      /* Method is not implemented */
-}
-
-/* ================================================================ */
-
-int Widget_set_position(void* _widget, const Vector2* position) {
-
-    const struct widget* const* widget_p = _widget;
-    /* ======== */
-
-    if ((_widget == NULL) || (widget_p == NULL) || (position == NULL)) {
+    /* === Do not dereference `NULL` === */
+    if ((_self == NULL) || (self == NULL)) {
 
         Error_set(SERR_NULL_POINTER);
         /* ======== */
         return SERR_NULL_POINTER;
     }
 
-    if ((*widget_p)->set_position != NULL) {
+    /* ================================ */
 
-        (*widget_p)->set_position(_widget, position);
-        /* ======== */
-        return SSUCCESS;
+    /* === Get the current mouse cursor position === */
+    Input_get_cursorPos(&x, &y);
+
+    /* === Updating the widget's area === */
+    widget_rect = (SDL_Rect) {.x = self->x, .y = self->y, .w = self->width, .h = self->height};
+    
+    if ((self->on_click != NULL) && Input_wasBtn_pressed(LMB) && (PinR(x, y, &widget_rect))) {
+
+        va_start(ap, _self);
+
+        self->on_click(_self, &ap);
+
+        va_end(ap);
     }
 
-    Error_set(SERR_NOT_IMPLEMENTED);
-
-    /* ========= */
-    return SERR_NOT_IMPLEMENTED;      /* Method is not implemented */
+    /* ======== */
+    return SSUCCESS;
 }
 
 /* ================================================================ */
 
-int Widget_handle_onHover(const void* widget, ...) {
+int Widget_is_focused(const void* _self) {
 
-    const struct widget* const* widget_p = widget;
-    va_list ap;
+    const struct widget* self = _self;
+
+    int x;
+    int y;
+
+    SDL_Rect widget_area;
     /* ======== */
 
-    if ((widget == NULL) && (*widget_p == NULL)) {
-        return SERR_NULL_POINTER;
-    }
-    
-    if ((*widget_p)->on_hover != NULL) {
+    /* === Do not dereference `NULL` === */
+    if ((_self == NULL) || (self == NULL)) {
 
-        va_start(ap, widget);
-        (*widget_p)->on_hover(widget, &ap);
-        va_end(ap);
-
-        /* ======== */
-        return SSUCCESS;
-    }
-
-    Error_set(SERR_NOT_IMPLEMENTED);
-
-    /* ========= */
-    return SERR_NOT_IMPLEMENTED;      /* Method is not implemented */
-}
-
-/* ================================================================ */
-
-int Widget_get_position(const void* widget, Vector2* pos) {
-
-    const struct widget* const* widget_p;
-    widget_p = widget;
-    /* ========= */
-
-    if ((widget == NULL) || (*widget_p == NULL) || (pos == NULL)) {
-        
         Error_set(SERR_NULL_POINTER);
         /* ======== */
         return SERR_NULL_POINTER;
     }
 
-    if ((*widget_p)->get_dimensions != NULL) {
-
-        (*widget_p)->get_position(widget, pos);
-
-        /* ======== */
-        return SSUCCESS;
-    }
-
-    Error_set(SERR_NOT_IMPLEMENTED);
+    widget_area = (SDL_Rect) {.x = self->x, .y = self->y, .w = self->width, .h = self->height};
+    Input_get_cursorPos(&x, &y);
 
     /* ======== */
-    return SERR_NOT_IMPLEMENTED;    /* Method is not implemented */
+    return PinR(x, y, &widget_area);
 }
 
 /* ================================================================ */
+
