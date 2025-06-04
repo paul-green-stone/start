@@ -16,10 +16,12 @@
 #include "State/State.h"
 #include "Math/Core.h"
 #include "Math/Vector2D.h"
-#include "Widget/Button.h"
 #include "Widget/Menu.h"
+#include "Widget/Widgets.h"
 #include "Widget/Widget.h"
 #include "Error.h"
+
+#include "Widget/Button/Button.h"
 
 /* ================================================================ */
 
