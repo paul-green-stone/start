@@ -18,6 +18,7 @@ extern const void* Widget;
  * @param color pointer to an `SDL_Color` structure specifying the color of the label text (`SDL_Color*`)
  * @param label null-terminated string containing the text displayed on the button (`const char*`)
  * @param texture optional pointer to a custom texture object representing an image to be rendered as the button's background instead of the default label
+ * @param src default portion of texture to render
  */
 extern const void* Button;
 
