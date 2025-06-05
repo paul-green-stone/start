@@ -5,7 +5,7 @@
 # Object files location. Object files will be placed in this directory during compilation
 OBJDIR   = objects
 # Full names of object files
-OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o Widget.o Button.o Menu.o State.o Manager.o Conf.o Core.o Error.o)
+OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o)
 
 # The Compiler
 CC       = gcc
@@ -26,7 +26,7 @@ LIB_NAME = start
 PREFIX   = lib
 
 # Aa list of all header files in the `include` directory and its subdirectories
-INCLUDE  = $(wildcard include/*/*.h) $(wildcard include/*.h)
+INCLUDE  = $(wildcard include/*/*.h) $(wildcard include/*.h) $(wildcard include/*/*/*/*.h)
 
 # Operating System name
 OS_NAME  = $(shell uname -s)
@@ -86,6 +86,37 @@ WINDOW   = $(addprefix source/, window.c)
 $(OBJDIR)/Window.o: $(WINDOW) $(INCLUDE)
 	$(CC) $(CFLAGS) -o $@ $<
 
+# ================================================================ #
+# ====================== ASSEMBLING WIDGETS ====================== #
+# ================================================================ #
+
+$(OBJDIR)/menu.o: source/Widget/menu.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ======== #
+
+$(OBJDIR)/_button.o: source/Widget/Button/_button.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(OBJDIR)/button.o: source/Widget/Button/button.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ======== #
+
+$(OBJDIR)/_widget.o: source/Widget/_widget.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(OBJDIR)/widget.o: source/Widget/widget.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+# === Assembling them together === #
+
+$(OBJDIR)/Widgets.o: 	$(OBJDIR)/_button.o $(OBJDIR)/button.o \
+						$(OBJDIR)/_widget.o $(OBJDIR)/widget.o \
+						$(OBJDIR)/menu.o
+	$(CC) -r -o $@ $^
+	rm -rf $(OBJDIR)/_button.o $(OBJDIR)/button.o $(OBJDIR)/_widget.o $(OBJDIR)/widget.o $(OBJDIR)/menu.o
+	
 # ======== #
 
 CLOCK    = $(addprefix source/, clock.c)
@@ -126,27 +157,6 @@ $(OBJDIR)/Input.o: $(INPUT) $(INCLUDE)
 APP      = $(addprefix source/, application.c)
 
 $(OBJDIR)/Application.o: $(APP) $(INCLUDE)
-	$(CC) $(CFLAGS) -o $@ $<
-
-# ======== #
-
-WIDGET   = $(addprefix source/Widget/, widget.c)
-
-$(OBJDIR)/Widget.o: $(WIDGET) $(INCLUDE)
-	$(CC) $(CFLAGS) -o $@ $<
-
-# ======== #
-
-BUTTON   = $(addprefix source/Widget/, button.c)
-
-$(OBJDIR)/Button.o: $(BUTTON) $(INCLUDE)
-	$(CC) $(CFLAGS) -o $@ $<
-
-# ======== #
-
-MENU     = $(addprefix source/Widget/, menu.c)
-
-$(OBJDIR)/Menu.o: $(MENU) $(INCLUDE)
 	$(CC) $(CFLAGS) -o $@ $<
 
 # ======== #
