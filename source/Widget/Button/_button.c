@@ -17,6 +17,7 @@ static void* Button_ctor(void* _self, va_list* args) {
     SDL_Color* label_color = va_arg(*args, SDL_Color*);
     const char* label = va_arg(*args, const char*);
     Texture* btn_texture = va_arg(*args, Texture*);
+    SDL_Rect* src = va_arg(*args, SDL_Rect*);
     /* ======== */
 
     /* === Check if the label has been provided === */
@@ -33,6 +34,7 @@ static void* Button_ctor(void* _self, va_list* args) {
     }
 
     self->texture = btn_texture;
+    self->default_src = src;
 
     /* === Updating the widget's dimensions === */
     if (self->texture != NULL) {
@@ -80,7 +82,7 @@ static int Button_draw(const void* _self, const SDL_Rect* src, const SDL_Rect* d
     }
 
     /* === Render the button's texture if it has one and does not have a label === */
-    return Texture_draw(self->texture, src, (dst == NULL) ? &dest : dst);
+    return Texture_draw(self->texture, (src == NULL) ? self->default_src : src, (dst == NULL) ? &dest : dst);
 } 
 
 /* ================================================================ */

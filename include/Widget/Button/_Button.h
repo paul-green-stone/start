@@ -16,6 +16,8 @@ struct button {
 
     /* The button's texture if it has any */
     Texture* texture;
+    /* Used for drawing widgets via `Menu_draw()` */
+    SDL_Rect* default_src;
 };
 
 /* ================================================================ */
