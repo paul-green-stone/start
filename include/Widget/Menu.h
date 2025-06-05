@@ -33,6 +33,7 @@ typedef struct menu Menu;
  * @param LEFT align widgets to the left edge of the menu or container.
  * @param RIGHT align widgets to the right edge of the menu or container.
  * @param CENTER center widgets horizontally within the menu or container.
+ * @param CUSTOM allow custom alignment, where widget positions are specified manually (when they are being created)
  */
 typedef enum {LEFT, RIGHT, CENTER, CUSTOM} Alignment;
 
@@ -88,7 +89,7 @@ int Menu_get_size(const Menu* menu);
  * 
  * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
  */
-int Menu_set_padding(Menu* menu, Vector2* padding);
+int Menu_set_padding(Menu* menu, int x, int y);
 
 /**
  * Draws all widgets contained within a menu, positioning them horizontally with specified alignment along the X axis.
@@ -131,27 +132,12 @@ int Menu_get_dimensions(const Menu* menu, int* x, int* y);
 int Menu_set_position(Menu* menu, int x, int y);
 
 /**
- * Sets the color of the menu's widget.
+ * Sets the alignment of the menu and updates its layout.
  * 
- * @param menu pointer to the `Menu` structure whose widget color is to be set
- * @param color pointer to the `SDL_Color` value to assign
- * 
- * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
- */
-int Menu_set_color(Menu* menu, SDL_Color* color);
-
-/**
- * Sets the active color of the menu's widget.
- * 
- * @param menu pointer to the `Menu` structure whose active widget color is to be set
- * @param color pointer to the `SDL_Color` value to assign
+ * @param menu pointer to the `Menu` object (must not be `NULL`)
+ * @param a the new `Alignment` value to set
  * 
  * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
- */
-int Menu_set_activeColor(Menu* menu, SDL_Color* color);
-
-/**
- * 
  */
 int Menu_set_alignment(Menu* menu, Alignment a);
 
