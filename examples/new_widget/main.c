@@ -30,22 +30,18 @@ int main(int argc, char** argv) {
 
     Menu* menu = Menu_new(2, &(Vector2) {64, 64});
 
-    void* btn1 = Widget_create(Button, 0, 0, font, &(SDL_Color) {255, 255, 255, 255}, "Button 1", NULL);
-    void* btn2 = Widget_create(Button, 0, 0, font, &(SDL_Color) {255, 255, 255, 255}, "Button 2", NULL);
+    void* btn1 = Widget_create(Button, 64, 64, font, &(SDL_Color) {255, 255, 255, 255}, "Button 1", NULL);
+    void* btn2 = Widget_create(Button, 128, 90, font, &(SDL_Color) {255, 255, 255, 255}, "Button 2", NULL);
 
     Menu_pack(menu, btn1);
     Menu_pack(menu, btn2);
 
     menu->widget_color = (SDL_Color) {255, 255, 255, 255};
 
-    Menu_set_alignment(menu, CENTER);
-
-    printf("%ld\n", Menu_get_size(menu));
-
     int menu_w, menu_h;
     Menu_get_dimensions(menu, &menu_w, &menu_h);
     Menu_set_position(menu, 640 / 2 - menu_w / 2, 480 / 2 - menu_h / 2);
-    Menu_set_alignment(menu, CUSTOM);
+    //Menu_set_alignment(menu, CUSTOM);
     
     while (App_isRunning()) {
 
@@ -91,14 +87,14 @@ int main(int argc, char** argv) {
         App_render();
     }
 
+    Menu_destroy(&menu);
+
     Texture_destroy(&btn_texture);
     Texture_destroy(&btn_texture_hover);
     TTF_CloseFont(font);
 
     App_quit();
     Stop();
-
-    Widget_destroy(widget);
 
     /* ======== */
     return EXIT_SUCCESS;    

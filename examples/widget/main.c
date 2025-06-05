@@ -5,7 +5,7 @@
 #include "../../include/Window.h"
 #include "../../include/Clock.h"
 #include "../../include/Text.h"
-#include "../../include/Widget/Button.h"
+#include "../../include/Widget/Button/Button.h"
 #include "../../include/Widget/Widget.h"
 #include "../../include/Widget/Menu.h"
 #include "../../include/Math/Vector2D.h"
@@ -19,12 +19,8 @@
 
 int main(int argc, char** argv) {
 
-    /* SDL Library Initialization */
-	SDL_Init(SDL_INIT_TIMER);
-	/* TTF Library Initialization */
-	TTF_Init();
-
-    App_init("Start Application", 640, 480);
+    Start();
+    App_init();
 
     /* ================================ */
 
