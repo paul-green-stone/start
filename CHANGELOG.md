@@ -4,15 +4,20 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
+## [2.0.1] - 2025-06-08
+
+### Added
+- Added documentation for the missing function
+
 ## [2.0.0] - 2025-06-05
 
-## Added
+### Added
 - Introduced a `Class` struct to support object-oriented programming patterns in C (widgets only)
 - Added a `Widget` struct as the foundational base for all widgets
 - Introduced `Button` widget struct as the first concrete widget type
 - Added ability to specify a source rectangle (`SDL_Rect`) when creating buttons to control which part of the texture is rendered via `Menu_draw`
 
-## Fixed
+### Fixed
 - Refactored `Menu` struct to hide internal data behind an opaque pointer
 - Added `NULL` pointer validation for the `color` parameter in `Text_set_color`
 
