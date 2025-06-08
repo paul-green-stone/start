@@ -198,15 +198,15 @@ int Menu_pack(Menu* menu, const void* widget) {
 
     Widget_get_dimensions(widget, &w, &h);
 
-    if (((struct menu_data*)(menu))->num_widgets == 1) {
+    if (((struct menu_data*)(menu->data))->num_widgets == 1) {
 
-        ((struct menu_data*)(menu))->width = w;
-        ((struct menu_data*)(menu))->height = h;
+        ((struct menu_data*)(menu->data))->width = w;
+        ((struct menu_data*)(menu->data))->height = h;
     }
     else {
 
-        ((struct menu_data*)(menu->data))->width = ((struct menu_data*)(menu))->width >= w ? ((struct menu_data*)(menu))->width + ((struct menu_data*)(menu))->px : w;
-        ((struct menu_data*)(menu->data))->height += h + ((struct menu_data*)(menu))->py;
+        ((struct menu_data*)(menu->data))->width = ((struct menu_data*)(menu->data))->width >= w ? ((struct menu_data*)(menu->data))->width + ((struct menu_data*)(menu->data))->px : w;
+        ((struct menu_data*)(menu->data))->height += h + ((struct menu_data*)(menu->data))->py;
     }
 
     /* ======== */

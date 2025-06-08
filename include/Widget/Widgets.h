@@ -9,7 +9,7 @@
 extern const void* Widget;
 
 /**
- * Usage: `Widget_create(Button, x, y, font, color, label, texture);`
+ * Usage: `Widget_create(Button, x, y, font, color, label, texture, src);`
  * 
  * @param Button pointer to the button widget descriptor
  * @param x x-coordinate of the button's position on the screen

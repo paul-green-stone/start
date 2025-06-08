@@ -75,16 +75,30 @@ int Widget_set_position(void* widget, int x, int y);
 int Widget_get_position(const void* self, int* x, int* y);
 
 /**
+ * Binds or unbinds a callback function to a widget's click event.
  * 
+ * @param widget pointer to the widget object
+ * @param callback function pointer to the callback to be bound
+ * @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
  */
 int Widget_bind_callback(void* widget, int (callback)(const void* widget, va_list* args));
 
 /**
+ * Handles a click event on the widget, invoking its click callback if conditions are met.
  * 
+ * @param widget pointer to the widget object
+ * @param ... variable arguments forwarded to the widget's callback function
+ * 
+ * @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
  */
 int Widget_click(const void* widget, ...);
 
 /**
+ * Checks if the widget is currently focused by the cursor.
+ * 
+ * @param widget pointer to the widget object
+ * 
+ * @return Returns non-zero (true) if the cursor is within the widget's area. Zero (false) if the cursor is outside the widget's area.
  * 
  */
 int Widget_is_focused(const void* widget);
