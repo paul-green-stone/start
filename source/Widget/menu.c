@@ -273,8 +273,6 @@ int Menu_set_padding(Menu* menu, int x, int y) {
 int Menu_draw(const Menu* menu) {
 
     int i;
-
-    Text* label = NULL;
     /* ======== */
 
     if (menu == NULL) {
