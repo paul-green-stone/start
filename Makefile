@@ -26,7 +26,7 @@ LIB_NAME = start
 PREFIX   = lib
 
 # Aa list of all header files in the `include` directory and its subdirectories
-INCLUDE  = $(wildcard include/*/*.h) $(wildcard include/*.h) $(wildcard include/*/*/*/*.h)
+INCLUDE  = $(shell find include -type f -name '*.h')
 
 # Operating System name
 OS_NAME  = $(shell uname -s)
@@ -117,7 +117,8 @@ $(OBJDIR)/Widgets.o: 	$(OBJDIR)/_button.o $(OBJDIR)/button.o \
 	$(CC) -r -o $@ $^
 	rm -rf $(OBJDIR)/_button.o $(OBJDIR)/button.o $(OBJDIR)/_widget.o $(OBJDIR)/widget.o $(OBJDIR)/menu.o
 	
-# ======== #
+# ================================================================ #	
+# ================================================================ #
 
 CLOCK    = $(addprefix source/, clock.c)
 
@@ -212,27 +213,24 @@ install:
 
 # If the operating system is Linux
 ifeq ($(OS_NAME), Linux)
-# Installing a dynamic library
 	install -Dm755 $(SHARED) $(DESTDIR)/lib/$(SHARED)
-# Installing a static library
 	install -Dm644 $(STATIC) $(DESTDIR)/lib/$(STATIC)
 
 	for header in $(INCLUDE); do \
-		destination=$$(echo $$header | sed 's,^include/,,' ); \
-		install -Dm644 $$header $(DESTDIR)/include/start/$$destination; \
+		destination=$$(echo $$header | sed 's,^include/,,') ; \
+        mkdir -p $(DESTDIR)/include/start/$$(dirname $$destination) ; \
+        install -m644 $$header $(DESTDIR)/include/start/$$destination ; \
 	done
 
 # If the operating system is macOS
 else ifeq ($(OS_NAME), Darwin)
-# Installing a dynamic library
 	install -m755 $(SHARED) $(DESTDIR)/lib/$(SHARED)
-# Installing a static library
 	install -m644 $(STATIC) $(DESTDIR)/lib/$(STATIC)
 	
 	for header in $(INCLUDE); do \
-		destination=$$(echo $$header | sed 's,^include/,,' ); \
-	 	mkdir -p $(DESTDIR)/include/start/$$(dirname $$destination); \
-		install -m644 $$header $(DESTDIR)/include/start/$$destination; \
+		destination=$$(echo $$header | sed 's,^include/,,') ; \
+        mkdir -p $(DESTDIR)/include/start/$$(dirname $$destination) ; \
+        install -m644 $$header $(DESTDIR)/include/start/$$destination ; \
 	done
 
 else
@@ -245,33 +243,32 @@ endif
 
 uninstall:
 
-# If the operating system is Linux
 ifeq ($(OS_NAME), Linux)
-# Uninstalling a dynamic library
+	# Remove dynamic and static libraries
 	rm -f $(DESTDIR)/lib/$(SHARED)
-# Uninstalling a static library
 	rm -f $(DESTDIR)/lib/$(STATIC)
 
+	# Remove installed headers preserving directory structure
 	for header in $(INCLUDE); do \
-		destination=$$(echo $$header | sed 's,^include/,,' ); \
-		rm -rf $(DESTDIR)/include/start/$$dest; \
+		destination=$$(echo $$header | sed 's,^include/,,') ; \
+		rm -f $(DESTDIR)/include/start/$$destination ; \
 	done
 
-# If the operating system is macOS
 else ifeq ($(OS_NAME), Darwin)
-# Uninstalling a dynamic library
+	# Remove dynamic and static libraries
 	rm -f $(DESTDIR)/lib/$(SHARED)
-# Uninstalling a static library
 	rm -f $(DESTDIR)/lib/$(STATIC)
 
+	# Remove installed headers preserving directory structure
 	for header in $(INCLUDE); do \
-		destination=$$(echo $$header | sed 's,^include/,,' ); \
-		rm -rf $(DESTDIR)/include/start/$$dest; \
+		destination=$$(echo $$header | sed 's,^include/,,') ; \
+		rm -f $(DESTDIR)/include/start/$$destination ; \
 	done
 
 else
-    $(error Unsupported operating system)
+	$(error Unsupported operating system)
 endif
+
 
 # ================================================================ #
 
