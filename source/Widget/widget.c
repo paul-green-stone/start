@@ -4,6 +4,7 @@
 #include "../../include/Widget/Widgets.h"
 #include "../../include/Widget/_Class.h"
 #include "../../include/Widget/_Widget.h"
+#include "../../include/Widget/TextInput/_TextInput.h"
 
 #include "../../include/Error.h"
 
@@ -148,6 +149,15 @@ int Widget_set_position(void* _self, int x, int y) {
     self->x = x;
     self->y = y;
 
+    if (((void**) self->_class) == TextInput) {
+        
+        struct text_input* s = _self;
+        /* ======== */
+
+        s->ifd.x = self->x + self->label->width + 16;
+        s->ifd.y = self->y;
+    }
+
     /* ======== */
     return SSUCCESS;
 }
@@ -270,7 +280,7 @@ int Widget_click(const void* _self, ...) {
 
 /* ================================================================ */
 
-int Widget_is_focused(const void* _self) {
+int Widget_is_hovered(const void* _self) {
 
     const struct widget* self = _self;
 
@@ -297,3 +307,46 @@ int Widget_is_focused(const void* _self) {
 
 /* ================================================================ */
 
+void Widget_focus(void* _self) {
+
+    struct widget* self = _self;
+    /* ======== */
+
+    self->is_focused = 1;
+}
+
+/* ================================================================ */
+
+void Widget_unfocus(void* _self) {
+
+    struct widget* self = _self;
+    /* ======== */
+
+    self->is_focused = 0;
+}
+
+/* ================================================================ */
+
+int Widget_set_label_color(void* _self, const SDL_Color* color) {
+
+    struct widget* self = _self;
+    /* ======== */
+
+    if (self == NULL) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    /* ======== */
+    return Text_set_color(self->label, color);
+}
+
+/* ================================================================ */
+
+int Widget_is_focused(const void* _self) {
+    return ((struct widget*) _self)->is_focused;
+}
+
+/* ================================================================ */

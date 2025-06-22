@@ -12,26 +12,9 @@ static void* Button_ctor(void* _self, va_list* args) {
     /* === Calling a parent class constructor === */
     struct button* self = ((const struct Class*) Widget)->ctor(_self, args);
     struct widget* widget = _self;
-
-    TTF_Font* font = va_arg(*args, TTF_Font*);
-    SDL_Color* label_color = va_arg(*args, SDL_Color*);
-    const char* label = va_arg(*args, const char*);
     Texture* btn_texture = va_arg(*args, Texture*);
     SDL_Rect* src = va_arg(*args, SDL_Rect*);
     /* ======== */
-
-    /* === Check if the label has been provided === */
-    if ((font != NULL) && (label != NULL)) {
-
-        /* === Creating a button's label === */
-        if ((self->label = Text_new(get_context(), font, (label_color == NULL) ? &(SDL_Color) {0, 0, 0, 255} : label_color, label)) == NULL) {
-            return NULL;
-        }
-
-        /* === Updating the widget's dimensions === */
-        widget->width = self->label->width;
-        widget->height = self->label->height;
-    }
 
     self->texture = btn_texture;
     self->default_src = src;
@@ -77,8 +60,8 @@ static int Button_draw(const void* _self, const SDL_Rect* src, const SDL_Rect* d
     /* ======== */
 
     /* === Render the button's label if it has one === */
-    if (self->label != NULL) {
-        return Text_draw(self->label, &dest);
+    if (widget->label != NULL) {
+        return Text_draw(widget->label, &dest);
     }
 
     /* === Render the button's texture if it has one and does not have a label === */
