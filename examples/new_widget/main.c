@@ -14,6 +14,8 @@ int main(int argc, char** argv) {
     SDL_Event event;
     SDL_Renderer* ctx;
 
+    char buffer[64];
+
     Start();
     App_init();
 
@@ -22,16 +24,15 @@ int main(int argc, char** argv) {
     Texture* btn_texture = Texture_new(ctx, "../resources/images/64x32.png");
     Texture* btn_texture_hover = Texture_new(ctx, "../resources/images/64x32_2.png");
 
-    void* widget = Widget_create(Button, 10, 12, NULL, NULL, NULL, btn_texture);\
-
-    Widget_bind_callback(widget, click);
-
     SDL_Rect d = {10, 12, 192, 96};
 
     Menu* menu = Menu_new(2, &(Vector2) {64, 64});
 
-    void* btn1 = Widget_create(Button, 64, 64, font, &(SDL_Color) {255, 255, 255, 255}, "Button 1", NULL);
-    void* btn2 = Widget_create(Button, 128, 90, font, &(SDL_Color) {255, 255, 255, 255}, "Button 2", NULL);
+    void* btn1 = Widget_create(Button, 64, 64, font, &(SDL_Color) {255, 255, 255, 255}, "Button 1", NULL, NULL);
+    void* btn2 = Widget_create(Button, 128, 90, font, &(SDL_Color) {255, 255, 255, 255}, "Button 2", NULL, NULL);
+
+    void* input = Widget_create(TextInput, 0, 0, font, &(SDL_Color) {255, 255, 255, 255}, "Input");
+    Widget_set_position(input, 0, 350);
 
     Menu_pack(menu, btn1);
     Menu_pack(menu, btn2);
@@ -54,33 +55,55 @@ int main(int argc, char** argv) {
                     App_stop();
                     break ;
             }
+
+            if (Widget_is_focused(input)) {
+
+                SDL_StartTextInput();
+                TextInput_update(input, &event);
+            }
+            else {
+                SDL_StopTextInput();
+            }
         }
 
         Input_update();
 
-        // Widget_click(widget, "Hello, World!");
+        if (Widget_is_focused(input) && Input_wasKey_pressed(SDL_SCANCODE_RETURN)) {
+            TextInput_get_input(input, buffer);
 
-        // if (Widget_is_focused(widget)) {
-        //    Button_set_texture(widget, btn_texture_hover);
-        // }
-        // else {
-        //    Button_set_texture(widget, btn_texture);
-        // }
+            printf("Input: %s\n", buffer);
+        }
 
-        // SDL_SetRenderDrawColor(ctx, 255, 255, 255, 255);
-        // SDL_RenderClear(ctx);
-        
-        // Widget_draw(widget, NULL, &d);
+        SDL_SetRenderDrawColor(ctx, 0, 0, 0, 255);
+        SDL_RenderClear(ctx);
 
         for (size_t i = 0; i < Menu_get_size(menu); i++) {
 
-            if (Widget_is_focused(menu->widgets[i])) {
-                Button_set_label_color(menu->widgets[i], &(SDL_Color) {255, 0, 0, 255});
+            if (Widget_is_hovered(menu->widgets[i])) {
+                Widget_set_label_color(menu->widgets[i], &(SDL_Color) {255, 0, 0, 255});
             }
             else {
-                Button_set_label_color(menu->widgets[i], &(SDL_Color) {255, 255, 255, 255});
+                Widget_set_label_color(menu->widgets[i], &(SDL_Color) {255, 255, 255, 255});
             }
         }
+
+        /* === Handling the input widget; might decide to integrate states === */
+        if (Widget_is_hovered(input) && Input_isBtn_pressed(LMB)) {
+            Widget_focus(input);
+            Widget_set_label_color(input, &(SDL_Color) {0, 255, 0, 255});
+        }
+        else if (!Widget_is_hovered(input) && Input_isBtn_pressed(LMB)) {
+            Widget_unfocus(input);
+            Widget_set_label_color(input, &(SDL_Color) {255, 255, 255, 255});
+        }
+        else if (!Widget_is_focused(input) && Widget_is_hovered(input)) {
+            Widget_set_label_color(input, &(SDL_Color) {0, 255, 0, 122});
+        }
+        else if (!Widget_is_focused(input) && !Widget_is_hovered(input)) {
+            Widget_set_label_color(input, &(SDL_Color) {255, 255, 255, 255});
+        }
+
+        Widget_draw(input, NULL, NULL);
 
         Menu_draw(menu);
         
@@ -91,6 +114,7 @@ int main(int argc, char** argv) {
 
     Texture_destroy(&btn_texture);
     Texture_destroy(&btn_texture_hover);
+    // Widget_destroy(input);
     TTF_CloseFont(font);
 
     App_quit();
