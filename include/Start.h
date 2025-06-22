@@ -22,6 +22,7 @@
 #include "Error.h"
 
 #include "Widget/Button/Button.h"
+#include "Widget/TextInput/TextInput.h"
 
 /* ================================================================ */
 
