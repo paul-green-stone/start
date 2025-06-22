@@ -109,13 +109,22 @@ $(OBJDIR)/_widget.o: source/Widget/_widget.c
 $(OBJDIR)/widget.o: source/Widget/widget.c
 	$(CC) $(CFLAGS) -o $@ $<
 
+# ======== #
+
+$(OBJDIR)/_input.o: source/Widget/TextInput/_input.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(OBJDIR)/input.o: source/Widget/TextInput/input.c
+	$(CC) $(CFLAGS) -o $@ $<
+
 # === Assembling them together === #
 
 $(OBJDIR)/Widgets.o: 	$(OBJDIR)/_button.o $(OBJDIR)/button.o \
 						$(OBJDIR)/_widget.o $(OBJDIR)/widget.o \
+						$(OBJDIR)/_input.o $(OBJDIR)/input.o \
 						$(OBJDIR)/menu.o
 	$(CC) -r -o $@ $^
-	rm -rf $(OBJDIR)/_button.o $(OBJDIR)/button.o $(OBJDIR)/_widget.o $(OBJDIR)/widget.o $(OBJDIR)/menu.o
+	rm -rf $(OBJDIR)/_button.o $(OBJDIR)/button.o $(OBJDIR)/_widget.o $(OBJDIR)/widget.o $(OBJDIR)/menu.o $(OBJDIR)/_input.o
 	
 # ================================================================ #	
 # ================================================================ #
