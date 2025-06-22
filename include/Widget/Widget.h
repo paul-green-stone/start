@@ -103,6 +103,26 @@ int Widget_click(const void* widget, ...);
  */
 int Widget_is_focused(const void* widget);
 
+/**
+ * 
+ */
+int Widget_is_hovered(const void* widget);
+
+/**
+ * 
+ */
+void Widget_focus(void* widget);
+
+/**
+ * 
+ */
+void Widget_unfocus(void* widget);
+
+/**
+ *
+ */
+int Widget_set_label_color(void* widget, const SDL_Color* color);
+
 /* ================================================================ */
 
 #endif /* _START_WIDGET_INTERFACE_H */

@@ -2,6 +2,7 @@
 #define _START_WIDGET_CLASS_H
 
 #include "_Class.h"
+#include "../Text.h"
 
 /* ================================================================ */
 
@@ -18,6 +19,9 @@ struct widget {
     /* === Widget dimensions === */
     int width;
     int height;
+
+    /* === Widget's label === */
+    Text* label;
 
     /* === Actions associated with the widget === */
     int (*on_click)(const void* self, va_list* args);
