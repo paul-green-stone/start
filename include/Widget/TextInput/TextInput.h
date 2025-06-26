@@ -24,6 +24,11 @@ int TextInput_update(void* input, SDL_Event* e);
  */
 int TextInput_get_input(const void* input, char* buffer);
 
+/**
+ * 
+ */
+int TextInput_clear(void* widget);
+
 /* ================================================================ */
 
 #endif /* _START_TEXTINPUT_INTERFACE_H */

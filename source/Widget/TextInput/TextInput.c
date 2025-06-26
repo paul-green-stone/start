@@ -11,8 +11,11 @@
 
 int TextInput_update(void* _self, SDL_Event* e) {
 
-    struct text_input* self = _self;
+    /* Base widget class. Provides information such as its position and size */
     struct widget* widget = _self;
+    /* `TextInput` widget itself */
+    struct text_input* self = _self;
+
     int length;
     /* ======== */
 
@@ -26,8 +29,8 @@ int TextInput_update(void* _self, SDL_Event* e) {
 
     /* === Writing a character === */
     if (e->type == SDL_TEXTINPUT) {
-        self->input->content[self->curr_pos++] = *(e->text.text);
 
+        self->input->content[self->curr_pos++] = *(e->text.text);
         self->input->content[strlen(self->input->content)] = '>';
     }
     /* === Deleting a character === */
@@ -36,6 +39,7 @@ int TextInput_update(void* _self, SDL_Event* e) {
         /* === Getting the number of characters in the field === */
         length = strlen(self->input->content);
 
+        /* === The field is not "empty" === */
         if (length != 2) {
             
             /* === "Shifting" === */
@@ -44,8 +48,9 @@ int TextInput_update(void* _self, SDL_Event* e) {
         }
     }
 
-    /* === Updating the text and the size of the field === */
+    /* === Updating the text === */
     Text_update(self->input, self->input->content);
+    /* === and the size of the input field === */
     self->ifd.w = self->input->width;
     self->ifd.h = self->input->height;
 
@@ -81,6 +86,35 @@ int TextInput_get_input(const void* _self, char* buffer) {
 
     /* === Marking the end of the string === */
     buffer[strlen(buffer) - 1] = '\0';
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ================================================================ */
+
+int TextInput_clear(void* _self) {
+
+    /* Base widget class. Provides information such as its position and size */
+    const struct widget* widget =_self;
+    /* `TextInput` widget itself */
+    struct text_input* self = _self;
+
+    size_t length = sizeof(self->input->content);
+    /* ======== */
+
+    /* === Do not dereference `NULL === */
+    if (self == NULL) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    Text_update(self->input, "<>\0");
+
+    self->curr_pos = 1;
+    self->ifd.w = self->input->width;
 
     /* ======== */
     return SSUCCESS;

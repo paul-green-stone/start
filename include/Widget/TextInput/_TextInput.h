@@ -9,15 +9,18 @@
 
 struct text_input {
 
+    /* Base widget class */
     const struct widget _;
 
     /* The number of characters that is going to appear on the screen */
     int length;
+    /* Position into which we insert a character */
     int curr_pos;
 
     /* Text that appears near the field */
     Text* input;
 
+    /* Input Field Dimensions. Remember to update this if you make changes */
     SDL_Rect ifd;
 };
 
