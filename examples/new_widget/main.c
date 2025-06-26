@@ -93,6 +93,7 @@ int main(int argc, char** argv) {
             Widget_set_label_color(input, &(SDL_Color) {0, 255, 0, 255});
         }
         else if (!Widget_is_hovered(input) && Input_isBtn_pressed(LMB)) {
+            TextInput_clear(input);
             Widget_unfocus(input);
             Widget_set_label_color(input, &(SDL_Color) {255, 255, 255, 255});
         }
