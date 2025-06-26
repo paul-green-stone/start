@@ -111,10 +111,10 @@ $(OBJDIR)/widget.o: source/Widget/widget.c
 
 # ======== #
 
-$(OBJDIR)/_input.o: source/Widget/TextInput/_input.c
+$(OBJDIR)/_input.o: source/Widget/TextInput/_TextInput.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(OBJDIR)/input.o: source/Widget/TextInput/input.c
+$(OBJDIR)/input.o: source/Widget/TextInput/TextInput.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 # === Assembling them together === #
