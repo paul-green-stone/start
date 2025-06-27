@@ -32,6 +32,18 @@ extern const void* Button;
  */
 extern const void* TextInput;
 
+/**
+ * @param SelectWidget pointer to the text input widget descriptor
+ * @param x x-coordinate of the button's position on the screen
+ * @param y y-coordinate of the button's position on the screen
+ * @param font pointer to an `SDL_ttf` font used to render the button's label text (`TTF_Font*`)
+ * @param color pointer to an `SDL_Color` structure specifying the color of the label text (`SDL_Color*`)
+ * @param label null-terminated string containing the text displayed on the button (`const char*`)
+ * @param num_options number of options
+ * @param ... options
+ */
+extern const void* SelectWidget;
+
 /* ================================================================ */
 
 #endif /* _START_WIDGETS_COLLECTION_H */
