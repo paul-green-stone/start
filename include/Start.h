@@ -23,6 +23,7 @@
 
 #include "Widget/Button/Button.h"
 #include "Widget/TextInput/TextInput.h"
+#include "Widget/SelectWidget/SelectWidget.h"
 
 /* ================================================================ */
 
