@@ -64,6 +64,7 @@ int List_remove_head(List* list, void** data) {
         }
         else {
             list->head = list->head->next;
+            list->head->prev = NULL;
         }
     }
 
@@ -85,11 +86,14 @@ int List_insert_head(List* list, const void* data) {
         return -1;
     }
 
+    node->list = list;
+
     if (list->size == 0) {
         list->head = list->tail = node;
     }
     else {
         node->next = list->head;
+        list->head->prev = node;
         list->head = node;
     }
 
@@ -131,6 +135,36 @@ void List_print(const List* list) {
 
 /* ================================================================ */
 
+void List_print_backward(const List* list) {
+
+    Node* node = NULL;
+    /* ======== */
+
+    /* === There is no point in traversing the list === */
+    if (list->print == NULL) {
+        return ;
+    }
+
+    if (list->size > 0) {
+
+        node = list->tail;
+
+        for (size_t i = 0; i < list->size; i++) {
+
+            list->print(node->data);
+            node = node->prev;
+
+            if ((i + 1) != list->size) {
+                printf(" -> ");
+            }
+        }
+
+        printf("\n");
+    }
+}
+
+/* ================================================================ */
+
 int List_insert_tail(List* list, void* data) {
 
     Node* node = NULL;
@@ -140,11 +174,14 @@ int List_insert_tail(List* list, void* data) {
         return -1;
     }
 
+    node->list = list;
+
     if (list->size == 0) {
         list->head = list->tail = node;
     }
     else {
         list->tail->next = node;
+        node->prev = list->tail;
         list->tail = node;
     }
 
@@ -187,7 +224,7 @@ int List_remove_tail(List* list, void** data) {
 
 /* ================================================================ */
 
-void* List_find(const List* list, const void* data) {
+Node* List_find(const List* list, const void* data) {
 
     Node* current = NULL;
     /* ======= */
@@ -196,15 +233,78 @@ void* List_find(const List* list, const void* data) {
         return NULL;
     }
 
-    for (current = list->head; current != list->tail; current = current->next) {
+    for (current = list->head; current != NULL; current = current->next) {
 
         if (list->match(data, current->data) == 0) {
-            return current->data;
+            return current;
         }
     }
 
     /* ======== */
     return NULL;
+}
+
+/* ================================================================ */
+
+int List_insert_after(List* list, Node* _node, const void* data) {
+
+    Node* node = NULL;
+    /* =======*/
+
+    if ((list == NULL) || (((List*)_node->list) != list) || (data == NULL)) {
+        return -1;
+    }
+
+    if (_node == list->tail) {
+        return List_insert_tail(list, (void*) data);
+    }
+
+    if ((node = Node_create((void*) data)) == NULL) {
+        return -1;
+    }
+
+    node->list = list;
+
+    node->next = _node->next;
+    _node->next = node;
+    node->prev = _node;
+
+    list->size++;
+
+    /* ======== */
+    return 0;
+}
+
+/* ================================================================ */
+
+int List_insert_before(List* list, Node* _node, const void* data) {
+
+    Node* node = NULL;
+    /* =======*/
+
+    if ((list == NULL) || (((List*)_node->list) != list) || (data == NULL)) {
+        return -1;
+    }
+
+    if (_node == list->head) {
+        return List_insert_head(list, (void*) data);
+    }
+
+    if ((node = Node_create((void*) data)) == NULL) {
+        return -1;
+    }
+
+    node->list = list;
+
+    node->prev = _node->prev;
+    _node->prev->next = node;
+    _node->prev = node;
+    node->next = _node;
+
+    list->size++;
+
+    /* ======== */
+    return 0;
 }
 
 /* ================================================================ */

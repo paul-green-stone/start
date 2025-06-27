@@ -13,7 +13,10 @@
 typedef struct node {
 
     void* data;
+
+    void* list;
     struct node* next;
+    struct node* prev;
 } Node;
 
 /* ======== */
@@ -119,6 +122,20 @@ void List_print(const List* list);
 /* ======== */
 
 /**
+ * Prints the contents of the linked list specified by `list` to the standard output.
+ * The list must have a valid print function pointer assigned to its `print` member
+ * to properly display each element's data. If the `print` function pointer is `NULL`,
+ * this function will return immediately without printing anything.
+ * 
+ * @param list A pointer to the linked list whose contents are to be printed.
+ * 
+ * @return None.
+ */
+void List_print_backward(const List* list);
+
+/* ======== */
+
+/**
  * Removes the tail (last element) from the linked list specified by `list`.
  * If the list is not empty, the data stored in the tail node is returned via
  * the `data` pointer.abort.
@@ -139,16 +156,46 @@ int List_remove_tail(List* list, void** data);
  * Searches the linked list specified by `list` for an element matching `data`.
  * The comparison is performed using the list's `match` function, which should
  * return 0 when the elements are considered equal.
- * If a matching element is found, a pointer to the data stored in the list node
- * is returned. If no match is found, or if the list is empty, or if `match` or
+ * If a matching node is found, a pointer to that node is returned.
+ * If no match is found, or if the list is empty, or if `match` or
  * `data` is `NULL`, the function returns `NULL`.
  * 
  * @param list  Pointer to the linked list to search.
  * @param data  Pointer to the data to match against elements in the list.
  * 
- * @return A pointer to the matching data in the list if found; otherwise, `NULL`.
+ * @return A pointer to the matching node in the list if found; otherwise, `NULL`.
  */
-void* List_find(const List* list, const void* data);
+Node* List_find(const List* list, const void* data);
+
+/* ================================================================ */
+
+/**
+ * Inserts a new node containing `data` immediately after the specified node `_node`
+ * in the linked list `list`. If `_node` is the tail node of the list, the new data is appended to the end
+ * of the list.
+ * 
+ * @param list Pointer to the linked list where the new node will be inserted.
+ * @param _node Pointer to the node after which the new node will be inserted.
+ * Must be a node in `list`.
+ * @param data Pointer to the data to be stored in the new node.
+ * 
+ * @return 0 on success; -1 on failure.
+ */
+int List_insert_after(List* list, Node* node, const void* data);
+
+/**
+ * Inserts a new node containing `data` immediately before the specified node `_node`
+ * in the linked list `list`. If `_node` is the head node of the list, the new data is inserted at the beginning
+ * of the list.
+ * 
+ * @param list Pointer to the linked list where the new node will be inserted.
+ * @param _node Pointer to the node after which the new node will be inserted.
+ * Must be a node in `list`.
+ * @param data Pointer to the data to be stored in the new node.
+ * 
+ * @return 0 on success; -1 on failure.
+ */
+int List_insert_before(List* list, Node* node, const void* data);
 
 /* ================================================================ */
 
