@@ -162,3 +162,30 @@ int SelectWidget_prev(void* _self) {
 }
 
 /* ================================================================ */
+
+const char* SelectWidget_get_value(const void* _self) {
+
+    const struct select_widget* self = _self;
+    /* ======== *
+    
+    /* === Do not dereference `NULL` === */
+    if (self == NULL) {
+
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return NULL;
+    }
+
+    /* === Type mismatch === */
+    if (((struct Class*) self->_._class) != SelectWidget) {
+        
+        Error_set(SERR_UNKNOWN_TYPE);
+        /* ======== */
+        return NULL;
+    }
+
+    /* ======== */
+    return ((const char*) self->node_option->data);
+}
+
+/* ================================================================ */
