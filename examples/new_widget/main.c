@@ -34,6 +34,18 @@ int main(int argc, char** argv) {
     void* input = Widget_create(TextInput, 0, 0, font, &(SDL_Color) {255, 255, 255, 255}, "Input");
     Widget_set_position(input, 0, 350);
 
+    void* select = Widget_create(SelectWidget, 240, 240, font, &(SDL_Color) {255, 255, 255, 255}, "Race");
+    SelectWidget_add(select, "Argonian");
+    SelectWidget_add(select, "Khajiit");
+    SelectWidget_add(select, "Redguard");
+    SelectWidget_add(select, "Nord");
+    SelectWidget_add(select, "Breton");
+    SelectWidget_add(select, "Imperial");
+    SelectWidget_add(select, "Orsimer");
+    SelectWidget_add(select, "Bosmer");
+    SelectWidget_add(select, "Altmer");
+    SelectWidget_add(select, "Dunmer");
+
     Menu_pack(menu, btn1);
     Menu_pack(menu, btn2);
 
@@ -103,8 +115,32 @@ int main(int argc, char** argv) {
         else if (!Widget_is_focused(input) && !Widget_is_hovered(input)) {
             Widget_set_label_color(input, &(SDL_Color) {255, 255, 255, 255});
         }
+        
+        if (Widget_is_hovered(select) && Input_isBtn_pressed(LMB)) {
+
+            Widget_focus(select);
+            Widget_set_label_color(select, &(SDL_Color) {0, 255, 0, 255});
+        }
+        else if (!Widget_is_hovered(select) && Input_isBtn_pressed(LMB)) {
+            
+            Widget_unfocus(select);
+            Widget_set_label_color(select, &(SDL_Color) {255, 255, 255, 255});
+        }
+        else if (!Widget_is_focused(select) && Widget_is_hovered(select)) {
+            Widget_set_label_color(select, &(SDL_Color) {0, 255, 0, 122});
+        }
+        else if (!Widget_is_focused(select) && !Widget_is_hovered(select)) {
+            Widget_set_label_color(select, &(SDL_Color) {255, 255, 255, 255});
+        }
+        else if (Widget_is_focused(select) && Input_wasKey_pressed(SDL_SCANCODE_RIGHT)) {
+            SelectWidget_next(select);
+        }
+        else if (Widget_is_focused(select) && Input_wasKey_pressed(SDL_SCANCODE_LEFT)) {
+            SelectWidget_prev(select);
+        }
 
         Widget_draw(input, NULL, NULL);
+        Widget_draw(select, NULL, NULL);
 
         Menu_draw(menu);
         
@@ -115,7 +151,8 @@ int main(int argc, char** argv) {
 
     Texture_destroy(&btn_texture);
     Texture_destroy(&btn_texture_hover);
-    // Widget_destroy(input);
+    Widget_destroy(input);
+    Widget_destroy(select);
     TTF_CloseFont(font);
 
     App_quit();
