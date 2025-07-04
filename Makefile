@@ -5,7 +5,7 @@
 # Object files location. Object files will be placed in this directory during compilation
 OBJDIR   = objects
 # Full names of object files
-OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o List.o)
+OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o List.o Camera.o)
 
 # The Compiler
 CC       = gcc
@@ -86,6 +86,13 @@ WINDOW   = $(addprefix source/, window.c)
 $(OBJDIR)/Window.o: $(WINDOW) $(INCLUDE)
 	$(CC) $(CFLAGS) -o $@ $<
 
+# ======== #
+
+LIST     = $(addprefix source/, list.c)
+
+$(OBJDIR)/List.o: $(LIST) $(INCLUDE)
+	$(CC) $(CFLAGS) -o $@ $<
+
 # ================================================================ #
 # ====================== ASSEMBLING WIDGETS ====================== #
 # ================================================================ #
@@ -117,11 +124,20 @@ $(OBJDIR)/_input.o: source/Widget/TextInput/_TextInput.c
 $(OBJDIR)/input.o: source/Widget/TextInput/TextInput.c
 	$(CC) $(CFLAGS) -o $@ $<
 
+# ======== #
+
+$(OBJDIR)/_select.o: source/Widget/SelectWidget/_SelectWidget.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+$(OBJDIR)/select.o: source/Widget/SelectWidget/SelectWidget.c
+	$(CC) $(CFLAGS) -o $@ $<
+
 # === Assembling them together === #
 
 $(OBJDIR)/Widgets.o: 	$(OBJDIR)/_button.o $(OBJDIR)/button.o \
 						$(OBJDIR)/_widget.o $(OBJDIR)/widget.o \
 						$(OBJDIR)/_input.o $(OBJDIR)/input.o \
+						$(OBJDIR)/_select.o $(OBJDIR)/select.o \
 						$(OBJDIR)/menu.o
 	$(CC) -r -o $@ $^
 	rm -rf $(OBJDIR)/_button.o $(OBJDIR)/button.o $(OBJDIR)/_widget.o $(OBJDIR)/widget.o $(OBJDIR)/menu.o $(OBJDIR)/_input.o
@@ -206,9 +222,9 @@ $(OBJDIR)/Error.o: $(ERROR) $(INCLUDE)
 
 # ======== #
 
-LIST    = $(addprefix source/, list.c)
+CAMERA   = $(addprefix source/, camera.c)
 
-$(OBJDIR)/List.o: $(LIST) $(INCLUDE)
+$(OBJDIR)/Camera.o: $(CAMERA) $(INCLUDE)
 	$(CC) $(CFLAGS) -o $@ $<
 
 # ================================================================ #
