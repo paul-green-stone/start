@@ -20,6 +20,7 @@
 #include "Widget/Widgets.h"
 #include "Widget/Widget.h"
 #include "Error.h"
+#include "Camera.h"
 
 #include "Widget/Button/Button.h"
 #include "Widget/TextInput/TextInput.h"
