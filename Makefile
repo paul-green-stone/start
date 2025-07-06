@@ -5,7 +5,7 @@
 # Object files location. Object files will be placed in this directory during compilation
 OBJDIR   = objects
 # Full names of object files
-OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o List.o Camera.o)
+OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o List.o Camera.o Animation.o)
 
 # The Compiler
 CC       = gcc
@@ -225,6 +225,13 @@ $(OBJDIR)/Error.o: $(ERROR) $(INCLUDE)
 CAMERA   = $(addprefix source/, camera.c)
 
 $(OBJDIR)/Camera.o: $(CAMERA) $(INCLUDE)
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ======== #
+
+ANIMATION = $(addprefix source/, animation.c)
+
+$(OBJDIR)/Animation.o: $(ANIMATION) $(INCLUDE)
 	$(CC) $(CFLAGS) -o $@ $<
 
 # ================================================================ #
