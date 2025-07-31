@@ -4,10 +4,16 @@ This changelog records notable changes to the project, including new features, b
 
 Entries are organized by version and date, with changes grouped under categories such as Added, Changed, Fixed, Deprecated, and Removed.
 
-## [2.0.1] - 2025-06-08
+## [2.0.1] - 2025-07-31
 
 ### Added
-- Added documentation for the missing function
+- Introduced `TextInput` widget struct to capture a user input within an application
+- Introduced a `Select` widget to pick an option from a list
+- Added linked list data type as a core data type in the framework
+- Initial implementation of the `Camera` object with core functionality
+
+### Changed
+- A widget, base class for all other widgets, now contains a label
 
 ## [2.0.0] - 2025-06-05
 
