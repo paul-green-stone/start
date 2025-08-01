@@ -121,7 +121,7 @@ $(OBJDIR)/widget.o: source/Widget/widget.c
 $(OBJDIR)/_input.o: source/Widget/TextInput/_TextInput.c
 	$(CC) $(CFLAGS) -o $@ $<
 
-$(OBJDIR)/input.o: source/Widget/TextInput/TextInput.c
+$(OBJDIR)/tinput.o: source/Widget/TextInput/TextInput.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 # ======== #
@@ -136,7 +136,7 @@ $(OBJDIR)/select.o: source/Widget/SelectWidget/SelectWidget.c
 
 $(OBJDIR)/Widgets.o: 	$(OBJDIR)/_button.o $(OBJDIR)/button.o \
 						$(OBJDIR)/_widget.o $(OBJDIR)/widget.o \
-						$(OBJDIR)/_input.o $(OBJDIR)/input.o \
+						$(OBJDIR)/_input.o $(OBJDIR)/tinput.o \
 						$(OBJDIR)/_select.o $(OBJDIR)/select.o \
 						$(OBJDIR)/menu.o
 	$(CC) -r -o $@ $^
