@@ -26,3 +26,4 @@ int SelectWidget_add(void* widget, const char* option);
 /* ================================================================ */
 
 #endif /* _START_SELECTWIDGET_INTERFACE_H */
+

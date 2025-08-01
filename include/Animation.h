@@ -95,3 +95,4 @@ void Animation_setSpeed(Animation* animation, double speed);
 /* ================================================================ */
 
 #endif /* _START_ANIMATION_H */
+
