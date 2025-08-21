@@ -388,7 +388,17 @@ int directory_new(const char* path) {
     /* === Directory exists === */
     if (directory_exists(path) == 1) { return 1; }
     /* === Creating a directory === */
-    else if ((directory_exists(path) == 0) && (mkdir(path, 0755) == 0)) { return SSUCCESS; }
+    else if ((directory_exists(path) == 0)) {
+        int mkdir_status;
+#ifdef _WIN32
+        mkdir_status = mkdir("screenshots");
+#else
+        mkdir_status = mkdir("screenshots", 0755);
+#endif
+        if (mkdir_status == 0) {
+            return SSUCCESS; 
+        }
+    }
     
     Error_set(SERR_SYSTEM);    
 

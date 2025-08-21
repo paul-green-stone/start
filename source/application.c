@@ -421,7 +421,11 @@ int take_screenshot(const char* filename) {
     memset(filepath, 0, sizeof(filepath));
 
     if (stat("screenshots", &st) == -1) {
+#ifdef _WIN32
+        mkdir("screenshots");
+#else
         mkdir("screenshots", 0755);
+#endif
     }
 
     strcat(filepath, "screenshots/");

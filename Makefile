@@ -52,8 +52,11 @@ else ifeq ($(OS_NAME), Darwin)
 # The suffix for dynamic library files
     DLL_SUFFIX = .dylib
 
+# For WindowsOS
 else
-    $(error Unsupported operating system)
+    LIB_SUFFIX = .lib
+
+	DLL_SUFFIX = .dll
 endif
 
 # Constructing the name of static library
@@ -280,7 +283,7 @@ else ifeq ($(OS_NAME), Darwin)
 	done
 
 else
-    $(error Unsupported operating system)
+	@echo "Windows install not supported yet!"
 endif
 
 # ================================================================ #
@@ -312,7 +315,7 @@ else ifeq ($(OS_NAME), Darwin)
 	done
 
 else
-	$(error Unsupported operating system)
+	@echo "Windows uninstall not supported yet!"
 endif
 
 
