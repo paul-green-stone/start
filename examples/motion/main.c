@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
     SDL_Renderer* ctx;
 
     Start();
-    App_init();
+    App_init(NULL);
 
     TTF_Font* font = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 24);
     char buffer[32];

@@ -54,3 +54,8 @@ dkms.conf
 # Other 
 .vscode
 screenshots
+
+# Web build files
+*.data
+*.js
+*.wasm

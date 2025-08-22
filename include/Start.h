@@ -11,7 +11,9 @@
 #include "Texture.h"
 #include "Text.h"
 #include "Manager.h"
+#ifndef __EMSCRIPTEN__
 #include "File/conf.h"
+#endif
 #include "File/Color.h"
 #include "State/State.h"
 #include "Math/Core.h"

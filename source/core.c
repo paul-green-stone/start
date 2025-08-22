@@ -1,4 +1,3 @@
-#include <libconfig.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -8,8 +7,12 @@
 
 #include "../include/Start.h"
 #include "../include/Core.h"
-#include "../include/File/conf.h"
 #include "../include/Error.h"
+
+#ifndef __EMSCRIPTEN__
+#include <libconfig.h>
+#include "../include/File/conf.h"
+#endif
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
@@ -80,6 +83,7 @@ static struct lookup_table_entry IMG_Init__flags[] = {
 /* ===================== AUXILIARY FUNCTIONS ====================== */
 /* ================================================================ */
 
+#ifndef __EMSCRIPTEN__
 /**
  * Creates a default system configuration file containing an array of system initialization flags.
  * 
@@ -244,15 +248,17 @@ static int _read_default_system_config_file(struct flags* _flags) {
     /* ======== */
     return SSUCCESS;
 }
+#endif
 
 /* ================================================================ */
 /* ==================== FUNCTIONS DEFENITIONS ===================== */
 /* ================================================================ */
 
 int Start(void) {
-
-    char filepath[64];
     int status = SSUCCESS;
+
+#ifndef __EMSCRIPTEN__
+    char filepath[64];
     struct flags flags = {0, 0};
     /* ======== */
 
@@ -272,15 +278,20 @@ int Start(void) {
 
     /* ============== Initializaing IMG =============== */
     if (!(IMG_Init(flags.IMG_flags) & flags.IMG_flags)) { goto ERROR; }
+#else
+    /* ============== Initializaing SDL =============== */
+    if (SDL_Init(SDL_INIT_EVERYTHING & ~SDL_INIT_HAPTIC) != 0) { goto ERROR; }
 
+    /* ============== Initializaing IMG =============== */
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) { goto ERROR; }
+#endif
     /* ============== Initializaing TTF =============== */
     if (TTF_Init() != 0) { goto ERROR; }
     
     /* ======== */
     return SSUCCESS;
 
-    ERROR: {
-        
+    ERROR: {        
         status = (status == SSUCCESS) ? SERR_SDL : status;
 
         Stop();
