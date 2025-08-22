@@ -1,16 +1,19 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <string.h>
-#include <libconfig.h>
 
-#include "../include/Start.h"
 #include "../include/Application.h"
-#include "../include/Window.h"
 #include "../include/Clock.h"
-#include "../include/File/conf.h"
 #include "../include/Error.h"
+#include "../include/Start.h"
+#include "../include/Window.h"
+
+#ifndef __EMSCRIPTEN__
+#include "../include/File/conf.h"
+#include <libconfig.h>
+#endif
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
@@ -19,19 +22,20 @@
 /* Default configuration file */
 #define DEFAULT_CONFIGURATION_FILE "application.conf"
 
-#define combine(buffer) \
-    (buffer)[0] = '\0'; \
-    strcat((buffer), DEFAULT_CONFIGURATION_DIRECTORY); \
-    strcat((buffer), "/"); \
-    strcat((buffer), DEFAULT_CONFIGURATION_FILE); \
-    (buffer)[strlen((buffer))] = '\0'; \
+#define combine(buffer)                                                        \
+    (buffer)[0] = '\0';                                                        \
+    strcat((buffer), DEFAULT_CONFIGURATION_DIRECTORY);                         \
+    strcat((buffer), "/");                                                     \
+    strcat((buffer), DEFAULT_CONFIGURATION_FILE);                              \
+    (buffer)[strlen((buffer))] = '\0';
 
 /* ================================================================ */
 
 struct application {
 
-    /* A structure that contains information about both the `SDL_Window` and its associated `SDL_Renderer` */
-    Window* window;
+    /* A structure that contains information about both the `SDL_Window` and its
+     * associated `SDL_Renderer` */
+    Window *window;
 
     /* The main game loop controlling variable */
     int is_running;
@@ -43,13 +47,13 @@ struct application {
     float frame_period;
     /* How much time has passed since the last frame */
     float delta_time;
-    
+
     /* Frame start time */
     Uint64 fst;
     Uint64 running_time;
 
     /* Application's current state */
-    void* state;
+    void *state;
 };
 
 /* ================================================================ */
@@ -59,7 +63,7 @@ struct default_app {
     Uint64 wflags;
     Uint64 rflags;
 
-    char* title;
+    char *title;
 
     int width;
     int height;
@@ -80,7 +84,7 @@ static struct lookup_table_entry SDL_CreateWindow__flags[] = {
     {"SDL_WINDOW_MOUSE_GRABBED", SDL_WINDOW_MOUSE_GRABBED},
     {"SDL_WINDOW_INPUT_FOCUS", SDL_WINDOW_INPUT_FOCUS},
     {"SDL_WINDOW_MOUSE_FOCUS", SDL_WINDOW_MOUSE_FOCUS},
-    {"SDL_WINDOW_FULLSCREEN_DESKTOP", ( SDL_WINDOW_FULLSCREEN | 0x00001000 )},
+    {"SDL_WINDOW_FULLSCREEN_DESKTOP", (SDL_WINDOW_FULLSCREEN | 0x00001000)},
     {"SDL_WINDOW_FOREIGN", SDL_WINDOW_FOREIGN},
     {"SDL_WINDOW_ALLOW_HIGHDPI", SDL_WINDOW_ALLOW_HIGHDPI},
     {"SDL_WINDOW_MOUSE_CAPTURE", SDL_WINDOW_MOUSE_CAPTURE},
@@ -92,8 +96,7 @@ static struct lookup_table_entry SDL_CreateWindow__flags[] = {
     {"SDL_WINDOW_KEYBOARD_GRABBED", SDL_WINDOW_KEYBOARD_GRABBED},
     {"SDL_WINDOW_VULKAN", SDL_WINDOW_VULKAN},
     {"SDL_WINDOW_METAL", SDL_WINDOW_METAL},
-    {"SDL_WINDOW_INPUT_GRABBED", SDL_WINDOW_MOUSE_GRABBED}
-};
+    {"SDL_WINDOW_INPUT_GRABBED", SDL_WINDOW_MOUSE_GRABBED}};
 
 /* ================================================================ */
 
@@ -101,8 +104,7 @@ static struct lookup_table_entry SDL_CreateRenderer__flags[] = {
     {"SDL_RENDERER_SOFTWARE", SDL_RENDERER_SOFTWARE},
     {"SDL_RENDERER_ACCELERATED", SDL_RENDERER_ACCELERATED},
     {"SDL_RENDERER_PRESENTVSYNC", SDL_RENDERER_PRESENTVSYNC},
-    {"SDL_RENDERER_TARGETTEXTURE", SDL_RENDERER_TARGETTEXTURE}
-};
+    {"SDL_RENDERER_TARGETTEXTURE", SDL_RENDERER_TARGETTEXTURE}};
 
 /* ================================================================ */
 
@@ -112,18 +114,20 @@ static struct application app;
 /* ===================== AUXILIARY FUNCTIONS ====================== */
 /* ================================================================ */
 
+#ifndef __EMSCRIPTEN__
 /**
  * Reads a configuration file containing application settings and SDL flags,
  * then populates a `default_app` structure with the parsed values.
- * 
- * @param _app [output parameter] Pointer to a structure that will store parsed configuration values
- * 
+ *
+ * @param _app [output parameter] Pointer to a structure that will store parsed
+ * configuration values
+ *
  * @return Returns `SSUCCESS` on success or a negative error code on failure.
  */
-static int _read_default_configuration_file(struct default_app* _app) {
+static int _read_default_configuration_file(struct default_app *_app) {
 
     config_t config;
-    config_setting_t* array = NULL;
+    config_setting_t *array = NULL;
 
     int status;
     int length;
@@ -150,7 +154,7 @@ static int _read_default_configuration_file(struct default_app* _app) {
     /* === Extractint he dimensions of the window === */
     Conf_extract(&config, "application.width", INT, &_app->width);
     Conf_extract(&config, "application.height", INT, &_app->height);
-    
+
     /* === Extracting the window's title === */
     Conf_extract(&config, "application.title", STRING, &_app->title);
 
@@ -162,7 +166,11 @@ static int _read_default_configuration_file(struct default_app* _app) {
     for (i = 0; i < length; i++) {
 
         /* === Map a string to its integral counterpart === */
-        temp = lookup_table_find(SDL_CreateWindow__flags, sizeof(SDL_CreateWindow__flags) / sizeof(SDL_CreateWindow__flags[0]), config_setting_get_string_elem(array, i), &flag);
+        temp =
+            lookup_table_find(SDL_CreateWindow__flags,
+                              sizeof(SDL_CreateWindow__flags) /
+                                  sizeof(SDL_CreateWindow__flags[0]),
+                              config_setting_get_string_elem(array, i), &flag);
 
         /* === Combining flags === */
         _app->wflags |= (temp == 0) ? flag : 0;
@@ -176,7 +184,11 @@ static int _read_default_configuration_file(struct default_app* _app) {
     for (i = 0; i < length; i++) {
 
         /* === Map a string to its integral counterpart === */
-        temp = lookup_table_find(SDL_CreateRenderer__flags, sizeof(SDL_CreateRenderer__flags) / sizeof(SDL_CreateRenderer__flags[0]), config_setting_get_string_elem(array, i), &flag);
+        temp =
+            lookup_table_find(SDL_CreateRenderer__flags,
+                              sizeof(SDL_CreateRenderer__flags) /
+                                  sizeof(SDL_CreateRenderer__flags[0]),
+                              config_setting_get_string_elem(array, i), &flag);
 
         /* === Combining flags === */
         _app->rflags |= (temp == 0) ? flag : 0;
@@ -189,16 +201,18 @@ static int _read_default_configuration_file(struct default_app* _app) {
 /* ================================================================ */
 
 /**
- * Creates a default configuration file with predefined window and renderer settings using the libconfig library.
- * 
- * @return Returns `SSUCCESS` (0) on success or a negative error code on failure.
+ * Creates a default configuration file with predefined window and renderer
+ * settings using the libconfig library.
+ *
+ * @return Returns `SSUCCESS` (0) on success or a negative error code on
+ * failure.
  */
 static int _write_default_configuration_file_(void) {
 
     config_t config;
-    config_setting_t* setting = NULL;
-    config_setting_t* array = NULL;
-    config_setting_t* elm = NULL;
+    config_setting_t *setting = NULL;
+    config_setting_t *array = NULL;
+    config_setting_t *elm = NULL;
 
     size_t i;
 
@@ -206,18 +220,14 @@ static int _write_default_configuration_file_(void) {
 
     /* Structure holding default application properties */
     struct {
-        char* wflags[1];
-        char* rflags[1];
-        
-        char* title;
+        char *wflags[1];
+        char *rflags[1];
+
+        char *title;
         int width;
         int height;
     } default_app = {
-        {"SDL_WINDOW_SHOWN"},
-        {"SDL_RENDERER_ACCELERATED"},
-        "Start",
-        640,
-        480,
+        {"SDL_WINDOW_SHOWN"}, {"SDL_RENDERER_ACCELERATED"}, "Start", 640, 480,
     };
     /* ======== */
 
@@ -226,7 +236,8 @@ static int _write_default_configuration_file_(void) {
     config_init(&config);
 
     /* === Create a new setting for the application configuration === */
-    setting = config_setting_add(config_root_setting(&config), "application", CONFIG_TYPE_GROUP);
+    setting = config_setting_add(config_root_setting(&config), "application",
+                                 CONFIG_TYPE_GROUP);
 
     /* === TITLE === */
     elm = config_setting_add(setting, "title", CONFIG_TYPE_STRING);
@@ -243,7 +254,8 @@ static int _write_default_configuration_file_(void) {
     array = config_setting_add(setting, "Window", CONFIG_TYPE_ARRAY);
 
     /* === Set window flags === */
-    for (i = 0; i < sizeof(default_app.wflags) / sizeof(default_app.wflags[0]); i++) {
+    for (i = 0; i < sizeof(default_app.wflags) / sizeof(default_app.wflags[0]);
+         i++) {
 
         elm = config_setting_add(array, NULL, CONFIG_TYPE_STRING);
         config_setting_set_string(elm, default_app.wflags[i]);
@@ -252,48 +264,71 @@ static int _write_default_configuration_file_(void) {
     array = config_setting_add(setting, "Renderer", CONFIG_TYPE_ARRAY);
 
     /* === Set renderer flags === */
-    for (i = 0; i < sizeof(default_app.rflags) / sizeof(default_app.rflags[0]); i++) {
+    for (i = 0; i < sizeof(default_app.rflags) / sizeof(default_app.rflags[0]);
+         i++) {
 
         elm = config_setting_add(array, NULL, CONFIG_TYPE_STRING);
         config_setting_set_string(elm, default_app.rflags[i]);
     }
-    
+
     /* === Write the configuration to a file === */
-    if (!config_write_file(&config, filepath)) {
+    if (!config_write_file(&config, filepath))
         return SERR_LIBCONFIG;
-    }
 
     config_destroy(&config);
-    
+
     /* ======== */
     return SSUCCESS;
 }
+#endif
 
 /* ================================================================ */
 /* ==================== FUNCTIONS DEFENITIONS ===================== */
 /* ================================================================ */
 
-int App_init(void) {
-
+int App_init(ApplicationConfig *app_config) {
     struct default_app _app;
 
-    char filepath[64];
-    /* ======== */
+    // Check if we're running on the web or desktop
+#ifndef __EMSCRIPTEN__
+    if (app_config == NULL) {  // If app_config is NULL, we default to libconfig 
+        char filepath[64];
+        /* ======== */
 
-    combine(filepath);
+        combine(filepath);
 
-    /* === Clearing the struct === */
-    memset(&_app, 0, sizeof(struct default_app));
+        /* === Clearing the struct === */
+        memset(&_app, 0, sizeof(struct default_app));
 
-    if (!file_exists(filepath)) {
-        _write_default_configuration_file_();
+        if (!file_exists(filepath))
+            _write_default_configuration_file_();
+
+        _read_default_configuration_file(&_app);
+    } else {
+        _app.title = app_config->title;
+        _app.width = app_config->width;
+        _app.height = app_config->height;
+        _app.wflags = app_config->window_flags;
+        _app.rflags = app_config->renderer_flags;
+    }
+#else  // web configuration
+    if (app_config == NULL) {  // app_config must always be set for the web
+        Error_set(SERR_NULL_POINTER);
+
+        return SERR_NULL_POINTER;
     }
 
-    _read_default_configuration_file(&_app);
+    _app.title = app_config->title;
+    _app.width = app_config->width;
+    _app.height = app_config->height;
+    _app.wflags = app_config->window_flags;
+    _app.rflags = app_config->renderer_flags;
+#endif
 
     /* === CREATING A WINDOW === */
-    if ((app.window = Window_new(_app.title, _app.width, _app.height, _app.wflags, _app.rflags)) == NULL) {
-        
+    if ((app.window = Window_new(_app.title, _app.width, _app.height,
+                                 _app.wflags, _app.rflags)) == NULL) {
+
         Error_set(SERR_SDL);
         /* ======== */
         return SERR_SDL;
@@ -310,16 +345,14 @@ int App_init(void) {
 /* ================================================================ */
 
 void App_quit(void) {
-    
+
     /* Destroying the window */
     Window_destroy(&app.window);
 }
 
 /* ================================================================ */
 
-int App_isRunning(void) {
-    return app.is_running;
-}
+int App_isRunning(void) { return app.is_running; }
 
 /* ================================================================ */
 
@@ -337,8 +370,9 @@ void App_render(void) {
 
     /* === Mark the end of a frame === */
     end = SDL_GetPerformanceCounter();
-    /* === and compute delta time (the amount of time between two frames in seconds) === */
-    app.delta_time = (end - app.fst) / (float) SDL_GetPerformanceFrequency();
+    /* === and compute delta time (the amount of time between two frames in
+     * seconds) === */
+    app.delta_time = (end - app.fst) / (float)SDL_GetPerformanceFrequency();
 
     /* === Delay time in milliseconds === */
     delay_time = (app.frame_period - app.delta_time) * 1000.0f;
@@ -374,39 +408,29 @@ void App_setFPS(int fps) {
 
 /* ================================================================ */
 
-void App_stop(void) {
-    app.is_running = !app.is_running;
-}
+void App_stop(void) { app.is_running = !app.is_running; }
 
 /* ================================================================ */
 
-SDL_Renderer* get_context(void) {
-    return Window_get_context(app.window);
-}
+SDL_Renderer *get_context(void) { return Window_get_context(app.window); }
 
 /* ================================================================ */
 
-SDL_Window* get_window(void) {
-    return Window_get_window(app.window);
-}
+SDL_Window *get_window(void) { return Window_get_window(app.window); }
 
 /* ================================================================ */
 
-double get_delta(void) {
-    return app.delta_time;
-}
+double get_delta(void) { return app.delta_time; }
 
 /* ================================================================ */
 
-int get_fps(void) {
-    return app.actual_fps;
-}
+int get_fps(void) { return app.actual_fps; }
 
 /* ================================================================ */
 
-int take_screenshot(const char* filename) {
+int take_screenshot(const char *filename) {
 
-    SDL_Surface* surface = NULL;
+    SDL_Surface *surface = NULL;
 
     int width;
     int height;
@@ -421,14 +445,18 @@ int take_screenshot(const char* filename) {
     memset(filepath, 0, sizeof(filepath));
 
     if (stat("screenshots", &st) == -1) {
+#ifdef _WIN32
+        mkdir("screenshots");
+#else
         mkdir("screenshots", 0755);
+#endif
     }
 
     strcat(filepath, "screenshots/");
 
     /* === Do not dereference a NULL pointer === */
     if (filename == NULL) {
-        
+
         Error_set(SERR_NULL_POINTER);
         /* ======== */
         return SERR_NULL_POINTER;
@@ -437,14 +465,16 @@ int take_screenshot(const char* filename) {
     /* === Getting window dimensions === */
     SDL_GetWindowSize(Window_get_window(app.window), &width, &height);
 
-    if ((surface = SDL_CreateRGBSurfaceWithFormat(0, width, height, 32, SDL_PIXELFORMAT_RGBA32)) == NULL) {
+    if ((surface = SDL_CreateRGBSurfaceWithFormat(
+             0, width, height, 32, SDL_PIXELFORMAT_RGBA32)) == NULL) {
 
         Error_set(SERR_SDL);
         /* ========= */
         return SERR_SDL;
     }
 
-    if (SDL_RenderReadPixels(get_context(), NULL, SDL_PIXELFORMAT_RGBA32, surface->pixels, surface->pitch) != 0) {
+    if (SDL_RenderReadPixels(get_context(), NULL, SDL_PIXELFORMAT_RGBA32,
+                             surface->pixels, surface->pitch) != 0) {
 
         SDL_FreeSurface(surface);
         Error_set(SERR_SDL);
@@ -455,7 +485,6 @@ int take_screenshot(const char* filename) {
     /* === Updating the filename === */
     strcat(filepath, filename);
     filepath[strlen(filepath)] = '\0';
-
 
     if (IMG_SavePNG(surface, filepath) != 0) {
 
@@ -473,14 +502,10 @@ int take_screenshot(const char* filename) {
 
 /* ================================================================ */
 
-void set_state(const void* state) {
-    app.state = (void*) state;
-}
+void set_state(const void *state) { app.state = (void *)state; }
 
 /* ================================================================ */
 
-void* get_state(void) {
-    return app.state;
-}
+void *get_state(void) { return app.state; }
 
 /* ================================================================ */

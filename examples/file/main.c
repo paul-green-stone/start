@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 
     Start();
 
-    App_init();
+    App_init(NULL);
     App_quit();
 
     if (status != 0) {

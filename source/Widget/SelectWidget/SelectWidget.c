@@ -166,7 +166,7 @@ int SelectWidget_prev(void* _self) {
 const char* SelectWidget_get_value(const void* _self) {
 
     const struct select_widget* self = _self;
-    /* ======== *
+    /* ======== */
     
     /* === Do not dereference `NULL` === */
     if (self == NULL) {

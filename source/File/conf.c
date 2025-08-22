@@ -5,6 +5,9 @@
 #include <errno.h>
 
 #include "../../include/Error.h"
+
+#ifndef __EMSCRIPTEN__
+
 #include "../../include/File/conf.h"
 
 /* ================================================================ */
@@ -277,3 +280,5 @@ int Conf_lookup(const config_t* config, const char* path, config_setting_t** set
 }
 
 /* ================================================================ */
+
+#endif /* __EMSCRIPTEN__ */

@@ -7,12 +7,20 @@
 /* ========================== INTERFACE =========================== */
 /* ================================================================ */
 
+typedef struct ApplicationConfig {
+    char *title;
+    int width;
+    int height;
+    Uint32 window_flags;
+    Uint32 renderer_flags;
+} ApplicationConfig;
+
 /**
  * Initializes the application by creating the main window and setting up basic parameters.
  * 
  * @return Returns the `Clock` that was created or NULL on failure; call `Error_get()` for more information
  */
-int App_init(void);
+int App_init(ApplicationConfig *app_config);
 
 /**
  * Cleans up and shuts down the application.

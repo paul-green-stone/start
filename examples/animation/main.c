@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     char buffer[64];
 
     Start();
-    App_init();
+    App_init(NULL);
 
     ctx = get_context();
 

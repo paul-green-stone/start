@@ -7,18 +7,40 @@ OBJDIR   = objects
 # Full names of object files
 OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o List.o Camera.o Animation.o cJSON.o)
 
+TARGET ?= DESKTOP
+
+RELEASE ?= DEBUG
+
 # The Compiler
-CC       = gcc
+ifeq ($(TARGET), WEB)
+	CC := emcc
+else
+	CC := gcc
+endif
+
 # and its flags
-CFLAGS   = -c -g -Wall -Wextra -pedantic-errors -fPIC -O2 -std=c99
+CFLAGS   := -c -Wall -Wextra -pedantic-errors -fPIC -O2 -std=c99
+
+ifeq ($(RELEASE), DEBUG)
+	CFLAGS += -g
+endif
 
 # Additional libraries that need to be searched for function definitions
-LDFLAGS  = `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf` -lm
+ifeq ($(TARGET), WEB)
+	CFLAGS += -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s SDL2_IMAGE_FORMATS='["png"]' -Wno-int-conversion
+else
+	LDFLAGS  = `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf` -lm
+endif
 
 # An archiver to produce a static library
-AR       = ar
+ifeq ($(TARGET), WEB)
+	AR = emar
+else
+	AR = ar
+endif
+
 # The archiver flags
-ARFLAGS  = -r -s -c
+ARFLAGS  = rsc
 
 # Library name
 LIB_NAME = start
@@ -26,7 +48,7 @@ LIB_NAME = start
 PREFIX   = lib
 
 # Aa list of all header files in the `include` directory and its subdirectories
-INCLUDE  = $(shell find include -type f -name '*.h')
+INCLUDE  = $(wildcard include/**/*.h)
 
 # Operating System name
 OS_NAME  = $(shell uname -s)
@@ -38,8 +60,14 @@ DESTDIR  ?= /usr/local
 # === Determining the library ==== #
 # ================================ #
 
+# Check if building for the web
+ifeq ($(TARGET), WEB)
+	LIB_SUFFIX = .a
+
+	DLL_SUFFIX = .so 
+
 # If the operating system is Linux, set the variables
-ifeq ($(OS_NAME), Linux)
+else ifeq ($(OS_NAME), Linux)
 # The suffix for static library files
     LIB_SUFFIX = .a
 # The suffix for dynamic library files
@@ -52,8 +80,11 @@ else ifeq ($(OS_NAME), Darwin)
 # The suffix for dynamic library files
     DLL_SUFFIX = .dylib
 
+# For WindowsOS
 else
-    $(error Unsupported operating system)
+    LIB_SUFFIX = .lib
+
+	DLL_SUFFIX = .dll
 endif
 
 # Constructing the name of static library
@@ -67,7 +98,13 @@ SHARED   = $(PREFIX)$(LIB_NAME)$(DLL_SUFFIX)
 # ================================================================ #
 
 # Define a target
-all: $(STATIC) $(SHARED)
+ifeq ($(TARGET), WEB)
+	BUILD_TARGET := $(STATIC)
+else
+	BUILD_TARGET := $(STATIC) $(SHARED)
+endif
+
+all: $(BUILD_TARGET)
 
 # Building a static library 
 $(STATIC): $(OBJECTS)
@@ -75,6 +112,7 @@ $(STATIC): $(OBJECTS)
 
 #Building a shared library
 $(SHARED): $(OBJECTS)
+	echo "Shared lib"
 	$(CC) -shared -o $@ $^ $(LDFLAGS)
 
 # ================================================================ #
@@ -280,7 +318,7 @@ else ifeq ($(OS_NAME), Darwin)
 	done
 
 else
-    $(error Unsupported operating system)
+	@echo "Windows install not supported yet!"
 endif
 
 # ================================================================ #
@@ -312,7 +350,7 @@ else ifeq ($(OS_NAME), Darwin)
 	done
 
 else
-	$(error Unsupported operating system)
+	@echo "Windows uninstall not supported yet!"
 endif
 
 
