@@ -47,11 +47,17 @@ LIB_NAME = start
 # The prefix for library names
 PREFIX   = lib
 
-# Aa list of all header files in the `include` directory and its subdirectories
-INCLUDE  = $(wildcard include/**/*.h)
-
 # Operating System name
 OS_NAME  = $(shell uname -s)
+
+# A list of all header files in the `include` directory and its subdirectories
+ifeq ($(OS_NAME), Linux)
+	INCLUDE  = $(shell find include -type f -name '*.h')
+else ifeq ($(OS_NAME), Darwin)
+	INCLUDE  = $(shell find include -type f -name '*.h')
+else
+	INCLUDE  = $(wildcard include/**/*.h)
+endif
 
 # Default installation location
 DESTDIR  ?= /usr/local
