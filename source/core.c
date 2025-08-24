@@ -2,8 +2,14 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <limits.h>
+
+#ifdef _MSC_VER
+#include <SDL.h>
+#include <SDL_image.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#endif
 
 #include "../include/Start.h"
 #include "../include/Core.h"

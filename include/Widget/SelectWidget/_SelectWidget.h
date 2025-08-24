@@ -1,6 +1,10 @@
 #ifndef _START_SELECT_WIDGET_H
 #define _START_SELECT_WIDGET_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "../_Widget.h"
 #include "../../Text.h"
 #include "../../List.h"
@@ -22,6 +26,10 @@ struct select_widget {
 };
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_SELECT_WIDGET_H */
 

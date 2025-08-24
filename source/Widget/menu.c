@@ -1,6 +1,11 @@
 #include <stdlib.h>
 #include <stddef.h>
+
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 #include "../../include/Widget/Menu.h"
 #include "../../include/Widget/_Widget.h"

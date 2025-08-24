@@ -1,5 +1,10 @@
 #include <stdlib.h>
+
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 #include "../../include/Widget/Widgets.h"
 #include "../../include/Widget/_Class.h"

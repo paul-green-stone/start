@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{5BB108C6-4E3D-F1B5-E506-D38AFC7475C5}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectName>start</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\vclib\libconfig-1.8.1\lib;C:\vclib\SDL2_image-2.8.8\include;C:\vclib\SDL2_ttf-2.24.0\include;C:\vclib\SDL2-2.32.8\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\vclib\libconfig-1.8.1\lib;C:\vclib\SDL2_image-2.8.8\include;C:\vclib\SDL2_ttf-2.24.0\include;C:\vclib\SDL2-2.32.8\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\vclib\libconfig-1.8.1\lib;C:\vclib\SDL2_image-2.8.8\include;C:\vclib\SDL2_ttf-2.24.0\include;C:\vclib\SDL2-2.32.8\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\vclib\libconfig-1.8.1\lib;C:\vclib\SDL2_image-2.8.8\include;C:\vclib\SDL2_ttf-2.24.0\include;C:\vclib\SDL2-2.32.8\include;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>"C:\vclib\SDL2-2.32.8\lib\x64\SDL2.lib";"C:\vclib\SDL2_ttf-2.24.0\lib\x64\SDL2_ttf.lib";"C:\vclib\SDL2_image-2.8.8\lib\x64\SDL2_image.lib";"C:\vclib\libconfig-1.8.1\build\x64\libconfig++s.lib";"C:\vclib\libconfig-1.8.1\build\x64\libconfigs.lib";%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>"C:\vclib\SDL2-2.32.8\lib\x64\SDL2.lib";"C:\vclib\SDL2_ttf-2.24.0\lib\x64\SDL2_ttf.lib";"C:\vclib\SDL2_image-2.8.8\lib\x64\SDL2_image.lib";"C:\vclib\libconfig-1.8.1\build\x64\libconfig++s.lib";"C:\vclib\libconfig-1.8.1\build\x64\libconfigs.lib";%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>"C:\vclib\SDL2-2.32.8\lib\x64\SDL2.lib";"C:\vclib\SDL2_ttf-2.24.0\lib\x64\SDL2_ttf.lib";"C:\vclib\SDL2_image-2.8.8\lib\x64\SDL2_image.lib";"C:\vclib\libconfig-1.8.1\build\x64\libconfig++s.lib";"C:\vclib\libconfig-1.8.1\build\x64\libconfigs.lib";%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>"C:\vclib\SDL2-2.32.8\lib\x64\SDL2.lib";"C:\vclib\SDL2_ttf-2.24.0\lib\x64\SDL2_ttf.lib";"C:\vclib\SDL2_image-2.8.8\lib\x64\SDL2_image.lib";"C:\vclib\libconfig-1.8.1\build\x64\libconfig++s.lib";"C:\vclib\libconfig-1.8.1\build\x64\libconfigs.lib";%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="source\animation.c" />
+    <ClCompile Include="source\application.c" />
+    <ClCompile Include="source\camera.c" />
+    <ClCompile Include="source\cJSON.c" />
+    <ClCompile Include="source\clock.c" />
+    <ClCompile Include="source\core.c" />
+    <ClCompile Include="source\error.c" />
+    <ClCompile Include="source\file\conf.c" />
+    <ClCompile Include="source\input.c" />
+    <ClCompile Include="source\list.c" />
+    <ClCompile Include="source\manager.c" />
+    <ClCompile Include="source\math\vector2.c" />
+    <ClCompile Include="source\state\state.c" />
+    <ClCompile Include="source\text.c" />
+    <ClCompile Include="source\texture.c" />
+    <ClCompile Include="source\widget\button\button.c" />
+    <ClCompile Include="source\widget\button\_button.c" />
+    <ClCompile Include="source\widget\menu.c" />
+    <ClCompile Include="source\widget\selectwidget\SelectWidget.c" />
+    <ClCompile Include="source\widget\selectwidget\_SelectWidget.c" />
+    <ClCompile Include="source\widget\textinput\TextInput.c" />
+    <ClCompile Include="source\widget\textinput\_TextInput.c" />
+    <ClCompile Include="source\widget\widget.c" />
+    <ClCompile Include="source\widget\_widget.c" />
+    <ClCompile Include="source\window.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Animation.h" />
+    <ClInclude Include="include\Application.h" />
+    <ClInclude Include="include\Camera.h" />
+    <ClInclude Include="include\cJSON.h" />
+    <ClInclude Include="include\Clock.h" />
+    <ClInclude Include="include\Core.h" />
+    <ClInclude Include="include\Error.h" />
+    <ClInclude Include="include\file\Color.h" />
+    <ClInclude Include="include\file\conf.h" />
+    <ClInclude Include="include\Input.h" />
+    <ClInclude Include="include\List.h" />
+    <ClInclude Include="include\Manager.h" />
+    <ClInclude Include="include\math\Core.h" />
+    <ClInclude Include="include\math\Vector2D.h" />
+    <ClInclude Include="include\Start.h" />
+    <ClInclude Include="include\state\State.h" />
+    <ClInclude Include="include\state\_State.h" />
+    <ClInclude Include="include\Text.h" />
+    <ClInclude Include="include\Texture.h" />
+    <ClInclude Include="include\widget\button\Button.h" />
+    <ClInclude Include="include\widget\button\_Button.h" />
+    <ClInclude Include="include\widget\Menu.h" />
+    <ClInclude Include="include\widget\selectwidget\SelectWidget.h" />
+    <ClInclude Include="include\widget\selectwidget\_SelectWidget.h" />
+    <ClInclude Include="include\widget\textinput\TextInput.h" />
+    <ClInclude Include="include\widget\textinput\_TextInput.h" />
+    <ClInclude Include="include\widget\Widget.h" />
+    <ClInclude Include="include\widget\Widgets.h" />
+    <ClInclude Include="include\widget\_Class.h" />
+    <ClInclude Include="include\widget\_Widget.h" />
+    <ClInclude Include="include\Window.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

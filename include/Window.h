@@ -1,7 +1,15 @@
 #ifndef _START_WINDOW_INTERFACE_H
 #define _START_WINDOW_INTERFACE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
@@ -55,5 +63,9 @@ SDL_Renderer* Window_get_context(const Window* window);
 SDL_Window* Window_get_window(const Window* window);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_WINDOW_INTERFACE_H */

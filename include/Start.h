@@ -3,6 +3,10 @@
 
 /* ================================================================ */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "Core.h"
 #include "Window.h"
 #include "Application.h"
@@ -30,5 +34,9 @@
 #include "Widget/SelectWidget/SelectWidget.h"
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_HEADER_H */

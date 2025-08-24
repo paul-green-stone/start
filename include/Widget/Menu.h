@@ -3,7 +3,16 @@
 
 #include <stdlib.h>
 #include <stddef.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 #include "../Math/Vector2D.h"
 
@@ -142,5 +151,9 @@ int Menu_set_position(Menu* menu, int x, int y);
 int Menu_set_alignment(Menu* menu, Alignment a);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_MENU_H */

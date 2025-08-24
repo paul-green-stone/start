@@ -1,8 +1,17 @@
 #ifndef _START_TEXTURE_H
 #define _START_TEXTURE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef _MSC_VER
+#include <SDL.h>
+#include <SDL_image.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#endif
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
@@ -75,5 +84,9 @@ int Texture_drawM(const Texture *t, const SDL_Rect *src, const SDL_Rect *dst, co
 int Texture_get_dimensions(const Texture* texture, int* w, int* h);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_TEXTURE_H */

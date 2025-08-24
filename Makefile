@@ -47,11 +47,17 @@ LIB_NAME = start
 # The prefix for library names
 PREFIX   = lib
 
-# Aa list of all header files in the `include` directory and its subdirectories
-INCLUDE  = $(wildcard include/**/*.h)
-
 # Operating System name
 OS_NAME  = $(shell uname -s)
+
+# A list of all header files in the `include` directory and its subdirectories
+ifeq ($(OS_NAME), Linux)
+	INCLUDE  = $(shell find include -type f -name '*.h')
+else ifeq ($(OS_NAME), Darwin)
+	INCLUDE  = $(shell find include -type f -name '*.h')
+else
+	INCLUDE  = $(wildcard include/**/*.h)
+endif
 
 # Default installation location
 DESTDIR  ?= /usr/local
@@ -299,12 +305,9 @@ install:
 ifeq ($(OS_NAME), Linux)
 	install -Dm755 $(SHARED) $(DESTDIR)/lib/$(SHARED)
 	install -Dm644 $(STATIC) $(DESTDIR)/lib/$(STATIC)
-
-	for header in $(INCLUDE); do \
-		destination=$$(echo $$header | sed 's,^include/,,') ; \
-        mkdir -p $(DESTDIR)/include/start/$$(dirname $$destination) ; \
-        install -m644 $$header $(DESTDIR)/include/start/$$destination ; \
-	done
+	
+	mkdir -p $(DESTDIR)/include/start
+	cp -r include/* $(DESTDIR)/include/start/
 
 # If the operating system is macOS
 else ifeq ($(OS_NAME), Darwin)
@@ -333,10 +336,7 @@ ifeq ($(OS_NAME), Linux)
 	rm -f $(DESTDIR)/lib/$(STATIC)
 
 	# Remove installed headers preserving directory structure
-	for header in $(INCLUDE); do \
-		destination=$$(echo $$header | sed 's,^include/,,') ; \
-		rm -f $(DESTDIR)/include/start/$$destination ; \
-	done
+	rm -rf $(DESTDIR)/include/start
 
 else ifeq ($(OS_NAME), Darwin)
 	# Remove dynamic and static libraries

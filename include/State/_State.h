@@ -1,6 +1,10 @@
 #ifndef _START_STATE_CLASS_H
 #define _START_STATE_CLASS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -18,5 +22,9 @@ struct state {
 };
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_STATE_CLASS_H */

@@ -1,7 +1,16 @@
 #ifndef _START_WIDGET_INTERFACE_H
 #define _START_WIDGET_INTERFACE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
+
 #include <stdarg.h>
 
 #include "../Math/Vector2D.h"
@@ -124,5 +133,9 @@ void Widget_unfocus(void* widget);
 int Widget_set_label_color(void* widget, const SDL_Color* color);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_WIDGET_INTERFACE_H */

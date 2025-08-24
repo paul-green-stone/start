@@ -1,6 +1,10 @@
 #ifndef _LIST_H
 #define _LIST_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -198,5 +202,9 @@ int List_insert_after(List* list, Node* node, const void* data);
 int List_insert_before(List* list, Node* node, const void* data);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _LIST_H */

@@ -1,5 +1,11 @@
+#ifdef _MSC_VER
+#include <SDL.h>
+#include <SDL_image.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#endif
+
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>

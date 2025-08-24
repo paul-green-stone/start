@@ -1,6 +1,10 @@
 #ifndef _START_APPLICATION_H
 #define _START_APPLICATION_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "Core.h"
 
 /* ================================================================ */
@@ -111,5 +115,9 @@ void* get_state(void);
 SDL_Window* get_window(void);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_APPLICATION_H */
