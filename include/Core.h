@@ -1,6 +1,10 @@
 #ifndef _START_CORE_H
 #define _START_CORE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef _MSC_VER
 #include <SDL.h>
 #else
@@ -117,5 +121,9 @@ int directory_new(const char* path);
 void print_message(FILE* stream, Message_Type msg_type, const char* format, ...);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_CORE_H */

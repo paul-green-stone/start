@@ -1,6 +1,10 @@
 #ifndef START_TEXT_H
 #define START_TEXT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef _MSC_VER
 #include <SDL.h>
 #include <SDL_image.h>
@@ -117,5 +121,9 @@ int Text_draw(const Text* text, const SDL_Rect* dst);
 int Text_drawM(const Text *t, const SDL_Rect *src, const SDL_Rect *dst, const double angle, const SDL_Point* center, const SDL_RendererFlip flip);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* START_TEXT_H */

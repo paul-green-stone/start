@@ -1,6 +1,10 @@
 #ifndef _START_CORE_MATH_H
 #define _START_CORE_MATH_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* ================================================================ */
 
 /**
@@ -15,5 +19,9 @@
 #define PinR(x, y, rect) ((x) > (rect)->x && x < (rect)->x + (rect)->w) && (y > (rect)->y && y < (rect)->y + (rect)->h)
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_CORE_MATH_H */

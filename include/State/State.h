@@ -1,6 +1,10 @@
 #ifndef _START_STATE_INTERFACE_H
 #define _START_STATE_INTERFACE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdarg.h>
 
 /* ================================================================ */
@@ -52,5 +56,9 @@ int State_handle(void* state, ...);
 int State_update(void* state, ...);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_STATE_INTERFACE_H */

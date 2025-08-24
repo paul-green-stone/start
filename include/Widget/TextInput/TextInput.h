@@ -1,6 +1,10 @@
 #ifndef _START_TEXTINPUT_INTERFACE_H
 #define _START_TEXTINPUT_INTERFACE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* ================================================================ */
 
 /**
@@ -30,5 +34,9 @@ int TextInput_get_input(const void* input, char* buffer);
 int TextInput_clear(void* widget);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_TEXTINPUT_INTERFACE_H */

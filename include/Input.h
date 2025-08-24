@@ -1,6 +1,10 @@
 #ifndef _START_INPUT_H
 #define _START_INPUT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef _MSC_VER
 #include <SDL.h>
 #else
@@ -73,5 +77,9 @@ int Input_wasBtn_pressed(MouseButton btn);
 void Input_get_cursorPos(int* x, int* y);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_INPUT_H */

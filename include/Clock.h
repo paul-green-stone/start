@@ -1,6 +1,10 @@
 #ifndef _START_CLOCK_H
 #define _START_CLOCK_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
@@ -105,5 +109,9 @@ void Clock_setTimer(Clock* clock, double seconds);
 double Clock_getDelta(const Clock* clock);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_CLOCK_H */

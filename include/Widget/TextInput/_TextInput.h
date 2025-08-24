@@ -1,6 +1,10 @@
 #ifndef _START_TEXT_INPUT_H
 #define _START_TEXT_INPUT_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "../_Widget.h"
 #include "../../Text.h"
 #include "../../Texture.h"
@@ -25,5 +29,9 @@ struct text_input {
 };
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_TEXT_INPUT_H */

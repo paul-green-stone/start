@@ -1,6 +1,10 @@
 #ifndef _START_RESOURCE_MANAGER_H
 #define _START_RESOURCE_MANAGER_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdio.h>
 
 /* ================================================================ */
@@ -43,5 +47,9 @@ void* Manager_lookup(const char* key);
 size_t Manager_size(void);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_RESOURCE_MANAGER_H */

@@ -1,6 +1,10 @@
 #ifndef _START_CAMERA_H
 #define _START_CAMERA_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifdef _MSC_VER
 #include <SDL.h>
 #else
@@ -58,5 +62,9 @@ int Camera_center(Camera* camera);
 void Camera_transform(const Camera* camera, float x, float y, float* _x, float* _y);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_CAMERA_H */

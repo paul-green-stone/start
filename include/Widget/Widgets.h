@@ -1,6 +1,10 @@
 #ifndef _START_WIDGETS_COLLECTION_H
 #define _START_WIDGETS_COLLECTION_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /* ================================================================ */
 
 /**
@@ -45,5 +49,9 @@ extern const void* TextInput;
 extern const void* SelectWidget;
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_WIDGETS_COLLECTION_H */

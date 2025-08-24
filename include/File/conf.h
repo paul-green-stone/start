@@ -1,6 +1,10 @@
 #ifndef _START_LIBCONFIG_H
 #define _START_LIBCONFIG_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <libconfig.h>
 
 /* ================================================================ */
@@ -57,5 +61,9 @@ int Conf_extract(config_t* config, const char* path, Setting_Value type, void* d
 int Conf_lookup(const config_t* config, const char* path, config_setting_t** setting);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_LIBCONFIG_H */

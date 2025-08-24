@@ -1,6 +1,10 @@
 #ifndef _START_ERROR_H
 #define _START_ERROR_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "Start.h"
 
 /* ================================================================ */
@@ -51,5 +55,9 @@ const char* Error_string(void);
 void Error_set_string(const char* string);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_ERROR_H */

@@ -1,6 +1,10 @@
 #ifndef _START_ANIMATION_H
 #define _START_ANIMATION_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "Texture.h"
 
 /* ================================================================ */
@@ -93,6 +97,10 @@ void Animation_update(Animation* animation, double delta_time);
 void Animation_setSpeed(Animation* animation, double speed);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_ANIMATION_H */
 

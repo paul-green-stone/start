@@ -1,6 +1,10 @@
 #ifndef _START_VECTOR2D_H
 #define _START_VECTOR2D_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <math.h>
 
 /* ================================================================ */
@@ -126,5 +130,9 @@ int Vector2_add(const Vector2* a, Vector2* b, Vector2* dst_vector);
 int Vector2_subtract(const Vector2* a, Vector2* b, Vector2* dst_vector);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_VECTOR2D_H */

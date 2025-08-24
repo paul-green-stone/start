@@ -1,6 +1,10 @@
 #ifndef _START_BUTTON_INTERFACE_H
 #define _START_BUTTON_INTERFACE_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "../../Texture.h"
 
 /* ================================================================ */
@@ -26,5 +30,9 @@ int Button_set_texture(void* button, Texture* texture);
 int Button_set_label_color(void* button, const SDL_Color* color);
 
 /* ================================================================ */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* _START_BUTTON_INTERFACE_H */
