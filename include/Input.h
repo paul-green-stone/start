@@ -1,7 +1,11 @@
 #ifndef _START_INPUT_H
 #define _START_INPUT_H
 
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */

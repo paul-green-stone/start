@@ -1,9 +1,16 @@
 #ifndef START_TEXT_H
 #define START_TEXT_H
 
+#ifdef _MSC_VER
+#include <SDL.h>
+#include <SDL_image.h>
+#include<SDL_ttf.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
+#endif
+
 #include <string.h>
 
 #include "Texture.h"

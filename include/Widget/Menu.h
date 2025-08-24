@@ -3,7 +3,12 @@
 
 #include <stdlib.h>
 #include <stddef.h>
+
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 #include "../Math/Vector2D.h"
 

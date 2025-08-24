@@ -1,8 +1,13 @@
 #ifndef _START_TEXTURE_H
 #define _START_TEXTURE_H
 
+#ifdef _MSC_VER
+#include <SDL.h>
+#include <SDL_image.h>
+#else
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#endif
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */

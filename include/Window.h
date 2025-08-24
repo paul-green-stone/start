@@ -1,7 +1,11 @@
 #ifndef _START_WINDOW_INTERFACE_H
 #define _START_WINDOW_INTERFACE_H
 
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */

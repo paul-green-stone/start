@@ -1,7 +1,12 @@
 #ifndef _START_WIDGET_INTERFACE_H
 #define _START_WIDGET_INTERFACE_H
 
+#ifdef _MSC_VER
+#include <SDL.h>
+#else
 #include <SDL2/SDL.h>
+#endif
+
 #include <stdarg.h>
 
 #include "../Math/Vector2D.h"
