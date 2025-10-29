@@ -104,7 +104,7 @@ int directory_exists(const char* path);
  *
  * @param path a null-terminated string specifying the directory path to create
  *
- * @return Returns 1 if the directory already exists, 0 if it was created, and a negative error code on failure.
+ * @return Returns 1 if the directory already exists, 0 if it was created, and a negative error code on failure. Call `Error_string()` for more information.
  */
 int directory_new(const char* path);
 

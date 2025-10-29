@@ -4,21 +4,18 @@
 #include <limits.h>
 
 #ifdef _MSC_VER
-#include <SDL.h>
-#include <SDL_image.h>
+    #include <SDL.h>
+    #include <SDL_image.h>
 #else
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+    #include <SDL2/SDL.h>
+    #include <SDL2/SDL_image.h>
 #endif
 
+#include <libconfig.h>
 #include "../include/Start.h"
 #include "../include/Core.h"
 #include "../include/Error.h"
-
-#ifndef __EMSCRIPTEN__
-#include <libconfig.h>
 #include "../include/File/conf.h"
-#endif
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
@@ -130,7 +127,6 @@ static int _write_default_system_config_file(void) {
     /**
      * graphics: ["IMG_INIT_PNG", "IMG_INIT_JPG"];
      */ 
-
     system_array = config_setting_add(root, "graphics", CONFIG_TYPE_ARRAY);
 
     /* Adding data to the array */
@@ -261,9 +257,9 @@ static int _read_default_system_config_file(struct flags* _flags) {
 /* ================================================================ */
 
 int Start(void) {
+
     int status = SSUCCESS;
 
-#ifndef __EMSCRIPTEN__
     char filepath[64];
     struct flags flags = {0, 0};
     /* ======== */
@@ -284,18 +280,12 @@ int Start(void) {
 
     /* ============== Initializaing IMG =============== */
     if (!(IMG_Init(flags.IMG_flags) & flags.IMG_flags)) { goto ERROR; }
-#else
-    /* ============== Initializaing SDL =============== */
-    if (SDL_Init(SDL_INIT_EVERYTHING & ~SDL_INIT_HAPTIC) != 0) { goto ERROR; }
 
-    /* ============== Initializaing IMG =============== */
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) { goto ERROR; }
-#endif
     /* ============== Initializaing TTF =============== */
     if (TTF_Init() != 0) { goto ERROR; }
     
     /* ======== */
-    return SSUCCESS;
+    return status;
 
     ERROR: {        
         status = (status == SSUCCESS) ? SERR_SDL : status;
@@ -375,8 +365,8 @@ int file_exists(const char* filename) {
     /* ======== */
 
     if ((file = fopen(filename, "r")) != NULL) {
-        fclose(file);
 
+        fclose(file);
         /* ======== */
         return 1;
     }
@@ -402,25 +392,32 @@ int directory_exists(const char* path) {
 
 int directory_new(const char* path) {
 
+    int mkdir_status;
+    int status = SSUCCESS;
+    /* ======== */
+
     /* === Directory exists === */
     if (directory_exists(path) == 1) { return 1; }
+
     /* === Creating a directory === */
     else if ((directory_exists(path) == 0)) {
-        int mkdir_status;
-#ifdef _WIN32
-        mkdir_status = mkdir("screenshots");
-#else
-        mkdir_status = mkdir("screenshots", 0755);
-#endif
+
+        #ifdef _WIN32
+            mkdir_status = mkdir(path);
+        #else
+            mkdir_status = mkdir(path, 0755);
+        #endif
+
         if (mkdir_status == 0) {
-            return SSUCCESS; 
+            return status; 
         }
     }
     
-    Error_set(SERR_SYSTEM);    
+    status = SERR_SYSTEM;
+    Error_set(status);    
 
     /* ======== */
-    return SERR_SYSTEM;
+    return status;
 }
 
 /* ================================================================ */
@@ -462,6 +459,7 @@ void print_message(FILE* stream, Message_Type msg_type, const char* format, ...)
     if (((bytes_written = snprintf(buffer, sizeof(buffer), "%s: ", prefix)) == 0) || (bytes_written >= sizeof(buffer))) {
 
         fprintf(stream, "%s%s%s: something bad happened while formatting the message\n", RED, "Error", RESET);
+        va_end(args);
 
         /* ======== */
         return ;
@@ -471,6 +469,7 @@ void print_message(FILE* stream, Message_Type msg_type, const char* format, ...)
     if ((bytes_written = vsnprintf(buffer + bytes_written, sizeof(buffer) - bytes_written, format, args) == 0) || (bytes_written >= sizeof(buffer) - bytes_written)) {
 
         fprintf(stream, "%s%s%s: something bad happened while formatting the message\n", RED, "Error", RESET);
+        va_end(args);
 
         /* ======== */
         return ;
