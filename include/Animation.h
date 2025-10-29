@@ -40,11 +40,11 @@ typedef struct animation {
     /* Sprite height */
     int s_height;
 
-    /* 
-        The orientation of the sprite animation changes,
-        with `X` representing horizontal alignment
-        and `Y` representing vertical alignment
-    */
+    /* ================================================================ */
+    /* ======= The orientation of the sprite animation changes, ======= */
+    /* ========== with `X` representing horizontal alignment ========== */
+    /* =========== and `Y` representing vertical alignment ============ */
+    /* ================================================================ */
     AnimationAxis axis;
 
     SDL_Rect frame;
@@ -57,13 +57,13 @@ typedef struct animation {
  * 
  * @param t Texture/image (usually a sprite sheet) containig desired frames of the animation
  * @param x_offset Horizontal offset. In case the image is the sprite atlas
- * @param y_offset Vertical offset
+ * @param y_offset Vertical offset. In case the image is the sprite atlas
  * @param num_frames Number of frames of the animation
  * @param width Width of a single frame (sprite)
  * @param height Height og a single frame (sprite)
  * @param axis The order of frames alignment (`X` for horizontal, `Y` for vertical)
  * 
- * @return Returns the `Animation` that was created or NULL on failure.
+ * @return Returns the `Animation` that was created or `NULL` on failure. Call `Error_string()` for more information. 
  */
 Animation* Animation_new(Texture* t, int x_offset, int y_offset, int num_frames, int width, int height, AnimationAxis axis);
 
@@ -72,7 +72,7 @@ Animation* Animation_new(Texture* t, int x_offset, int y_offset, int num_frames,
  * 
  * @param animation animation to destroy (`&animation`)
  * 
- * @return Returns 0 on success or -1 on failure.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure. Call `Error_string()` for more information.
  */
 int Animation_destroy(Animation** animation);
 

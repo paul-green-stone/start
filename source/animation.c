@@ -9,6 +9,9 @@ Animation* Animation_new(Texture* t, int x_offset, int y_offset, int num_frames,
     /* ======== */
 
     if ((a = calloc(1, sizeof(Animation))) == NULL) {
+
+        Error_set(SERR_SYSTEM);
+        /* ======== */
         return NULL;
     }
 
@@ -57,6 +60,7 @@ void Animation_update(Animation* animation, double delta_time) {
         animation->frame.x = (animation->axis == X) ? animation->current_frame * animation->s_width + animation->x_offset : animation->x_offset;
         animation->frame.y = (animation->axis == Y) ? animation->current_frame * animation->s_height + animation->y_offset : animation->y_offset;
         
+        /* Reset the internal animation timer */
         animation->last_time_updated = 0;
     }
 }
