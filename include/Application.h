@@ -11,20 +11,12 @@ extern "C" {
 /* ========================== INTERFACE =========================== */
 /* ================================================================ */
 
-typedef struct ApplicationConfig {
-    char *title;
-    int width;
-    int height;
-    Uint32 window_flags;
-    Uint32 renderer_flags;
-} ApplicationConfig;
-
 /**
  * Initializes the application by creating the main window and setting up basic parameters.
  * 
- * @return Returns the `Clock` that was created or NULL on failure; call `Error_get()` for more information
+ * @return Returns `SSUCCESS` on siccess or a negative error code on failure. Call `Error_get()` for more information.
  */
-int App_init(ApplicationConfig *app_config);
+int App_init(void);
 
 /**
  * Cleans up and shuts down the application.
@@ -78,7 +70,7 @@ int get_fps(void);
 /**
  * Retrieves the `SDL_Renderer*` associated with the application's main window.
  * 
- * @return A pointer to the `SDL_Renderer` used by the application on success, `NULL` on failure; call `Error_get()` for more information.
+ * @return A pointer to the `SDL_Renderer` used by the application on success, `NULL` on failure; call `Error_string()` for more information.
  */
 SDL_Renderer* get_context(void);
 
@@ -87,7 +79,7 @@ SDL_Renderer* get_context(void);
  * 
  * @param filename name of the PNG file to save the screenshot as (e.g., "capture.png")
  * 
- * @return Returns 0 on success or a negative error code on failure; call `Error_get()` for more information.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure. Call `Error_string()` for more information.
  */
 int take_screenshot(const char* filename);
 
@@ -103,14 +95,14 @@ void set_state(const void* state);
 /**
  * Retrieves the current application state pointer.
  * 
- * @return returns a `void*` pointer to the current state object
+ * @return returns a `void` pointer to the current state object.
  */
 void* get_state(void);
 
 /**
  * Retrieves the `SDL_Window*` associated with the application's main window.
  * 
- * @return A pointer to the `SDL_Window` used by the application on success, `NULL` on failure; call `Error_get()` for more information.
+ * @return A pointer to the `SDL_Window` used by the application on success, `NULL` on failure; call `Error_string()` for more information.
  */
 SDL_Window* get_window(void);
 

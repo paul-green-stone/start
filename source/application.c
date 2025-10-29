@@ -1,30 +1,28 @@
-#ifdef _MSC_VER
-#include <SDL.h>
-#include <SDL_image.h>
-#else
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#endif
-
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#ifdef _MSC_VER
+    #include <SDL.h>
+    #include <SDL_image.h>
+#else
+    #include <SDL2/SDL.h>
+    #include <SDL2/SDL_image.h>
+#endif
+
+#include <libconfig.h>
+#include "../include/File/conf.h"
 #include "../include/Application.h"
-#include "../include/Clock.h"
 #include "../include/Error.h"
 #include "../include/Start.h"
 #include "../include/Window.h"
-
-#ifndef __EMSCRIPTEN__
-#include "../include/File/conf.h"
-#include <libconfig.h>
-#endif
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
 
+/* Defines the default directory name where configuration files are stored */
+#define DEFAULT_CONFIGURATION_DIRECTORY "configs"
 /* Default configuration file */
 #define DEFAULT_CONFIGURATION_FILE "application.conf"
 
@@ -39,8 +37,7 @@
 
 struct application {
 
-    /* A structure that contains information about both the `SDL_Window` and its
-     * associated `SDL_Renderer` */
+    /* A structure that contains information about both the `SDL_Window` and its associated `SDL_Renderer` */
     Window *window;
 
     /* The main game loop controlling variable */
@@ -120,7 +117,6 @@ static struct application app;
 /* ===================== AUXILIARY FUNCTIONS ====================== */
 /* ================================================================ */
 
-#ifndef __EMSCRIPTEN__
 /**
  * Reads a configuration file containing application settings and SDL flags,
  * then populates a `default_app` structure with the parsed values.
@@ -128,7 +124,7 @@ static struct application app;
  * @param _app [output parameter] Pointer to a structure that will store parsed
  * configuration values
  *
- * @return Returns `SSUCCESS` on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure. Call `Error_string()` for more information.
  */
 static int _read_default_configuration_file(struct default_app *_app) {
 
@@ -138,7 +134,6 @@ static int _read_default_configuration_file(struct default_app *_app) {
     int status;
     int length;
     int i;
-    int temp;
     int flag;
 
     char filepath[64];
@@ -172,14 +167,21 @@ static int _read_default_configuration_file(struct default_app *_app) {
     for (i = 0; i < length; i++) {
 
         /* === Map a string to its integral counterpart === */
-        temp =
-            lookup_table_find(SDL_CreateWindow__flags,
-                              sizeof(SDL_CreateWindow__flags) /
-                                  sizeof(SDL_CreateWindow__flags[0]),
-                              config_setting_get_string_elem(array, i), &flag);
+        status = lookup_table_find(
+            SDL_CreateWindow__flags,
+            sizeof(SDL_CreateWindow__flags) / sizeof(SDL_CreateWindow__flags[0]),
+            config_setting_get_string_elem(array, i),
+            &flag
+        );
+
+        if (status != SSUCCESS) {
+            warning(stdout, "unknown flag (%s%s%s) is ignored\n", RED, config_setting_get_string_elem(array, i), RESET);
+
+            continue ;
+        }
 
         /* === Combining flags === */
-        _app->wflags |= (temp == 0) ? flag : 0;
+        _app->wflags |= (status == SSUCCESS) ? flag : 0;
     }
 
     /* === Extracting an array of `SDL_Renderer` flags === */
@@ -190,14 +192,20 @@ static int _read_default_configuration_file(struct default_app *_app) {
     for (i = 0; i < length; i++) {
 
         /* === Map a string to its integral counterpart === */
-        temp =
-            lookup_table_find(SDL_CreateRenderer__flags,
-                              sizeof(SDL_CreateRenderer__flags) /
-                                  sizeof(SDL_CreateRenderer__flags[0]),
-                              config_setting_get_string_elem(array, i), &flag);
+        status = lookup_table_find(
+            SDL_CreateRenderer__flags,
+            sizeof(SDL_CreateRenderer__flags) / sizeof(SDL_CreateRenderer__flags[0]),
+            config_setting_get_string_elem(array, i), &flag
+        );
+
+        if (status != SSUCCESS) {
+            warning(stdout, "unknown flag (%s%s%s) is ignored\n", RED, config_setting_get_string_elem(array, i), RESET);
+
+            continue ;
+        }
 
         /* === Combining flags === */
-        _app->rflags |= (temp == 0) ? flag : 0;
+        _app->rflags |= (status == SSUCCESS) ? flag : 0;
     }
 
     /* ======== */
@@ -242,8 +250,7 @@ static int _write_default_configuration_file_(void) {
     config_init(&config);
 
     /* === Create a new setting for the application configuration === */
-    setting = config_setting_add(config_root_setting(&config), "application",
-                                 CONFIG_TYPE_GROUP);
+    setting = config_setting_add(config_root_setting(&config), "application", CONFIG_TYPE_GROUP);
 
     /* === TITLE === */
     elm = config_setting_add(setting, "title", CONFIG_TYPE_STRING);
@@ -260,8 +267,7 @@ static int _write_default_configuration_file_(void) {
     array = config_setting_add(setting, "Window", CONFIG_TYPE_ARRAY);
 
     /* === Set window flags === */
-    for (i = 0; i < sizeof(default_app.wflags) / sizeof(default_app.wflags[0]);
-         i++) {
+    for (i = 0; i < sizeof(default_app.wflags) / sizeof(default_app.wflags[0]); i++) {
 
         elm = config_setting_add(array, NULL, CONFIG_TYPE_STRING);
         config_setting_set_string(elm, default_app.wflags[i]);
@@ -270,70 +276,60 @@ static int _write_default_configuration_file_(void) {
     array = config_setting_add(setting, "Renderer", CONFIG_TYPE_ARRAY);
 
     /* === Set renderer flags === */
-    for (i = 0; i < sizeof(default_app.rflags) / sizeof(default_app.rflags[0]);
-         i++) {
+    for (i = 0; i < sizeof(default_app.rflags) / sizeof(default_app.rflags[0]); i++) {
 
         elm = config_setting_add(array, NULL, CONFIG_TYPE_STRING);
         config_setting_set_string(elm, default_app.rflags[i]);
     }
 
     /* === Write the configuration to a file === */
-    if (!config_write_file(&config, filepath))
+    if (!config_write_file(&config, filepath)) {
+
+        config_destroy(&config);
+        Error_set(SERR_LIBCONFIG);
+        /* ======== */
         return SERR_LIBCONFIG;
+    }
 
     config_destroy(&config);
 
     /* ======== */
     return SSUCCESS;
 }
-#endif
 
 /* ================================================================ */
 /* ==================== FUNCTIONS DEFENITIONS ===================== */
 /* ================================================================ */
 
-int App_init(ApplicationConfig *app_config) {
+int App_init(void) {
+
     struct default_app _app;
 
-    // Check if we're running on the web or desktop
-#ifndef __EMSCRIPTEN__
-    if (app_config == NULL) {  // If app_config is NULL, we default to libconfig 
-        char filepath[64];
+    char filepath[64];
+    int status = SSUCCESS;
+    /* ======== */
+
+    combine(filepath);
+
+    /* === Clearing the struct === */
+    memset(&_app, 0, sizeof(struct default_app));
+
+    if (!file_exists(filepath) && ((status = _write_default_configuration_file_()) != SSUCCESS)) {
+        
+        Error_set(status);
         /* ======== */
-
-        combine(filepath);
-
-        /* === Clearing the struct === */
-        memset(&_app, 0, sizeof(struct default_app));
-
-        if (!file_exists(filepath))
-            _write_default_configuration_file_();
-
-        _read_default_configuration_file(&_app);
-    } else {
-        _app.title = app_config->title;
-        _app.width = app_config->width;
-        _app.height = app_config->height;
-        _app.wflags = app_config->window_flags;
-        _app.rflags = app_config->renderer_flags;
+        return status;
     }
-#else  // web configuration
-    if (app_config == NULL) {  // app_config must always be set for the web
-        Error_set(SERR_NULL_POINTER);
-
-        return SERR_NULL_POINTER;
+    
+    if ((status = _read_default_configuration_file(&_app)) != SSUCCESS) {
+        
+        Error_set(status);
+        /* ======== */
+        return status;
     }
-
-    _app.title = app_config->title;
-    _app.width = app_config->width;
-    _app.height = app_config->height;
-    _app.wflags = app_config->window_flags;
-    _app.rflags = app_config->renderer_flags;
-#endif
 
     /* === CREATING A WINDOW === */
-    if ((app.window = Window_new(_app.title, _app.width, _app.height,
-                                 _app.wflags, _app.rflags)) == NULL) {
+    if ((app.window = Window_new(_app.title, _app.width, _app.height, _app.wflags, _app.rflags)) == NULL) {
 
         Error_set(SERR_SDL);
         /* ======== */
@@ -376,8 +372,7 @@ void App_render(void) {
 
     /* === Mark the end of a frame === */
     end = SDL_GetPerformanceCounter();
-    /* === and compute delta time (the amount of time between two frames in
-     * seconds) === */
+    /* === and compute delta time (the amount of time between two frames in seconds) === */
     app.delta_time = (end - app.fst) / (float)SDL_GetPerformanceFrequency();
 
     /* === Delay time in milliseconds === */
@@ -451,11 +446,11 @@ int take_screenshot(const char *filename) {
     memset(filepath, 0, sizeof(filepath));
 
     if (stat("screenshots", &st) == -1) {
-#ifdef _WIN32
-        mkdir("screenshots");
-#else
-        mkdir("screenshots", 0755);
-#endif
+        #ifdef _WIN32
+            mkdir("screenshots");
+        #else
+            mkdir("screenshots", 0755);
+        #endif
     }
 
     strcat(filepath, "screenshots/");
@@ -471,16 +466,14 @@ int take_screenshot(const char *filename) {
     /* === Getting window dimensions === */
     SDL_GetWindowSize(Window_get_window(app.window), &width, &height);
 
-    if ((surface = SDL_CreateRGBSurfaceWithFormat(
-             0, width, height, 32, SDL_PIXELFORMAT_RGBA32)) == NULL) {
+    if ((surface = SDL_CreateRGBSurfaceWithFormat( 0, width, height, 32, SDL_PIXELFORMAT_RGBA32)) == NULL) {
 
         Error_set(SERR_SDL);
         /* ========= */
         return SERR_SDL;
     }
 
-    if (SDL_RenderReadPixels(get_context(), NULL, SDL_PIXELFORMAT_RGBA32,
-                             surface->pixels, surface->pitch) != 0) {
+    if (SDL_RenderReadPixels(get_context(), NULL, SDL_PIXELFORMAT_RGBA32, surface->pixels, surface->pitch) != 0) {
 
         SDL_FreeSurface(surface);
         Error_set(SERR_SDL);
@@ -508,7 +501,7 @@ int take_screenshot(const char *filename) {
 
 /* ================================================================ */
 
-void set_state(const void *state) { app.state = (void *)state; }
+void set_state(const void *state) { app.state = (void *) state; }
 
 /* ================================================================ */
 
