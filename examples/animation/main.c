@@ -1,12 +1,5 @@
 #include "../../include/Start.h"
 
-int click(const void* _self, va_list* args) {
-
-    const char* string = va_arg(*args, const char*);
-
-    printf("%s\n", string);
-}
-
 /* ================================================================ */
 
 int main(int argc, char** argv) {
@@ -14,12 +7,32 @@ int main(int argc, char** argv) {
     SDL_Event event;
     SDL_Renderer* ctx;
 
-    char buffer[64];
+    /* Initialize the framework: set up the initial configurations and initialize SDL2 library */
+    if (Start() != SSUCCESS) {
 
-    Start();
-    App_init(NULL);
+        error(stderr, "%s\n", Error_string());
+        Stop();
+
+        /* ======== */
+        return EXIT_FAILURE;
+    }
+
+    /* Create a basic application. You can modify it by manually configuring a file at `configs/application.conf` and `configs.system` */
+    if (App_init() != SSUCCESS) {
+
+        error(stderr, "%s\n", Error_string());
+        Stop();
+
+        /* ======== */
+        return EXIT_FAILURE;
+    } 
 
     ctx = get_context();
+
+    /* ================================================================ */
+    /* ======= Let's assume a `Texture_new` call is successful ======== */
+    /* ==================== It is not safe, though ==================== */
+    /* ================================================================ */
 
     Texture* attack_t = Texture_new(ctx, "../resources/Huntress2/Sprites/Character/Attack.png");
     Texture* death_t = Texture_new(ctx, "../resources/Huntress2/Sprites/Character/Death.png");
@@ -29,7 +42,12 @@ int main(int argc, char** argv) {
     Texture* jump_t = Texture_new(ctx, "../resources/Huntress2/Sprites/Character/Jump.png");
     Texture* run_t = Texture_new(ctx, "../resources/Huntress2/Sprites/Character/Run.png");
 
+    /* Opening a font by standard library function */
     TTF_Font* font = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 22);
+
+    /* ================================================================ */
+    /* ===== Creating animations from previously created textures ===== */
+    /* ================================================================ */
 
     Animation* attack_animation = Animation_new(attack_t, 0, 0, 6, 100, 100, X);
     Animation_setSpeed(attack_animation, 1.0f / 6);
@@ -59,6 +77,10 @@ int main(int argc, char** argv) {
     Animation_setSpeed(jump_animation, 1.0f / 4);
     Text* jump_text = Text_new(ctx, font, &(SDL_Color) {255, 255, 255, 255}, "Jump");
     
+    /* ================================================================ */
+    /* =============== A pretty standard main game loop =============== */
+    /* ================================================================ */
+
     while (App_isRunning()) {
 
         while (SDL_PollEvent(&event)) {
@@ -74,16 +96,25 @@ int main(int argc, char** argv) {
 
         Input_update();
 
-        Animation_update(attack_animation, get_delta());
-        Animation_update(death_animation, get_delta());
-        Animation_update(fall_animation, get_delta());
-        Animation_update(get_hit_animation, get_delta());
-        Animation_update(idle_animation, get_delta());
-        Animation_update(jump_animation, get_delta());
-        Animation_update(run_animation, get_delta());
+        /* Getting time since the previous frame */
+        float delta = get_delta();
 
+        /* Based on that time update the animations */
+        Animation_update(attack_animation, delta);
+        Animation_update(death_animation, delta);
+        Animation_update(fall_animation, delta);
+        Animation_update(get_hit_animation, delta);
+        Animation_update(idle_animation, delta);
+        Animation_update(jump_animation, delta);
+        Animation_update(run_animation, delta);
+
+        /* Fill the screen with the given color */
         SDL_SetRenderDrawColor(ctx, 0, 0, 0, 255);
         SDL_RenderClear(ctx);
+
+        /* ================================================================ */
+        /* ============= Draw textures on the screen (buffer) ============= */
+        /* ================================================================ */
 
         Texture_draw(attack_animation->texture, &attack_animation->frame, &(SDL_Rect) {0, 0, 100, 100});
         Text_draw(attack_text, &(SDL_Rect) {100, 50 - attack_text->height / 2, attack_text->width, attack_text->height});
@@ -106,34 +137,45 @@ int main(int argc, char** argv) {
         Texture_draw(run_animation->texture, &run_animation->frame, &(SDL_Rect) {320, 100, 100, 100});
         Text_draw(run_text, &(SDL_Rect) {420, 150 - run_text->height / 2, run_text->width, run_text->height});
         
+        /* Render the current scene to the display */
         App_render();
     }
 
     TTF_CloseFont(font);
 
+    /* ================================================================ */
+    /* ============= Freeing animations, textures & text ============== */
+    /* ================================================================ */
+
     Animation_destroy(&attack_animation);
     Texture_destroy(&attack_t);
+    Text_destroy(&attack_text);
+
     Animation_destroy(&death_animation);
     Texture_destroy(&death_t);
+    Text_destroy(&death_text);
+
     Animation_destroy(&fall_animation);
     Texture_destroy(&fall_t);
+    Text_destroy(&fall_text);
+
     Animation_destroy(&get_hit_animation);
     Texture_destroy(&get_hit_t);
+    Text_destroy(&get_hit_text);
+
     Animation_destroy(&idle_animation);
     Texture_destroy(&idle_t);
+    Text_destroy(&idle_text);
+
     Animation_destroy(&jump_animation);
     Texture_destroy(&jump_t);
+    Text_destroy(&jump_text);
+
     Animation_destroy(&run_animation);
     Texture_destroy(&run_t);
-
-    Text_destroy(&attack_text);
-    Text_destroy(&death_text);
-    Text_destroy(&fall_text);
-    Text_destroy(&get_hit_text);
-    Text_destroy(&idle_text);
-    Text_destroy(&jump_text);
     Text_destroy(&run_text);
 
+    /* Deinitializes the application and its core systems */
     App_quit();
     Stop();
 
