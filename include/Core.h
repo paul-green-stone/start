@@ -5,20 +5,11 @@
 extern "C" {
 #endif
 
-#ifdef _MSC_VER
-#include <SDL.h>
-#else
-#include <SDL2/SDL.h>
-#endif
-
 #include <stdio.h>
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
-
-/* Defines the default directory name where configuration files are stored */
-#define DEFAULT_CONFIGURATION_DIRECTORY "configs"
 
 /* Defines symbolic names for different types of messages used in logging or user output */
 typedef enum { ERROR, INFO, SUCCESS } Message_Type;
@@ -47,21 +38,21 @@ struct lookup_table_entry {
    */
 #define success(stream, format, ...) print_message((stream), SUCCESS, (format), __VA_ARGS__)
 
-   /* ================================================================ */
-   /* ========================== INTERFACE =========================== */
-   /* ================================================================ */
+/* ================================================================ */
+/* ========================== INTERFACE =========================== */
+/* ================================================================ */
 
-   /**
-	* Initializes the system by setting up configuration and SDL subsystems.
-	*
-	* @return Returns `SSUCCESS` (0) on success, or a negative error code on failure.
-	*/
+/**
+* Initializes the system by setting up configuration and SDL subsystems.
+*
+* @return Returns `SSUCCESS` (0) on success, or a negative error code on failure. Call `Error_string()` for more information.
+*/
 int Start(void);
 
 /**
  * Cleans up and shuts down the subsystems by calling their respective quit functions.
  *
- * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure. call `Error_get()` for more information.
+ * @return Always returns `SSUCCESS`.
  */
 int Stop(void);
 
@@ -77,7 +68,7 @@ int Stop(void);
  * @param flag the string key to search for in the table
  * @param dest output parameter where the found integer value is stored
  *
- * @return Returns
+ * @return Returns `SSUCCESS` if the value is found in the table, storing the found value in the `dest` parameter. Returns a negative error code on failure. Call `Error_string()` for more information.
  */
 int lookup_table_find(struct lookup_table_entry* table, int table_size, const char* flag, int* dest);
 

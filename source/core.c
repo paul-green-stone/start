@@ -4,15 +4,14 @@
 #include <limits.h>
 
 #ifdef _MSC_VER
-    #include <SDL.h>
-    #include <SDL_image.h>
+   #include <SDL.h>
+   #include <SDL_image.h>
 #else
-    #include <SDL2/SDL.h>
-    #include <SDL2/SDL_image.h>
+   #include <SDL2/SDL.h>
+   #include <SDL2/SDL_image.h>
 #endif
 
 #include <libconfig.h>
-#include "../include/Start.h"
 #include "../include/Core.h"
 #include "../include/Error.h"
 #include "../include/File/conf.h"
@@ -21,7 +20,11 @@
 /* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
 
+/* Defines the default directory name where configuration files are stored */
+#define DEFAULT_CONFIGURATION_DIRECTORY "configs"
+/* Defines the default configuration file name where SDL information is stored */
 #define DEFAULT_CONFIGURATION_FILE "system.conf"
+
 #define BUFFER_SIZE 128
 
 /* ================================================================ */
@@ -86,11 +89,10 @@ static struct lookup_table_entry IMG_Init__flags[] = {
 /* ===================== AUXILIARY FUNCTIONS ====================== */
 /* ================================================================ */
 
-#ifndef __EMSCRIPTEN__
 /**
  * Creates a default system configuration file containing an array of system initialization flags.
  * 
- * @return Returns `SSUCCESS` on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure. Call `Error_string()` for more information.
  */
 static int _write_default_system_config_file(void) {
 
@@ -127,6 +129,7 @@ static int _write_default_system_config_file(void) {
     /**
      * graphics: ["IMG_INIT_PNG", "IMG_INIT_JPG"];
      */ 
+
     system_array = config_setting_add(root, "graphics", CONFIG_TYPE_ARRAY);
 
     /* Adding data to the array */
@@ -162,7 +165,7 @@ static int _write_default_system_config_file(void) {
  *
  * @param _flags pointer to a `struct flags` where SDL and IMG flags will be stored
  * 
- * @return Returns `SSUCCESS` on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` on success or a negative error code on failure. Call `Error_string()` for more information.
  */
 static int _read_default_system_config_file(struct flags* _flags) {
 
@@ -250,7 +253,6 @@ static int _read_default_system_config_file(struct flags* _flags) {
     /* ======== */
     return SSUCCESS;
 }
-#endif
 
 /* ================================================================ */
 /* ==================== FUNCTIONS DEFENITIONS ===================== */
