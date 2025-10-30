@@ -6,9 +6,9 @@ extern "C" {
 #endif
 
 #ifdef _MSC_VER
-#include <SDL.h>
+    #include <SDL.h>
 #else
-#include <SDL2/SDL.h>
+    #include <SDL2/SDL.h>
 #endif
 
 #include "Math/Vector2D.h"
@@ -35,7 +35,7 @@ typedef struct camera {
  * @param camera pointer to a `Camera` structure that will be bound to the specified point.
  * @param point pointer to a `Vector2` structure representing the position or object to which the camera should be bound.
  * 
- * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure. call `Error_get()` for more information. 
+ * @return Returns `SSUCCESS` (0) on success, or a negative error code on failure. Call `Error_get()` for more information. 
  */
 int Camera_bind(Camera* camera, Vector2* point);
 
