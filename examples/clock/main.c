@@ -95,23 +95,14 @@ int main(int argc, char** argv) {
 		Text_draw(fast, &(SDL_Rect) {window_width / 4 - fast->width / 2 , window_height / 2 + fast->height / 2, fast->width, fast->height});
 		Text_draw(fast_time_string, &(SDL_Rect) {window_width / 4 - fast_time_string->width / 2, window_height / 2 + fast_time_string->height / 2 + normal->height + 8, fast_time_string->width, fast_time_string->height});
 
-		// t1_d += Clock_getDelta(clock);
-		// sprintf(t1_str, "Seconds passed: %.2f", t1_d);
-		// t1_str_t = foo(t1_str_t, t1_str, &(SDL_Color) {0, 0, 0, 255});
-		// SDL_QueryTexture(t1_str_t, NULL, NULL, &t1_str_w, &t1_str_h);
-		// SDL_RenderCopy(r, t1_str_t, NULL, &(SDL_Rect) {(W / 2) / 2 - t1_str_w / 2, H / 2 + t1_str_h, t1_str_w, t1_str_h});
-
-		// t2_d += Clock_getDelta(fast_clock);
-		// sprintf(t2_str, "Seconds passed: %.2f", t2_d);
-		// t2_str_t = foo(t2_str_t, t2_str, &(SDL_Color) {0, 0, 0, 255});
-		// SDL_QueryTexture(t2_str_t, NULL, NULL, &t2_str_w, &t2_str_h);
-		// SDL_RenderCopy(r, t2_str_t, NULL, &(SDL_Rect) {(W / 2) / 2 - t2_str_w / 2, H / 2 + t2_str_h, t2_str_w, t2_str_h});
-
 		sprintf(normal_time_string->content, "Seconds passed: %.1f", normal_time);
 		Text_update(normal_time_string, normal_time_string->content);
 
 		sprintf(fast_time_string->content, "Seconds passed: %.1f", fast_time);
 		Text_update(fast_time_string, fast_time_string->content);
+        
+        sprintf(fps_string->content, "FPS: %d", get_fps());
+        Text_update(fps_string, fps_string->content);
 
 		SDL_RenderSetViewport(ctx, NULL);
 
@@ -131,6 +122,8 @@ int main(int argc, char** argv) {
 	/* ================================================================ */
     /* ===================== Freeing cloks & text ===================== */
     /* ================================================================ */
+    
+    Text_destroy(&fps_string);
     
     Clock_destroy(&normal_clock);
     Clock_destroy(&fast_clock);
