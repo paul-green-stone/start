@@ -20,7 +20,7 @@ typedef struct clock Clock;
  * mechanism for managing time within a game. It allows you to
  * set timers, check if time is up, and adjust the clock's speed, among other features.
  * 
- * @return Returns the `Clock` that was created or `NULL` on failure; call `Error_get()` for more information.
+ * @return Returns the `Clock` that was created or `NULL` on failure; call `Error_string()` for more information.
  */
 Clock* Clock_new(void);
 
@@ -29,7 +29,7 @@ Clock* Clock_new(void);
  * 
  * @param clock the clock to destroy (`&clock`)
  * 
- * @return Returns the `Clock` that was created or `NULL` on failure; call `Error_get()` for more information
+ * @return Returns the `Clock` that was created or `NULL` on failure; call `Error_string()` for more information
  */
 int Clock_destroy(Clock** clock);
 
