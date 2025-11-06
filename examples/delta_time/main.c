@@ -5,6 +5,11 @@
 
 /* ================================================================ */
 
+/*
+	This is one of my first attempts to work with game engine architectures.
+	This example demonstrates how to compute the delta time between two frames and cap the FPS to a desired value.
+*/
+
 static TTF_Font* font;
 static Window* w;
 static SDL_Renderer* r;
@@ -114,6 +119,7 @@ int main(int argc, char** argv) {
 	TTF_Quit();
 	SDL_Quit();
 
+	/* ======== */
 	return 0;
 }
 
