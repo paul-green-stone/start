@@ -9,12 +9,9 @@ ifeq ($(OS_NAME), Linux)
 # If the operating system is macOS, set the variables
 else ifeq ($(OS_NAME), Darwin)
 # Compiler's flags
-	CFLAGS += -L../.. -lstart -Wl,-rpath,../..
-
-else
-    $(error Unsupported operating system)
+	CFLAGS += -L../.. -lstart -Wl,-rpath,@loader_path../..
 endif
 
 all: main.c
-	gcc main.c $(CFLAGS) `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf`
+	gcc main.c $(CFLAGS) `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf | sed 's/-mwindows//'`
 	

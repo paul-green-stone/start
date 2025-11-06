@@ -9,11 +9,14 @@ int main(int argc, char** argv) {
     config_t config;
     config_setting_t* setting;
 
-    char* name;
+    char* name = NULL;
     /* ======== */
 
     config_init(&config);
 
+    /* ================================================================ */
+    /* ================ Parsing the configuration file ================ */
+    /* ================================================================ */
     if ((status = Conf_parse_file(&config, filename)) != SSUCCESS) {
 
         config_destroy(&config);
@@ -26,39 +29,64 @@ int main(int argc, char** argv) {
         printf("OK\n");
     }
 
-    // if (Conf_extract(&config, "name", 8, &name) == SSUCCESS) {
-    //     printf("Name = %s\n", name);
-    // }
-    // else {
-    //     error(stderr, "%s\n", Error_get_msg());
-    // }
+    /* ================================================================ */
+    /* ================= Extracting a string "name" =================== */
+    /* ================================================================ */
 
-    // if (Conf_lookup(&config, "what", &setting) == SERR_ITEM_NOT_FOUND) {
-    //     error(stderr, "%s\n", Error_get_msg());
-    // }
+    /**
+     * If a configuration file contains a string member,
+     * specifying it as a BOOLEAN causes a segmentation fault.
+     * 
+     * hmmm...
+     */
 
-    // if (file_exists(NULL)) {
-    //     printf("Exists!\n");
-    // }
+    if (Conf_extract(&config, "name", STRING, &name) == SSUCCESS) {
+        printf("Name = %s\n", name);
+    }
+    else {
+        error(stderr, "%s\n", Error_string());
+    }
 
-    // status = directory_new("us");
-    // if (status == 1) {
-    //     printf("directory exists\n");
-    // }
-    // else if (status == SSUCCESS) {
-    //     printf("directory created\n");
-    // }
-    // else {
-    //     error(stderr, "%s\n", Error_get_msg());
-    // }
-    
-    // if (Start() != SSUCCESS) {
-    //     error(stderr, "%s\n", Error_get_msg(), "");
-    // }
+    /* ================================================================ */
+    /* ============= Trying to extract an entity "what", ============== */
+    /* ============ further processing is usually required ============ */
+    /* ================================================================ */
 
-    // Stop();
+    /**
+     * This one results in a libconfig error 'cause there is no such member
+     */
 
-    //config_destroy(&config);
+    if (Conf_lookup(&config, "what", &setting) != SSUCCESS) {
+        error(stderr, "%s\n", Error_string());
+    }
+
+    /* ================================================================ */
+    /* ================= Trying to create a directory ================= */
+    /* ================================================================ */
+
+    if ((status = directory_new("us")) == 1) {
+        printf("directory exists\n");
+    }
+    else if (status == SSUCCESS) {
+        printf("directory created\n");
+    }
+    else {
+        error(stderr, "%s\n", Error_string());
+    }
+
+    /* ================================================================ */
+    /* ============ Trying to create a configuration file ============= */
+    /* ================================================================ */
+
+    if (Start() != SSUCCESS) {
+        error(stderr, "%s\n", Error_string());
+    }
+
+    Stop();
+
+    /* ================================================================ */
+
+    config_destroy(&config);
 
     /* ======== */
     return EXIT_SUCCESS;
