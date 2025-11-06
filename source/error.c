@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include <errno.h>
+#include <string.h>
 
 #include "../include/Error.h"
 
@@ -24,7 +26,7 @@ static const char* error_descriptions[] = {
     "data not found",
     "input value is out of valid range",
     "",     /* reserved for system errors */
-    "",     /* resуrved for SDL errors */
+    "",     /* reserved for SDL errors */
     "method not implemented",
     "division by zero",
 };
