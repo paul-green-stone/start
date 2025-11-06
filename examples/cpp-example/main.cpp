@@ -1,37 +1,65 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include "../../include/Start.h"
 
-#include "../../include/Application.h"
-#include "../../include/Window.h"
-#include "../../include/Clock.h"
-#include "../../include/Text.h"
+#define set_color(ctx, color_in_hex) \
+    SDL_SetRenderDrawColor((ctx), (static_cast<int>(color_in_hex) >> 16) & 0xFF, (static_cast<int>(color_in_hex) >> 8) & 0xFF, static_cast<int>(color_in_hex) & 0xFF, 0xFF);
 
 /* ================================================================ */
 
 int main(int argc, char** argv) {
-    ApplicationConfig conf = {
-        .title = "C++ Example",
-        .width = 600,
-        .height = 400,
-        .window_flags = SDL_WINDOW_SHOWN,
-        .renderer_flags = SDL_RENDERER_ACCELERATED
-    };
-    
-    Start();
-    App_init(&conf);
 
-    /* ================================ */
-
+    SDL_Renderer* ctx = NULL;
     SDL_Event event;
-    SDL_Renderer* r = get_context();
 
-    TTF_Font* font = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 24);
-    SDL_Color text_color = {0, 0, 0, 255};
-    Text* text = Text_new(r, font, &text_color, "FPS: 60");
-    SDL_Rect text_pos = {32, 32, text->width, text->height};
+    TTF_Font* font = NULL;
+
+    Text* text = NULL;
+    SDL_Rect text_pos;
     char fps_buf[32];
 
+    enum class Color {
+
+        red = 0xFF0000,
+        green = 0x00FF00,
+        blue = 0x0000FF,
+    };
+
+    /* ======== */
+    
+    /* Initialize the framework: set up the initial configurations and initialize SDL2 library */
+    if (Start() != SSUCCESS) {
+
+        error(stderr, "%s\n", Error_string());
+        Stop();
+
+        /* ======== */
+        return EXIT_FAILURE;
+    }
+
+    /* Create a basic application. You can modify it by manually configuring a file at `configs/application.conf` and `configs.system` */
+    if (App_init() != SSUCCESS) {
+
+        error(stderr, "%s\n", Error_string());
+        Stop();
+
+        /* ======== */
+        return EXIT_FAILURE;
+    }
+    
+    /* ================================ */
+
+    ctx = get_context();
+
+    font = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 24);
+
+    SDL_Color text_color = {255, 255, 255, 255};
+    text = Text_new(ctx, font, &text_color, "FPS: 60");
+    text_pos = (SDL_Rect) {32, 32, text->width, text->height};
+
     App_setFPS(45);
+
+    /* ================================================================ */
+    /* =============== A pretty standard main game loop =============== */
+    /* ================================================================ */
 
     while (App_isRunning()) {
 
@@ -40,15 +68,17 @@ int main(int argc, char** argv) {
             switch (event.type) {
 
 				case SDL_QUIT:
+
 					App_stop();
+                    /* ========= */
 					break ;
 			}
         }
 
         /* ================ */
 
-        SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
-		SDL_RenderClear(r);
+        set_color(ctx, Color::red);
+		SDL_RenderClear(ctx);
 
         Text_draw(text, &text_pos);
 
@@ -56,15 +86,16 @@ int main(int argc, char** argv) {
         Text_update(text, fps_buf);
 
         App_render();
-
-        printf("Delta time: %f\n", get_delta());
     }
 
     /* ================================ */
 
+    /* Deinitializes the application and its core systems */
     App_quit();
     Stop();
 
     /* ======== */
-    return 0;
+    return SSUCCESS;
 }
+
+/* ================================================================ */
