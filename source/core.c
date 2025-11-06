@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <limits.h>
+#include <libconfig.h>
 
 #ifdef _MSC_VER
    #include <SDL.h>
@@ -11,10 +12,7 @@
    #include <SDL2/SDL_image.h>
 #endif
 
-#include <libconfig.h>
-#include "../include/Core.h"
-#include "../include/Error.h"
-#include "../include/File/conf.h"
+#include "../include/Start.h"
 
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
