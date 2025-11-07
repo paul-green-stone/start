@@ -141,13 +141,37 @@ int Text_set_font(Text* text, TTF_Font* font) {
 /* ================================================================ */
 
 int Text_draw(const Text* text, const SDL_Rect* dst) {
-    return SDL_RenderCopy(text->texture->r, text->texture->t, NULL, dst);
+
+    int status = SSUCCESS;
+    /* ======== */
+
+    if ((status = SDL_RenderCopy(text->texture->r, text->texture->t, NULL, dst)) != 0) {
+
+        status = SERR_SDL;
+        Error_set(SERR_SDL);
+        Error_set_string(SDL_GetError());
+    }
+
+    /* ======== */
+    return status;
 }
 
 /* ================================================================ */
 
 int Text_drawM(const Text *t, const SDL_Rect *src, const SDL_Rect *dst, const double angle, const SDL_Point* center, const SDL_RendererFlip flip) {
-    return SDL_RenderCopyEx(t->texture->r, t->texture->t, src, dst, angle, center, flip);
+
+    int status = SSUCCESS;
+    /* ======== */
+    
+    if ((status = SDL_RenderCopyEx(t->texture->r, t->texture->t, src, dst, angle, center, flip)) != 0) {
+        
+        status = SERR_SDL;
+        Error_set(SERR_SDL);
+        Error_set_string(SDL_GetError());
+    }
+
+    /* ======== */
+    return status;
 }
 
 /* ================================================================ */

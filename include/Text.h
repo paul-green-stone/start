@@ -6,17 +6,16 @@ extern "C" {
 #endif
 
 #ifdef _MSC_VER
-#include <SDL.h>
-#include <SDL_image.h>
-#include<SDL_ttf.h>
+    #include <SDL.h>
+    #include <SDL_image.h>
+    #include <SDL_ttf.h>
 #else
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_ttf.h>
+    #include <SDL2/SDL.h>
+    #include <SDL2/SDL_image.h>
+    #include <SDL2/SDL_ttf.h>
 #endif
 
 #include <string.h>
-
 #include "Texture.h"
 
 #define TEXT_BUFFER 64
@@ -103,7 +102,7 @@ int Text_set_font(Text* text, TTF_Font* font);
  * @param text text to be rendered on the screen
  * @param dst the region into which text should be rendered
  * 
- * @return Returns `SSUCCESS` (0) on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` (0) on success or a negative error code on failure; call `Error_string()` for more information.
  */
 int Text_draw(const Text* text, const SDL_Rect* dst);
 
@@ -116,7 +115,7 @@ int Text_draw(const Text* text, const SDL_Rect* dst);
  * @param center a pointer to a point indicating the point around which dstrect will be rotated (if NULL, rotation will be done around `dst.w / 2`, `dst.h / 2`)
  * @param flip a `SDL_RendererFlip` value stating which flipping actions should be performed on the texture
  * 
- * @return Returns `SSUCCESS` (0) on success or a negative error code on failure.
+ * @return Returns `SSUCCESS` (0) on success or a negative error code on failure; call `Error_string()` for more information.
  */
 int Text_drawM(const Text *t, const SDL_Rect *src, const SDL_Rect *dst, const double angle, const SDL_Point* center, const SDL_RendererFlip flip);
 
