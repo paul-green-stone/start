@@ -27,8 +27,6 @@ int main(int argc, char** argv) {
     char* s = Manager_remove("orange");
     printf("%s\n", s != NULL ? s : "Not Found");
 
-    Manager_debug();
-
     /* ======== */
 
     return 0;
