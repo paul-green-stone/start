@@ -1,6 +1,7 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "../../include/Math/Vector2D.h"
+#include "../../include/Math/Core.h"
 
 /* ================================================================ */
 
@@ -44,6 +45,9 @@ int main(int argc, char** argv) {
 
     Vector2_subtract(&a, &d, NULL);
     printf("d (a - d) = {%.2f; %.2f}\n", d.x, d.y);
+
+    /* ======== */
+    return EXIT_SUCCESS;
 }
 
 /* ================================================================ */
