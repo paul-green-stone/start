@@ -56,19 +56,55 @@ int Texture_destroy(Texture** texture) {
 /* ================================ */
 
 int Texture_draw(const Texture *t, const SDL_Rect *src, const SDL_Rect *dst) {
-    return SDL_RenderCopy(t->r, t->t, src, dst);
+
+    int status = SSUCCESS;
+    /* ======== */
+
+    if ((status = SDL_RenderCopy(t->r, t->t, src, dst)) != 0) {
+
+        status = SERR_SDL;
+        Error_set(SERR_SDL);
+        Error_set_string(SDL_GetError());
+    }
+
+    /* ======== */
+    return status;
 }
 
 /* ================================ */
 
 int Texture_drawM(const Texture *t, const SDL_Rect *src, const SDL_Rect *dst, const double angle, const SDL_Point* center, const SDL_RendererFlip flip) {
-    return SDL_RenderCopyEx(t->r, t->t, src, dst, angle, center, flip);
+
+    int status = SSUCCESS;
+    /* ======== */
+
+    if ((status = SDL_RenderCopyEx(t->r, t->t, src, dst, angle, center, flip)) != 0) {
+
+        status = SERR_SDL;
+        Error_set(SERR_SDL);
+        Error_set_string(SDL_GetError());
+    }
+
+    /* ======== */
+    return status;
 }
 
 /* ================================ */
 
 int Texture_get_dimensions(const Texture* texture, int* w, int* h) {
-    return SDL_QueryTexture(texture->t, NULL, NULL, w, h);
+
+    int status = SSUCCESS;
+    /* ======== */
+
+    if ((status = SDL_QueryTexture(texture->t, NULL, NULL, w, h)) != 0) {
+
+        status = SERR_SDL;
+        Error_set(SERR_SDL);
+        Error_set_string(SDL_GetError());
+    }
+
+    /* ======== */
+    return status;
 }
 
 /* ================================================================ */
