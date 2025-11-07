@@ -1,30 +1,18 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "../../include/Window.h"
-#include "../../include/Input.h"
-#include "../../include/Text.h"
+#include "../../include/Start.h"
 
 /* ================================================================ */
 
-static TTF_Font* font;
-static Window* w;
-static SDL_Renderer* r;
-
-SDL_Texture* foo(SDL_Texture* _t, const char* str, SDL_Color* color) {
-
-	if (_t) SDL_DestroyTexture(_t);
-
-	SDL_Surface* s = TTF_RenderText_Solid(font, str, *color);
-	SDL_Texture* t = SDL_CreateTextureFromSurface(r, s);
-	SDL_FreeSurface(s);
-
-	return t;
-}
-
 void bar(Text* t) {
 
-    SDL_Rect rect = {680 / 2 - t->width / 2, 400 / 2 - t->height / 2, t->width, t->height};
+	static int width;
+	static int height;
+
+	SDL_GetWindowSize(get_window(), &width, &height);
+
+    SDL_Rect rect = {width / 2 - t->width / 2, height / 2 - t->height / 2, t->width, t->height};
 
     if (Input_isKey_pressed(SDL_SCANCODE_A)) {
         Text_update(t, "\"A\" is pressed");
@@ -46,105 +34,88 @@ void bar(Text* t) {
 
 int main(int argc, char** argv) {
 
-    /* SDL Library Initialization */
-	SDL_Init(SDL_INIT_TIMER);
-    /* TTF Library Initialization */
-	TTF_Init();
+	SDL_Event event;
+	SDL_Renderer* ctx;
+	TTF_Font* font;
+	Text* _t = NULL;
+	Text* fps = NULL;
 
-    Text* _t = NULL;
+    /* Initialize the framework: set up the initial configurations and initialize SDL2 library */
+    if (Start() != SSUCCESS) {
 
-    /* Creating a new window */
-	w = Window_new("Start", 680, 400, 0, SDL_RENDERER_ACCELERATED);
-    /* and getting its rendering context */
-	r = Window_get_context(w);
+        error(stderr, "%s\n", Error_string());
+        Stop();
+
+        /* ======== */
+        return EXIT_FAILURE;
+    }
+
+    /* Create a basic application. You can modify it by manually configuring a file `configs/application.conf` and `configs.system` */
+    if (App_init() != SSUCCESS) {
+
+        error(stderr, "%s\n", Error_string());
+        Stop();
+
+        /* ======== */
+        return EXIT_FAILURE;
+    }
+
+	ctx = get_context();
 
     /* Opening a TTF font */
 	font = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 32);
 
-	SDL_Event e;
+	char fps_buf[32] = "FPS: 60";
 
-	int quit = 0;
-	int width = 0, height = 0;
-	
-	/* Desired time for a frame */
-	float frame_period = 1.0f / 60.f;
+    _t = Text_new(ctx, font, &(SDL_Color) {0, 0, 0, 255}, "What key did you just press?");
+	fps = Text_new(ctx, font, &(SDL_Color) {0, 0, 0, 255}, "What key did you just press?");
 
-	Uint64 start;
-	Uint64 end;
-	double delta_time;
-
-	int frames = 0;
-
-	double counter = 0;
-
-	char fps_string[32] = "FPS: 60";
-	SDL_Texture* t = foo(NULL, fps_string, &(SDL_Color) {0, 0, 0, 255});
-
-    _t = Text_new(r, font, &(SDL_Color) {0, 0, 0, 255}, "What key did you just press?");
+	App_setFPS(55);
 
 	/* ================================================================ */
-	/* =========================== GAME LOOP ========================== */
-	/* ================================================================ */
+    /* =============== A pretty standard main game loop =============== */
+    /* ================================================================ */
 
-	while (!quit) {
-		
-		/* ================================ */
-		/* ========= FRAME STARTS ========= */
-		/* ================================ */
+	while (App_isRunning()) {
 
-		frames++;
-		start = SDL_GetPerformanceCounter();
+		while (SDL_PollEvent(&event)) {
 
-		SDL_SetRenderDrawColor(r, 255, 255, 255, 255);
-		SDL_RenderClear(r);
-
-		while (SDL_PollEvent(&e)) {
-
-			switch (e.type) {
+			switch (event.type) {
 
 				case SDL_QUIT:
-					quit = !quit;
+
+					{ App_stop(); } 
+					/* ======== */
 					break ;
 			}
 		}
 
+		SDL_SetRenderDrawColor(ctx, 255, 255, 255, 255);
+		SDL_RenderClear(ctx);
+
         Input_update();
 
+		/* The bar function renderes the text */
         bar(_t);
-		
-		SDL_RenderCopy(r, t, NULL, &(SDL_Rect) {32, 32, width, height});
-		SDL_RenderPresent(r);
+		Text_draw(fps, &(SDL_Rect) {16, 16, fps->width, fps->height});
 
-		/* ================================ */
-		/* ========== FRAME ENDS ========== */
-		/* ================================ */
+		App_render();
 
-		end = SDL_GetPerformanceCounter();
-		delta_time = (end - start) / (float) SDL_GetPerformanceFrequency();
-
-		/* Delay time in milliseconds */
-		double delay_time = (frame_period - delta_time) * 1000.0f;
-
-		if ((counter += delta_time) >= 1.0) {
-			sprintf(fps_string, "FPS: %d", frames);
-			SDL_QueryTexture(t, NULL, NULL, &width, &height);
-			t = foo(t, fps_string, &(SDL_Color) {0, 0, 0, 255});
-			frames = 0;
-			counter = 0;
-		}
-
-		if (delta_time < frame_period) { SDL_Delay(delay_time); counter += (frame_period - delta_time); }
+		sprintf(fps_buf, "FPS: %d", get_fps());
+		Text_update(fps, fps_buf);
 	}	
-	
-	SDL_DestroyTexture(t);
-	Window_destroy(&w);
+
+	Text_destroy(&fps);
+	Text_destroy(&_t);
 
 	TTF_CloseFont(font);
+	
+	/* Deinitializes the application and its core systems */
+	App_quit();
+	Stop();
 
-	TTF_Quit();
-	SDL_Quit();
-
-	return 0;
+	/* ======== */
+	return EXIT_SUCCESS;
 }
 
 /* ================================================================ */
