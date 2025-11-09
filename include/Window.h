@@ -6,9 +6,9 @@ extern "C" {
 #endif
 
 #ifdef _MSC_VER
-#include <SDL.h>
+    #include <SDL.h>
 #else
-#include <SDL2/SDL.h>
+    #include <SDL2/SDL.h>
 #endif
 
 /* ================================================================ */

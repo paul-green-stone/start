@@ -34,6 +34,7 @@ Window* Window_new(const char* title, int width, int height, Uint32 window_flags
         /* Deallocating a `Window` container */
         free(w);
         Error_set(SERR_SDL);
+        Error_set_string(SDL_GetError());
         /* ======== */
         return NULL;
     }
@@ -47,6 +48,7 @@ Window* Window_new(const char* title, int width, int height, Uint32 window_flags
         free(w);
 
         Error_set(SERR_SDL);
+        Error_set_string(SDL_GetError());
         /* ======== */
         return NULL;
     }
