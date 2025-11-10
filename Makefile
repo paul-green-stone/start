@@ -7,16 +7,9 @@ OBJDIR   = objects
 # Full names of object files
 OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o List.o Camera.o Animation.o cJSON.o)
 
-TARGET ?= DESKTOP
-
 RELEASE ?= DEBUG
 
-# The Compiler
-ifeq ($(TARGET), WEB)
-	CC := emcc
-else
-	CC := gcc
-endif
+CC := gcc
 
 # and its flags
 CFLAGS   := -c -Wall -Wextra -pedantic-errors -fPIC -O2 -std=c99
@@ -26,18 +19,10 @@ ifeq ($(RELEASE), DEBUG)
 endif
 
 # Additional libraries that need to be searched for function definitions
-ifeq ($(TARGET), WEB)
-	CFLAGS += -s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_TTF=2 -s SDL2_IMAGE_FORMATS='["png"]' -Wno-int-conversion
-else
-	LDFLAGS  = `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf` -lm
-endif
+LDFLAGS  = `pkg-config --libs --cflags sdl2 SDL2_image libconfig SDL2_ttf` -lm
 
 # An archiver to produce a static library
-ifeq ($(TARGET), WEB)
-	AR = emar
-else
-	AR = ar
-endif
+AR = ar
 
 # The archiver flags
 ARFLAGS  = rsc
@@ -66,14 +51,8 @@ DESTDIR  ?= /usr/local
 # === Determining the library ==== #
 # ================================ #
 
-# Check if building for the web
-ifeq ($(TARGET), WEB)
-	LIB_SUFFIX = .a
-
-	DLL_SUFFIX = .so 
-
 # If the operating system is Linux, set the variables
-else ifeq ($(OS_NAME), Linux)
+ifeq ($(OS_NAME), Linux)
 # The suffix for static library files
     LIB_SUFFIX = .a
 # The suffix for dynamic library files
@@ -81,22 +60,19 @@ else ifeq ($(OS_NAME), Linux)
 
 # If the operating system is macOS, set the variables
 else ifeq ($(OS_NAME), Darwin)
-# The suffix for static library files
     LIB_SUFFIX = .a
-# The suffix for dynamic library files
     DLL_SUFFIX = .dylib
 
 # For WindowsOS
 else
     LIB_SUFFIX = .lib
-
 	DLL_SUFFIX = .dll
 endif
 
-# Constructing the name of static library
+# Constructing the name of a static library
 STATIC   = $(PREFIX)$(LIB_NAME)$(LIB_SUFFIX)
 
-# Constructing the name of static library
+# Constructing the name of a dynamic library
 SHARED   = $(PREFIX)$(LIB_NAME)$(DLL_SUFFIX)
 
 # ================================================================ #
@@ -104,11 +80,7 @@ SHARED   = $(PREFIX)$(LIB_NAME)$(DLL_SUFFIX)
 # ================================================================ #
 
 # Define a target
-ifeq ($(TARGET), WEB)
-	BUILD_TARGET := $(STATIC)
-else
-	BUILD_TARGET := $(STATIC) $(SHARED)
-endif
+BUILD_TARGET := $(STATIC) $(SHARED)
 
 all: $(BUILD_TARGET)
 
@@ -116,7 +88,7 @@ all: $(BUILD_TARGET)
 $(STATIC): $(OBJECTS)
 	$(AR) $(ARFLAGS) $@ $^
 
-#Building a shared library
+# Building a shared library
 $(SHARED): $(OBJECTS)
 	echo "Shared lib"
 	$(CC) -shared -o $@ $^ $(LDFLAGS)
@@ -331,19 +303,14 @@ endif
 uninstall:
 
 ifeq ($(OS_NAME), Linux)
-	# Remove dynamic and static libraries
-	rm -f $(DESTDIR)/lib/$(SHARED)
-	rm -f $(DESTDIR)/lib/$(STATIC)
-
-	# Remove installed headers preserving directory structure
+	rm -rf $(DESTDIR)/lib/$(SHARED)
+	rm -rf $(DESTDIR)/lib/$(STATIC)
 	rm -rf $(DESTDIR)/include/start
 
 else ifeq ($(OS_NAME), Darwin)
-	# Remove dynamic and static libraries
-	rm -f $(DESTDIR)/lib/$(SHARED)
-	rm -f $(DESTDIR)/lib/$(STATIC)
+	rm -rf $(DESTDIR)/lib/$(SHARED)
+	rm -rf $(DESTDIR)/lib/$(STATIC)
 
-	# Remove installed headers preserving directory structure
 	for header in $(INCLUDE); do \
 		destination=$$(echo $$header | sed 's,^include/,,') ; \
 		rm -f $(DESTDIR)/include/start/$$destination ; \
