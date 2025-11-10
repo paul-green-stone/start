@@ -5,6 +5,8 @@ int click(const void* _self, va_list* args) {
     const char* string = va_arg(*args, const char*);
 
     printf("%s\n", string);
+
+    return SSUCCESS;
 }
 
 /* ================================================================ */
@@ -17,14 +19,12 @@ int main(int argc, char** argv) {
     char buffer[64];
 
     Start();
-    App_init(NULL);
+    App_init();
 
     ctx = get_context();
     TTF_Font* font = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 22);
     Texture* btn_texture = Texture_new(ctx, "../resources/images/64x32.png");
     Texture* btn_texture_hover = Texture_new(ctx, "../resources/images/64x32_2.png");
-
-    SDL_Rect d = {10, 12, 192, 96};
 
     Menu* menu = Menu_new(2, &(Vector2) {64, 64});
 
