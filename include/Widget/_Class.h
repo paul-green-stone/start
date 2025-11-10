@@ -9,9 +9,9 @@ extern "C" {
 #endif
 
 #ifdef _MSC_VER
-#include <SDL.h>
+    #include <SDL.h>
 #else
-#include <SDL2/SDL.h>
+    #include <SDL2/SDL.h>
 #endif
 
 /* ================================================================ */
@@ -21,9 +21,9 @@ struct Class {
     size_t size;
 
     /* The widget constructor */
-    void *(*ctor)(void *self, va_list *args);
+    void* (*ctor)(void *self, va_list *args);
     /* The widget destructor */
-    void *(*dtor)(void *self);
+    void* (*dtor)(void *self);
 
     /* ================ */
 

@@ -30,23 +30,6 @@ static void* Button_ctor(void* _self, va_list* args) {
 
 /* ================================================================ */
 
-static void* Button_dtor(void* _self) {
-
-    struct button* self = _self;
-    /* ======== */
-
-    /* === Destroying the button's label (`Text`) === */
-    Text_destroy(&self->label);
-
-    /* === `Texture` is typically an atlas of images that might contain not only the button's texture but also other images === */
-    /* === this is why we don't destroy the texture here; make sure to delete it elsewhere when it is no longer needed === */
-
-    /* ======== */
-    return self;
-}
-
-/* ================================================================ */
-
 /**
  * @param dst If no `dst` rectangle is provided, the button is rendered at the widget's position (x, y) with the widget's width and height
  */
@@ -77,7 +60,7 @@ static const struct Class _Button = {
     .size = sizeof(struct button),
 
     .ctor = Button_ctor,
-    .dtor = Button_dtor,
+    .dtor = NULL,
 
     .draw = Button_draw,
 };

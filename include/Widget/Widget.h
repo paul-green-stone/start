@@ -6,9 +6,9 @@ extern "C" {
 #endif
 
 #ifdef _MSC_VER
-#include <SDL.h>
+    #include <SDL.h>
 #else
-#include <SDL2/SDL.h>
+    #include <SDL2/SDL.h>
 #endif
 
 #include <stdarg.h>
@@ -26,7 +26,7 @@ extern "C" {
  * @param widget pointer to a widget descriptor
  * @param ... constructor-specific arguments (type and quantity depend on widget implementation)
  * 
- * @return Returns a pointer to initialized widget instance on success, `NULL` on failure; call `Error_get()` for more information
+ * @return Returns a pointer to initialized widget instance on success, `NULL` on failure; call `Error_string()` for more information
  */
 void* Widget_create(const void* widget, ...);
 
@@ -35,7 +35,7 @@ void* Widget_create(const void* widget, ...);
  * 
  * @param widget pointer to widget instance created by `Widget_create()`
  * 
- * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_string()` for more information
  */
 int Widget_destroy(void* widget);
 
@@ -46,7 +46,7 @@ int Widget_destroy(void* widget);
  * 
  * @param widget pointer to a valid widget instance
  * 
- * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
+ * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_string()` for more information.
  */
 int Widget_draw(const void* widget, const SDL_Rect* src, const SDL_Rect* dst);
 
@@ -57,7 +57,7 @@ int Widget_draw(const void* widget, const SDL_Rect* src, const SDL_Rect* dst);
  * @param w pointer to an integer where the width will be stored. Can be `NULL` if width is not needed
  * @param h pointer to an integer where the height will be stored. Can be `NULL` if height is not needed
  * 
- * @return @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
+ * @return @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_string()` for more information.
  */
 int Widget_get_dimensions(const void* widget, int* w, int* h);
 
@@ -68,7 +68,7 @@ int Widget_get_dimensions(const void* widget, int* w, int* h);
  * @param x the new x-coordinate of the widget
  * @param y the new y-coordinate of the widget
  * 
- * @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
+ * @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_string()` for more information.
  */
 int Widget_set_position(void* widget, int x, int y);
 
@@ -79,7 +79,7 @@ int Widget_set_position(void* widget, int x, int y);
  * @param x pointer to an integer where the widget's `x` coordinate will be stored. If `NULL`, the `x` coordinate will not be written
  * @param y pointer to an integer where the widget's `y` coordinate will be stored. If `NULL`, the `y` coordinate will not be written
  * 
- * @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
+ * @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_string()` for more information.
  */
 int Widget_get_position(const void* self, int* x, int* y);
 
@@ -88,7 +88,7 @@ int Widget_get_position(const void* self, int* x, int* y);
  * 
  * @param widget pointer to the widget object
  * @param callback function pointer to the callback to be bound
- * @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
+ * @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_string()` for more information.
  */
 int Widget_bind_callback(void* widget, int (callback)(const void* widget, va_list* args));
 
@@ -98,37 +98,54 @@ int Widget_bind_callback(void* widget, int (callback)(const void* widget, va_lis
  * @param widget pointer to the widget object
  * @param ... variable arguments forwarded to the widget's callback function
  * 
- * @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_get()` for more information.
+ * @return Returns `SUCCESS` (0) on success, or a negative error code on failure; call `Error_string()` for more information.
  */
 int Widget_click(const void* widget, ...);
 
 /**
- * Checks if the widget is currently focused by the cursor.
+ * Checks if the widget is currently focused.
  * 
  * @param widget pointer to the widget object
  * 
- * @return Returns non-zero (true) if the cursor is within the widget's area. Zero (false) if the cursor is outside the widget's area.
+ * @return Returns non-zero (true) if the widget is being focused. Zero (false) if the cursor is outside the widget's area. A negative error code if something went wrong; call `Error_string()` for more information.
  * 
  */
 int Widget_is_focused(const void* widget);
 
 /**
+ * Checks whether the mouse cursor is currently hovering over the specified widget.
  * 
+ * @param widget pointer to a constant instance of the widget structure
+ * 
+ * @return Returns non-zero (true) if the widget is being focused. Zero (false) if it is not. A negative error code if something went wrong; call `Error_string()` for more information.
  */
 int Widget_is_hovered(const void* widget);
 
 /**
+ * Sets the focus state of the specified widget to "focused".
  * 
+ * @param widgert pointer to the instance of the widget structure
+ * 
+ * @return None.
  */
 void Widget_focus(void* widget);
 
 /**
+ * Removes focus from the specified widget by setting its focus state to "not focused".
  * 
+ * @param widget pointer to the instance of the widget structure
+ * 
+ * @return None.
  */
 void Widget_unfocus(void* widget);
 
 /**
- *
+ * Sets the text color of the widget's label.
+ * 
+ * @param widget pointer to the instance of the widget structure
+ * @param color pointer to an `SDL_Color` structure specifying the new color for the label
+ * 
+ * @return `SSUCCESS` on successful color update or a negaive error code on failure; call `Error_string()` for more information.
  */
 int Widget_set_label_color(void* widget, const SDL_Color* color);
 

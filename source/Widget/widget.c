@@ -10,6 +10,7 @@
 #include "../../include/Widget/_Class.h"
 #include "../../include/Widget/_Widget.h"
 #include "../../include/Widget/TextInput/_TextInput.h"
+#include "../../include/Math/Core.h"
 
 #include "../../include/Error.h"
 

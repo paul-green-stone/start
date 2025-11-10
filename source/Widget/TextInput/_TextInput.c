@@ -1,3 +1,4 @@
+#include "../../../include/Error.h"
 #include "../../../include/Widget/Widgets.h"
 #include "../../../include/Widget/_Class.h"
 #include "../../../include/Widget/_Widget.h"
@@ -46,6 +47,7 @@ static void* TextInput_dtor(void* _self) {
 
 static int TextInput_draw(const void* _self, const SDL_Rect* src, const SDL_Rect* dst) {
 
+    int status = SSUCCESS;
     const struct text_input* self = _self;
     const struct widget* widget = _self;
 
@@ -54,8 +56,11 @@ static int TextInput_draw(const void* _self, const SDL_Rect* src, const SDL_Rect
     /* ======== */
 
     /* === Render the widget's label if it has one === */
-    Text_draw(widget->label, &dest);
-    Text_draw(self->input, &self->ifd);
+    status = Text_draw(widget->label, &dest);
+    status = Text_draw(self->input, &self->ifd);
+
+    /* ======== */
+    return status;
 }
 
 /* ================================================================ */

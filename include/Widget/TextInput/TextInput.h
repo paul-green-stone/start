@@ -29,7 +29,11 @@ int TextInput_update(void* input, SDL_Event* e);
 int TextInput_get_input(const void* input, char* buffer);
 
 /**
+ * Clears the content of the `TextInput` widget and resets the cursor position.
  * 
+ * @param widget pointer to the instance of the `text_input` structure, expected to be of type `TextInput`
+ * 
+ * @return Returns `SSUCCESS` on successful clearing of the input content or a negative error code on failure; call `Error_string()` for more information.
  */
 int TextInput_clear(void* widget);
 
