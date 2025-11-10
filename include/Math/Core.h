@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 #include "Vector2D.h"
+#include <math.h>
 
 /* ================================================================ */
 
@@ -19,6 +20,26 @@ extern "C" {
  * @return Non-zero (true) if the point is inside the rectangle; zero (false) otherwise.
  */
 #define PinR(x, y, rect) ((x) > (rect)->x && x < (rect)->x + (rect)->w) && (y > (rect)->y && y < (rect)->y + (rect)->h)
+
+/**
+ * Generate a random number (`float`) from the given range 
+ */
+#define rand_float(min, max) (((float) rand() / (float) RAND_MAX) * (max - min) + min)
+
+/**
+ * Generate a random number (`int`) from the given range 
+ */
+#define rand_int(min, max) (rand() % ((max) - (min) + 1) + (min))
+
+/**
+ * Find which of the two numbers is smaller
+ */
+#define min(x, y) ((x) > (y) ? (y) : (x))
+
+/**
+ * Find which of the two numbers is bigger
+ */
+#define max(x, y) ((x) > (y) ? (x) : (y))
 
 /* ================================================================ */
 
