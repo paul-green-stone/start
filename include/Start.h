@@ -17,6 +17,7 @@ extern "C" {
 #include "Error.h"
 #include "Input.h"
 #include "Manager.h"
+#include "Particle.h"
 #include "Text.h"
 #include "Texture.h"
 #include "Window.h"
