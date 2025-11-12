@@ -34,10 +34,8 @@ void List_destroy(List* list) {
     void* data = NULL;
     /* ======== */
 
-    while (list->size > 0) {
-        if ((List_remove_head(list, (void**) &data) == 0) && (list->destroy != NULL)) {
-            list->destroy(data);
-        }
+    while (List_remove_head(list, &data) == 0) {
+        if (list->destroy) { list->destroy(data); }
     }
 
     memset(list, 0, sizeof(List));
@@ -47,7 +45,7 @@ void List_destroy(List* list) {
 
 int List_remove_head(List* list, void** data) {
 
-    Node* node = NULL;
+    Node* node2delete = NULL;
     /* ======== */
 
     /* === Do not allow removal from an empty list === */
@@ -56,8 +54,9 @@ int List_remove_head(List* list, void** data) {
     }
     else {
 
-        *data = list->head->data;
-        node = list->head;
+        if (data != NULL) { *data = list->head->data; }
+
+        node2delete = list->head;
 
         if (list->size == 1) {
             list->head = list->tail = NULL;
@@ -66,10 +65,10 @@ int List_remove_head(List* list, void** data) {
             list->head = list->head->next;
             list->head->prev = NULL;
         }
-    }
 
-    free(node);
-    list->size--;
+        free(node2delete);
+        list->size--;
+    }
 
     /* ======== */
     return 0;
@@ -195,31 +194,30 @@ int List_insert_tail(List* list, void* data) {
 
 int List_remove_tail(List* list, void** data) {
 
-    Node* previous = NULL;
-    Node* current = NULL;
+    Node* node2delete = NULL;
     /* ======== */
 
     if (list->size > 0) {
 
-        *data = list->tail->data;
-        current = list->tail;
+        if (data != NULL) { *data = list->tail->data; }
+
+        node2delete = list->tail;
 
         if (list->size == 1) {
             list->head = list->tail = NULL;
         }
         else {
-            for (previous = list->head, current = previous->next; current != list->tail; previous = current, current = current->next) ;
 
-            list->tail = previous;
-            list->tail->next = NULL;
+            list->tail->prev->next = NULL;
+            list->tail = list->tail->prev;
         }
 
-        free(current);
+        free(node2delete);
         list->size--;
     }
 
     /* ======== */
-    return -1;
+    return 0;
 }
 
 /* ================================================================ */
@@ -251,7 +249,7 @@ int List_insert_after(List* list, Node* _node, const void* data) {
     Node* node = NULL;
     /* =======*/
 
-    if ((list == NULL) || (((List*)_node->list) != list) || (data == NULL)) {
+    if ((((List*)_node->list) != list) || (data == NULL)) {
         return -1;
     }
 
@@ -282,7 +280,7 @@ int List_insert_before(List* list, Node* _node, const void* data) {
     Node* node = NULL;
     /* =======*/
 
-    if ((list == NULL) || (((List*)_node->list) != list) || (data == NULL)) {
+    if ((((List*)_node->list) != list) || (data == NULL)) {
         return -1;
     }
 
@@ -302,6 +300,35 @@ int List_insert_before(List* list, Node* _node, const void* data) {
     node->next = _node;
 
     list->size++;
+
+    /* ======== */
+    return 0;
+}
+
+/* ================================================================ */
+
+int List_delete_node(List* list, Node* node, void** data) {
+
+    Node* node2delete = NULL;
+    /* ======== */
+
+    if (node->list != list) {
+        return -1;
+    }
+
+    if (node == list->head) { return List_remove_head(list, data); }
+
+    if (node == list->tail) { return List_remove_tail(list, data); }
+
+    node2delete = node;
+
+    if (data != NULL) { *data = node2delete->data; }
+
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+
+    free(node2delete);
+    list->size--;
 
     /* ======== */
     return 0;
