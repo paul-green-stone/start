@@ -5,7 +5,7 @@
 # Object files location. Object files will be placed in this directory during compilation
 OBJDIR   = objects
 # Full names of object files
-OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o List.o Camera.o Animation.o cJSON.o Particles.o)
+OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o List.o Camera.o Animation.o cJSON.o Particles.o ParticleSystem.o)
 
 RELEASE ?= DEBUG
 
@@ -90,7 +90,6 @@ $(STATIC): $(OBJECTS)
 
 # Building a shared library
 $(SHARED): $(OBJECTS)
-	echo "Shared lib"
 	$(CC) -shared -o $@ $^ $(LDFLAGS)
 
 # ================================================================ #
@@ -157,8 +156,27 @@ $(OBJDIR)/Widgets.o: 	$(OBJDIR)/_button.o $(OBJDIR)/button.o \
 						$(OBJDIR)/menu.o
 	$(CC) -r -o $@ $^
 	rm -rf $(OBJDIR)/_button.o $(OBJDIR)/button.o $(OBJDIR)/_widget.o $(OBJDIR)/widget.o $(OBJDIR)/menu.o $(OBJDIR)/_input.o
-	
-# ================================================================ #	
+
+# ================================================================ #
+# ================ ASSEMBLING THE PARTICLE SYSTEM ================ #
+# ================================================================ #
+
+$(OBJDIR)/particle.o: source/Particle/Particle.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ======== #
+
+$(OBJDIR)/_particle.o: source/Particle/Base/_Particle.c
+	$(CC) $(CFLAGS) -o $@ $<
+
+# === Assembling them together === #
+
+$(OBJDIR)/ParticleSystem.o: \
+	$(OBJDIR)/particle.o $(OBJDIR)/_particle.o \
+
+	$(CC) -r -o $@ $^
+	rm -rf $(OBJDIR)/_particle.o $(OBJDIR)/particle.o
+
 # ================================================================ #
 
 CLOCK    = $(addprefix source/, clock.c)
