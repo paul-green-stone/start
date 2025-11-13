@@ -1,8 +1,13 @@
 #include "../../include/Start.h"
+#include <time.h>
+
+#define SIZE 20
 
 /* ================================================================ */
 
 int main(int argc, char** argv) {
+
+    srand(time(NULL));
 
     SDL_Event event;
     SDL_Renderer* ctx;
@@ -35,12 +40,26 @@ int main(int argc, char** argv) {
     /* ================================================================ */
 
     /* Opening a font by standard library function */
-    TTF_Font* font = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 22);;
-    
-    Particle* array_of_particles[20];
-    
-    for (size_t i = 0; i < 20; i++) {
-        array_of_particles[i] = Particle_create(240, 240, rand_float(10, 25), rand_float(1, 5), &(SDL_Color) {rand_int(1, 255), rand_int(1, 255), rand_int(1, 255), 255});
+    TTF_Font* font = TTF_OpenFont("../resources/8bitOperatorPlus8-Regular.ttf", 18);
+
+    int num_em = 0;
+    int free_slot = 0;
+    //ParticalEmmiter* emmiters[SIZE] = {NULL};
+
+    int width, height;
+    SDL_GetWindowSize(get_window(), &width, &height);
+
+    //ParticalEmmiter* super = ParticalEmmiter_create(0, width / 2, height / 2, rand_float(10, 30), rand_int(2, 5), NULL, 50);
+
+    // Text* text = Text_new(ctx, font, &(SDL_Color) {255, 255, 255, 255}, "Particels: ");
+    // char buffer[64];
+
+    void* particles[SIZE];
+    int alive = SIZE;
+
+    for (size_t i = 0; i < SIZE; i++) {
+
+        particles[i] = Particle_create(BaseParticle, (float) width / 2, (float) height / 2, rand_float(-1.0f, 1.0f), rand_float(-1.0f, 1.0f), rand_float(15, 25), rand_int(2, 5), rand_int(1, 4294967295), 255);
     }
     
     /* ================================================================ */
@@ -62,29 +81,51 @@ int main(int argc, char** argv) {
             }
         }
 
-        Input_update();
-        
-        for (size_t i = 0; i < 20; i++) {
-            Particle_update(array_of_particles[i]);
+        for (size_t i = 0; i < alive; i++) {
+
+            if (particles[i] == NULL) { continue ; }
+
+            Particle_move(particles[i]);
+            Particle_update(particles[i]);
         }
+
 
         /* Fill the screen with the given color */
         SDL_SetRenderDrawColor(ctx, 0, 0, 0, 255);
         SDL_RenderClear(ctx);
-        
-        for (size_t i = 0; i < 20; i++) {
-            Particle_draw(array_of_particles[i]);
+
+       
+
+        for (size_t i = 0; i < alive; i++) {
+            Particle_draw(particles[i]);
         }
         
         /* Render the current scene to the display */
         App_render();
+        
+        for (size_t i = 0; i < alive; i++) {
+
+            if (!Particle_isAlive(particles[i])) {
+
+                Particle_destroy(particles[i]);
+                particles[i] = particles[alive -= 1];
+                i--;
+            }
+        }
     }
     
-    for (size_t i = 0; i < 20; i++) {
-            free(array_of_particles[i]);
-    }
+    // for (size_t i = 0; i < SIZE; i++) {
+    //     ParticalEmmiter_destroy(&emmiters[i]);
+    // }
+
+    // ParticalEmmiter_destroy(&super);
+    //Text_destroy(&text);
 
     TTF_CloseFont(font);
+
+    for (size_t i = 0; i < alive; i++) {
+        Particle_destroy(particles[i]);
+    }
 
     /* Deinitializes the application and its core systems */
     App_quit();
