@@ -340,6 +340,8 @@ int App_init(void) {
     app.desired_fps = 60;
     app.frame_period = 1.0f / app.desired_fps;
 
+    SDL_SetRenderDrawBlendMode(get_context(), SDL_BLENDMODE_BLEND);
+
     /* ======== */
     return SSUCCESS;
 }

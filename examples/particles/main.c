@@ -1,4 +1,5 @@
 #include "../../include/Start.h"
+#include "../../include/Math/Core.h"
 #include <time.h>
 
 #define SIZE 20
@@ -61,7 +62,7 @@ int main(int argc, char** argv) {
 
         particles[i] = Particle_create(BaseParticle, (float) width / 2, (float) height / 2, rand_float(-1.0f, 1.0f), rand_float(-1.0f, 1.0f), rand_float(15, 25), rand_int(2, 5), rand_int(1, 4294967295), 255);
     }
-    
+
     /* ================================================================ */
     /* =============== A pretty standard main game loop =============== */
     /* ================================================================ */
@@ -89,12 +90,9 @@ int main(int argc, char** argv) {
             Particle_update(particles[i]);
         }
 
-
         /* Fill the screen with the given color */
         SDL_SetRenderDrawColor(ctx, 0, 0, 0, 255);
-        SDL_RenderClear(ctx);
-
-       
+        SDL_RenderClear(ctx); 
 
         for (size_t i = 0; i < alive; i++) {
             Particle_draw(particles[i]);
@@ -102,7 +100,7 @@ int main(int argc, char** argv) {
         
         /* Render the current scene to the display */
         App_render();
-        
+    
         for (size_t i = 0; i < alive; i++) {
 
             if (!Particle_isAlive(particles[i])) {
@@ -113,13 +111,6 @@ int main(int argc, char** argv) {
             }
         }
     }
-    
-    // for (size_t i = 0; i < SIZE; i++) {
-    //     ParticalEmmiter_destroy(&emmiters[i]);
-    // }
-
-    // ParticalEmmiter_destroy(&super);
-    //Text_destroy(&text);
 
     TTF_CloseFont(font);
 

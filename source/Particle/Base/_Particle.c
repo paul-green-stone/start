@@ -18,7 +18,34 @@
 /* ================================================================ */
 
 /**
+ * Constructor for a base particle object.
+ *
+ * Initializes a `base_particle` struct with provided position, velocity, speed,
+ * size, color, and alpha values. The function uses a variadic argument list
+ * to set the particle's properties.
+ *
+ * @param _self Pointer to the base_particle object to initialize.
+ * @param args  Pointer to a `va_list` containing the following arguments in order:
  * 
+ *              - `double`: x position
+ * 
+ *              - `double`: y position
+ * 
+ *              - `double`: x velocity
+ * 
+ *              - `double`: y velocity
+ * 
+ *              - `double`: speed
+ * 
+ *              - `int`: size
+ * 
+ *              - `unsigned int`: color (typically ARGB or RGBA)
+ * 
+ *              - `int`: alpha (transparency value)
+ *
+ * @return Pointer to the initialized `base_particle` object.
+ *
+ * @note The particle's `is_alive` field is set to true by default.
  */
 static void* base_particle_ctor(void* _self, va_list* args) {
     
@@ -44,7 +71,17 @@ static void* base_particle_ctor(void* _self, va_list* args) {
 }
 
 /**
- * 
+ * Updates the position of a base particle based on its velocity, speed, and delta time.
+ *
+ * The function modifies the particle's position by applying its velocity vector scaled
+ * by its speed and the delta time returned by `get_delta()`.
+ *
+ * @param _self Pointer to the `base_particle` object to update.
+ * @param args  Pointer to a `va_list` (not used in this function).
+ *
+ * @return `SSUCCESS` on successful update.
+ *
+ * @note The function does not use the `args` parameter; it only updates the particle's position.
  */
 int base_particle_move(void* _self, va_list* args) {
 
@@ -59,7 +96,17 @@ int base_particle_move(void* _self, va_list* args) {
 }
 
 /**
- * 
+ * Updates the state of a base particle for one frame.
+ *
+ * Decreases the particle's alpha value by 1 and sets its `is_alive` flag based on alpha.
+ * If alpha reaches zero or below, the particle is marked as not alive.
+ *
+ * @param _self Pointer to the `base_particle` object to update.
+ * @param args  Pointer to a `va_list` (not used in this function).
+ *
+ * @return `SSUCCESS` on successful update.
+ *
+ * @note The function does not use the `args` parameter; it only updates the particle's `alpha` and `is_alive` state.
  */
 int base_particle_update(void* _self, va_list* args) {
 
@@ -75,7 +122,16 @@ int base_particle_update(void* _self, va_list* args) {
 }
 
 /**
- * 
+ * Renders a base particle to the screen using SDL.
+ *
+ * Draws a filled rectangle at the particle's position with its size and color.
+ * The alpha value controls the transparency of the rectangle.
+ *
+ * @param _self Pointer to the const `base_particle` object to draw.
+ *
+ * @return `SSUCCESS` on successful drawing.
+ *
+ * @note The function uses `get_context()` to obtain the SDL renderer and extracts RGB components from the color field.
  */
 int base_particle_draw(const void* _self) {
 
@@ -89,7 +145,6 @@ int base_particle_draw(const void* _self) {
     /* ======== */
 
     SDL_SetRenderDrawColor(get_context(), (self->color >> 16) & 0xFF, (self->color >> 8) & 0xFF, (self->color >> 0) & 0xFF, self->alpha);
-    //SDL_SetRenderDrawColor(get_context(), 255, 0, 0, 255);
     SDL_RenderFillRect(get_context(), &where2draw);
 
     /* ======== */

@@ -9,6 +9,8 @@ extern "C" {
 
 #include "File/Color.h"
 #include "File/conf.h"
+#include "Particles/Particle.h"
+#include "Particles/Particles.h"
 #include "Animation.h"
 #include "Application.h"
 #include "Camera.h"
@@ -17,7 +19,6 @@ extern "C" {
 #include "Error.h"
 #include "Input.h"
 #include "Manager.h"
-#include "Particle.h"
 #include "Text.h"
 #include "Texture.h"
 #include "Window.h"
