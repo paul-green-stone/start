@@ -43,10 +43,10 @@ struct lookup_table_entry {
 /* ================================================================ */
 
 /**
-* Initializes the system by setting up configuration and SDL subsystems.
-*
-* @return Returns `SSUCCESS` (0) on success, or a negative error code on failure. Call `Error_string()` for more information.
-*/
+ * Initializes the application by setting up configuration and SDL subsystems.
+ *
+ * @return `SSUCCESS` on success, or an error code on failure.
+ */
 int Start(void);
 
 /**

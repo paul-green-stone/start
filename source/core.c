@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <limits.h>
 #include <libconfig.h>
+#include <pthread.h>
 
 #ifdef _MSC_VER
    #include <SDL.h>
@@ -51,6 +52,13 @@ struct flags {
 /* ================================================================ */
 /* ======================== STATIC STORAGE ======================== */
 /* ================================================================ */
+
+static int is_ready = 0;
+
+static pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
+
+static struct flags flags = {0, 0};
 
 /**
  * Provides a mapping between string representations of
@@ -253,6 +261,88 @@ static int _read_default_system_config_file(struct flags* _flags) {
 }
 
 /* ================================================================ */
+
+/**
+ * Thread function for initializing system configuration.
+ *
+ * This function attempts to create a configuration directory, create a configuration file,
+ * and read the configuration file. It signals readiness via a condition variable.
+ * If any step fails, the thread exits with an error status.
+ *
+ * @param arg Unused argument (for pthread compatibility).
+ *
+ * @return `NULL` on success, or a pointer to an error status on failure.
+ */
+static void* t_initialize(void* arg) {
+
+    char filepath[64];
+    int status = -1;
+
+    combine(filepath);
+    /* ======== */
+
+    while (1) {
+
+        if ((status = pthread_mutex_lock(&mtx)) != 0) {
+
+            Error_set(SERR_SYSTEM);
+            /* ======== */
+            pthread_exit(&status);
+        }
+
+        /* === Trying to create a new directory === */
+        if (!directory_exists(DEFAULT_CONFIGURATION_DIRECTORY) && (status = directory_new(DEFAULT_CONFIGURATION_DIRECTORY)) < 0) {
+
+            pthread_mutex_unlock(&mtx);
+            /* ======== */
+            pthread_exit(&status);
+        }
+
+        /* === Trying to create a configuration file === */
+        if (!file_exists(filepath) && (status = _write_default_system_config_file() != SSUCCESS)) {
+
+            pthread_mutex_unlock(&mtx);
+            /* ======== */
+            pthread_exit(&status);
+        }
+
+        /* === Trying to read the configuration file === */
+        if ((status = _read_default_system_config_file(&flags)) != SSUCCESS) {
+            
+            pthread_mutex_unlock(&mtx);
+            /* ======== */
+            pthread_exit(&status);
+        }
+
+        is_ready = 1;
+
+        if ((status = pthread_mutex_unlock(&mtx)) != 0) {
+
+            Error_set(SERR_SYSTEM);
+            /* ======== */
+            pthread_exit(&status);
+        }
+
+        if ((status = pthread_cond_signal(&cond)) != 0) {
+
+            Error_set(SERR_SYSTEM);
+            /* ======== */
+            pthread_exit(&status);
+        }
+
+        if (status == SSUCCESS) {
+
+            success(stdout, "init file read\n", "");
+            /* ======== */
+            break ;
+        }
+    }
+
+    /* ======== */
+    pthread_exit(&status);
+}
+
+/* ================================================================ */
 /* ==================== FUNCTIONS DEFENITIONS ===================== */
 /* ================================================================ */
 
@@ -261,19 +351,23 @@ int Start(void) {
     int status = SSUCCESS;
 
     char filepath[64];
-    struct flags flags = {0, 0};
+
+    pthread_t t;
+    void* trv;
     /* ======== */
 
     combine(filepath);
 
-    /* === Trying to create a new directory === */
-    if (!directory_exists(DEFAULT_CONFIGURATION_DIRECTORY) && (status = directory_new(DEFAULT_CONFIGURATION_DIRECTORY)) < 0) { goto ERROR; }
+    status = pthread_create(&t, NULL, t_initialize, NULL);
 
-    /* === Trying to create a configuration file === */
-    if (!file_exists(filepath) && (status = _write_default_system_config_file() != SSUCCESS)) { goto ERROR; }
+    /* Waiting for a file processing thread to be finished  */
+    {
+        pthread_mutex_lock(&mtx);
+        while (!is_ready) { pthread_cond_wait(&cond, &mtx); }
+        pthread_mutex_unlock(&mtx);
+    }
 
-    /* === Trying to read the configuration file === */
-    if ((status = _read_default_system_config_file(&flags)) != SSUCCESS) { goto ERROR; }
+    pthread_join(t, &trv);
 
     /* ============== Initializaing SDL =============== */
     if (SDL_Init(flags.SDL_flags) != 0) { goto ERROR; }
