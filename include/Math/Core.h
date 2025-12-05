@@ -7,6 +7,7 @@ extern "C" {
 
 #include "Vector2D.h"
 #include <math.h>
+#include <stdbool.h>
 
 /* ================================================================ */
 
@@ -40,6 +41,11 @@ extern "C" {
  * Find which of the two numbers is bigger
  */
 #define max(x, y) ((x) > (y) ? (x) : (y))
+
+/**
+ * Compares two floating-point values for approximate equality.
+ */
+#define eqf(a, b) fasbs((a) - (b)) < 1.0f / 8192.0f
 
 /* ================================================================ */
 

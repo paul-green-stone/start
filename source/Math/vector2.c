@@ -200,3 +200,28 @@ int Vector2_subtract(const Vector2* a, Vector2* b, Vector2* dst_vector) {
 }
 
 /* ================================================================ */
+
+int Vector2_scale(Vector2* a, float scalar) {
+
+    /* ====== Do not dereference a NULL pointer ====== */
+    if (a == NULL) {
+        
+        Error_set(SERR_NULL_POINTER);
+        /* ======== */
+        return SERR_NULL_POINTER;
+    }
+
+    a->x *= scalar;
+    a->y *= scalar;
+
+    /* ======== */
+    return SSUCCESS;
+}
+
+/* ================================================================ */
+
+double Vector2_length(const Vector2* v) {
+    return sqrt(v->x * v->x + v->y * v->y);
+}
+
+/* ================================================================ */

@@ -28,6 +28,9 @@ typedef struct vector2 Vector2;
 #define v2_neg(a) Vector2_negate(a)
 #define v2_mag(a, dst) Vector2_get_magnitude((a), (dst))
 #define v2_nrm(a) Vector2_normalize((a))
+#define v2_scl(a, s) Vector2_scale((a), (s))
+#define v2_uscl(a, s) Vector2_scale((a), 1/(s))
+#define v2_len(a) Vector2_length(a)
 
 /* ======== */
 
@@ -128,6 +131,27 @@ int Vector2_add(const Vector2* a, Vector2* b, Vector2* dst_vector);
  * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
  */
 int Vector2_subtract(const Vector2* a, Vector2* b, Vector2* dst_vector);
+
+/**
+ * Scales a 2D vector by a scalar value.
+ *
+ * @param a      Pointer to the `Vector2` to scale.
+ * @param scalar The scalar value to multiply the vector by.
+ *
+ * @return `SSUCCESS` on success, `SERR_NULL_POINTER` if the vector pointer is `NULL`.
+ */
+int Vector2_scale(Vector2* a, float scalar);
+
+/**
+ * Calculates the length (magnitude) of a 2D vector.
+ *
+ * @param v Pointer to the `Vector2` to calculate the length of.
+ *
+ * @return The length of the vector.
+ *
+ * @note The caller must ensure that the vector pointer is valid; passing `NULL` may result in undefined behavior.
+ */
+double Vector2_length(const Vector2* v);
 
 /* ================================================================ */
 
