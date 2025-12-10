@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <errno.h>
+#include <assert.h>
 
 #include "../../include/Math/Vector2D.h"
 #include "../../include/Error.h"
@@ -33,14 +34,6 @@ Vector2* Vector2_create(float x, float y) {
 
 int Vector2_destroy(Vector2** v) {
 
-    /* ====== Do not dereference a NULL pointer ======= */
-    if ((v == NULL) && (*v == NULL)) {
-
-        Error_set(SERR_NULL_POINTER);
-        /* ======== */
-        return SERR_NULL_POINTER;
-    }
-
     /* === Deallocating a Container === */
     free(*v);
     *v = NULL;
@@ -51,177 +44,106 @@ int Vector2_destroy(Vector2** v) {
 
 /* ================================================================ */
 
-int Vector2_multiply(Vector2* v, Vector2* dst, float s) {
+Vector2 Vector2_negate(const Vector2* v) {
 
-    /* ====== Do not dereference a NULL pointer ======= */
-    if (v == NULL) {
+    Vector2 res = {0, 0};
+    /* ========= */
 
-        Error_set(SERR_NULL_POINTER);
-        /* ======== */
-        return SERR_NULL_POINTER;
-    }
-
-    dst = (dst == NULL) ? v : dst;
-    dst->x = v->x * s;
-    dst->y = v->y * s;
+    res.x = -v->x;
+    res.y = -v->y;
 
     /* ======== */
-    return SSUCCESS;
+    return res;
 }
 
 /* ================================================================ */
 
-int Vector2_divide(Vector2* v, Vector2* dst, float s) {
-
-    float reciprocal;
-    /* ======== */
-
-    /* ============ Do not divide by zero ============= */
-    if (s == 0) {
-
-        Error_set(ERR_DIVIDE_ZERO);
-        /* ======== */
-        return ERR_DIVIDE_ZERO;
-    }
-
-    /* ====== Do not dereference a NULL pointer ======= */
-    if (v == NULL) {
-        
-        Error_set(SERR_NULL_POINTER);
-        /* ======== */
-        return SERR_NULL_POINTER;
-    }
-
-    reciprocal = 1.0 / s;
-    dst = (dst == NULL) ? v : dst;
-    dst->x = v->x * reciprocal;
-    dst->y = v->y * reciprocal;
-
-    /* ======== */
-    return SSUCCESS;
-}
-
-/* ================================================================ */
-
-int Vector2_negate(Vector2* v) {
-
-    /* ====== Do not dereference a NULL pointer ====== */
-    if (v == NULL) {
-
-        Error_set(SERR_NULL_POINTER);
-        /* ======== */
-        return SERR_NULL_POINTER;
-    }
-
-    v->x = -v->x;
-    v->y = -v->y;
-
-    /* ======== */
-    return SSUCCESS;
-}
-
-/* ================================================================ */
-
-int Vector2_get_magnitude(const Vector2* v, float* dst) {
-
-    /* ====== Do not dereference a NULL pointer ====== */
-    if (v == NULL) {
-    
-        Error_set(SERR_NULL_POINTER);
-        /* ======== */
-        return SERR_NULL_POINTER;
-    }
-
-    *dst = sqrt(v->x * v->x + v->y * v->y);
-
-    /* ======== */
-    return SSUCCESS;
-}
-
-/* ================================================================ */
-
-int Vector2_normalize(Vector2* v) {
-
-    float magnitude;
-    /* ======== */
-
-    /* ====== Do not dereference a NULL pointer ====== */
-    if (v == NULL) {
-
-        Error_set(SERR_NULL_POINTER);
-        /* ======== */
-        return SERR_NULL_POINTER;
-    }
-
-    magnitude = sqrt(v->x * v->x + v->y * v->y);
-
-    /* ======== */
-    return Vector2_divide(v, NULL, magnitude);
-}
-
-/* ================================================================ */
-
-int Vector2_add(const Vector2* a, Vector2* b, Vector2* dst_vector) {
-
-    /* ====== Do not dereference a NULL pointer ====== */
-    if ((a == NULL) || (b == NULL)) {
-
-        Error_set(SERR_NULL_POINTER);
-        /* ======== */
-        return SERR_NULL_POINTER;
-    }
-
-    dst_vector = (dst_vector == NULL) ? b : dst_vector;
-    dst_vector->x = b->x + a->x;
-    dst_vector->y = b->y + a->y;
-
-    /* ======== */
-    return SSUCCESS;
-}
-
-/* ================================================================ */
-
-int Vector2_subtract(const Vector2* a, Vector2* b, Vector2* dst_vector) {
-
-    /* ====== Do not dereference a NULL pointer ====== */
-    if ((a == NULL) || (b == NULL)) {
-        
-        Error_set(SERR_NULL_POINTER);
-        /* ======== */
-        return SERR_NULL_POINTER;
-    }
-
-    dst_vector = (dst_vector == NULL) ? b : dst_vector;
-    dst_vector->x = a->x - b->x;
-    dst_vector->y = a->y - b->y;
-
-    /* ======== */
-    return SSUCCESS;
-}
-
-/* ================================================================ */
-
-int Vector2_scale(Vector2* a, float scalar) {
-
-    /* ====== Do not dereference a NULL pointer ====== */
-    if (a == NULL) {
-        
-        Error_set(SERR_NULL_POINTER);
-        /* ======== */
-        return SERR_NULL_POINTER;
-    }
-
-    a->x *= scalar;
-    a->y *= scalar;
-
-    /* ======== */
-    return SSUCCESS;
-}
-
-/* ================================================================ */
-
-double Vector2_length(const Vector2* v) {
+float Vector2_get_magnitude(const Vector2* v) {
     return sqrt(v->x * v->x + v->y * v->y);
+}
+
+/* ================================================================ */
+
+Vector2 Vector2_normalize(const Vector2* v) {
+    return Vector2_scale(v, 1 / Vector2_get_magnitude(v));
+}
+
+/* ================================================================ */
+
+Vector2 Vector2_add(const Vector2* a, const Vector2* b) {
+
+    Vector2 res = {0, 0};
+    /* ======== */
+
+    res.x = a->x + b->x;
+    res.y = a->y + b->y;
+
+    /* ======== */
+    return res;
+}
+
+/* ================================================================ */
+
+Vector2 Vector2_subtract(const Vector2* a, const Vector2* b) {
+
+    Vector2 res = {0, 0};
+    /* ======== */
+
+    res.x = a->x - b->x;
+    res.y = a->y - b->y;
+
+    /* ======== */
+    return res;
+}
+
+/* ================================================================ */
+
+Vector2 Vector2_scale(const Vector2* a, float scalar) {
+
+    Vector2 res = {a->x, a->y};
+    
+    /* ======== */
+
+    res.x *= scalar;
+    res.y *= scalar;
+
+    /* ======== */
+    return res;
+}
+
+/* ================================================================ */
+
+Vector2 Vector2_unscale(const Vector2* a, float scalar) {
+
+    Vector2 res = {a->x, a->y};
+
+    assert(scalar != 0);
+    
+    /* ======== */
+
+    res.x /= scalar;
+    res.y /= scalar;
+
+    /* ======== */
+    return res;
+}
+
+/* ================================================================ */
+
+Vector2 Vector2_rotate(Vector2* v, float degrees) {
+
+    float rad = deg2rad(degrees);
+    float sine = sinf(rad);
+    float cosine = cosf(rad);
+    
+    Vector2 res = {0, 0};
+    /* ======== */
+
+    res.x = v->x * cosine - v->y * sine;
+    res.y = v->x * sine + v->y * cosine;
+
+    /* ======== */
+    return res;
 }
 
 /* ================================================================ */

@@ -11,6 +11,8 @@ extern "C" {
 
 /* ================================================================ */
 
+#define PI 3.14159265358979323846f
+
 /**
  * Checks if a point is inside a given rectangle.
  * 
@@ -46,6 +48,11 @@ extern "C" {
  * Compares two floating-point values for approximate equality.
  */
 #define eqf(a, b) fasbs((a) - (b)) < 1.0f / 8192.0f
+
+/**
+ * Convert degrees to radians
+ */
+#define deg2rad(deg) deg * PI / 180.0f
 
 /* ================================================================ */
 

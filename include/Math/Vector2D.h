@@ -7,6 +7,8 @@ extern "C" {
 
 #include <math.h>
 
+#include "Core.h"
+
 /* ================================================================ */
 /* ======================= DEFINEs&TYPEDEFs ======================= */
 /* ================================================================ */
@@ -23,14 +25,13 @@ typedef struct vector2 Vector2;
 /* Shorthands for common vector operations */
 /* ======================================= */
 
-#define v2_mul(a, b, s) Vector2_multiply((a), (b), (s))
-#define v2_div(a, b, s) Vector2_divide((a), (b), (s))
+#define v2_mul(a, b) Vector2_multiply((a), (b))
+#define v2_div(a, b) Vector2_divide((a), (b))
 #define v2_neg(a) Vector2_negate(a)
-#define v2_mag(a, dst) Vector2_get_magnitude((a), (dst))
+#define v2_len(a) Vector2_get_magnitude((a))
 #define v2_nrm(a) Vector2_normalize((a))
 #define v2_scl(a, s) Vector2_scale((a), (s))
 #define v2_uscl(a, s) Vector2_scale((a), 1/(s))
-#define v2_len(a) Vector2_length(a)
 
 /* ======== */
 
@@ -61,97 +62,76 @@ Vector2* Vector2_create(float x, float y);
 int Vector2_destroy(Vector2** vector_ptr);
 
 /**
- * Multiply a vector by a scalar.
+ * Computes the negation of a 2D vector.
+ *
+ * @param v Pointer to the `Vector2` to negate.
  * 
- * @param vector the vector to multiply
- * @param dst_vector the vector in which to store the result. If it is `NULL`, the `vector` is updated
- * @param scalar the scalar value to multiply by
+ * @return A new Vector2 with negated components.
  * 
- * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
+ * @note The behavior is undefined if `v` is `NULL`.
  */
-int Vector2_multiply(Vector2* vector, Vector2* dst_vector, float scalar);
+Vector2 Vector2_negate(const Vector2* vector);
 
 /**
- * Divide a vector by a scalar.
+ * Computes the magnitude (length) of a 2D vector.
+ *
+ * @param v Pointer to the `Vector2` whose magnitude is to be computed.
  * 
- * @param vector the vector to divide
- * @param dst_vector the vector in which to store the result. If it is `NULL`, the `vector` is updated
- * @param scalar the scalar value to divide by
+ * @return The magnitude of the vector.
  * 
- * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
+ * @note The behavior is undefined if `v` is `NULL`.
  */
-int Vector2_divide(Vector2* vector, Vector2* dst_vector, float scalar);
+float Vector2_get_magnitude(const Vector2* vector);
 
 /**
- * Negate a vector.
+ * Normalizes a 2D vector.
+ *
+ * @param v Pointer to the `Vector2` to normalize.
  * 
- * @param vector the vector to negate
+ * @return A new Vector2 with unit length in the same direction as `v`.
  * 
- * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
+ * @note The behavior is undefined if `v` is `NULL`.
  */
-int Vector2_negate(Vector2* vector);
+Vector2 Vector2_normalize(const Vector2* vector);
 
 /**
- * Get the magnitude of the vector.
+ * Adds two 2D vectors.
+ *
+ * @param a Pointer to the first `Vector2`.
+ * @param b Pointer to the second `Vector2`.
  * 
- * @param vector the vector whose magnitude is to be found
- * @param dst the variable in which to store the result
+ * @return A new Vector2 representing the sum of `a` and `b`.
  * 
- * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
+ * @note The behavior is undefined if either `a` or `b` is `NULL`.
  */
-int Vector2_get_magnitude(const Vector2* vector, float* dst);
+Vector2 Vector2_add(const Vector2* a, const Vector2* b);
 
 /**
- * Normalize the given vector.
+ * Subtracts two 2D vectors.
+ *
+ * @param a Pointer to the first `Vector2`.
+ * @param b Pointer to the second `Vector2`.
  * 
- * @param vector the vector to normalize
+ * @return A new Vector2 representing the difference of `a` and `b`.
  * 
- * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
+ * @note The behavior is undefined if either `a` or `b` is `NULL`.
  */
-int Vector2_normalize(Vector2* vector);
-
-/**
- * Add two vectors.
- * 
- * @param a the summand vector 1
- * @param b the summand vector 2
- * @param dst_vector the sum vector. If it is NULL, `b` becomes the vector that stores the sum
- * 
- * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
- */
-int Vector2_add(const Vector2* a, Vector2* b, Vector2* dst_vector);
-
-/**
- * Subtract one vector from another.
- * 
- * @param a the minuend vector
- * @param b the subtrahend vector
- * @param dst_vector the difference vector. If it is NULL, `b` becomes the vector that stores the difference
- * 
- * @return Returns `SUCCESS` (0) on success or a negative error code on failure; call `Error_get()` for more information.
- */
-int Vector2_subtract(const Vector2* a, Vector2* b, Vector2* dst_vector);
+Vector2 Vector2_subtract(const Vector2* a, const Vector2* b);
 
 /**
  * Scales a 2D vector by a scalar value.
  *
  * @param a      Pointer to the `Vector2` to scale.
  * @param scalar The scalar value to multiply the vector by.
- *
- * @return `SSUCCESS` on success, `SERR_NULL_POINTER` if the vector pointer is `NULL`.
+ * 
+ * @note The behavior is undefined if `a` is `NULL`.
  */
-int Vector2_scale(Vector2* a, float scalar);
+Vector2 Vector2_scale(const Vector2* a, float scalar);
 
 /**
- * Calculates the length (magnitude) of a 2D vector.
- *
- * @param v Pointer to the `Vector2` to calculate the length of.
- *
- * @return The length of the vector.
- *
- * @note The caller must ensure that the vector pointer is valid; passing `NULL` may result in undefined behavior.
+ * 
  */
-double Vector2_length(const Vector2* v);
+Vector2 Vector2_rotate(Vector2* a, float degrees);
 
 /* ================================================================ */
 
