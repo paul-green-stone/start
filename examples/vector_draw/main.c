@@ -1,0 +1,96 @@
+#include "../../include/Start.h"
+
+/* ================================================================ */
+
+SDL_Renderer* ctx;
+
+int width;
+int height;
+
+void draw(Vector2* v) {
+	SDL_RenderDrawLine(ctx, width / 2, height / 2, width / 2 + v->x, height / 2 + v->y);
+}
+
+void update(Vector2* v, float d) {
+	*v = Vector2_rotate(v, d);
+}
+
+/* ================================================================ */
+
+int main(int argc, char** argv) {
+
+	SDL_Event event;
+
+    /* Initialize the framework: set up the initial configurations and initialize SDL2 library */
+    if (Start() != SSUCCESS) {
+
+        error(stderr, "%s\n", Error_string());
+        Stop();
+
+        /* ======== */
+        return EXIT_FAILURE;
+    }
+
+    /* Create a basic application. You can modify it by manually configuring a file at `configs/application.conf` and `configs.system` */
+    if (App_init() != SSUCCESS) {
+
+        error(stderr, "%s\n", Error_string());
+        Stop();
+
+        /* ======== */
+        return EXIT_FAILURE;
+    } 
+
+	ctx = get_context();
+	SDL_GetWindowSize(get_window(), &width, &height);
+
+	Vector2 v1 = {125, 0};
+	Vector2 v2 = {-125, 0};
+	Vector2 v3 = {0, -125};
+
+	/* ================================================================ */
+    /* =============== A pretty standard main game loop =============== */
+    /* ================================================================ */
+
+	while (App_isRunning()) {
+
+		while (SDL_PollEvent(&event)) {
+
+			switch (event.type) {
+
+				case SDL_QUIT:
+
+					App_stop();
+					break ;
+			}
+		}
+
+		update(&v1, .5f);
+		update(&v2, -.5f);
+		update(&v3, -.45);
+
+		SDL_SetRenderDrawColor(ctx, 255, 255, 255, 255);
+		SDL_RenderClear(ctx);
+
+		/* ======== */
+
+		SDL_SetRenderDrawColor(ctx, 0, 255, 0, 255);
+		draw(&v1);
+
+		SDL_SetRenderDrawColor(ctx, 255, 0, 0, 255);
+		draw(&v2);
+
+		SDL_SetRenderDrawColor(ctx, 0, 0, 255, 255);
+		draw(&v3);
+
+		/* ======== */
+
+		App_render();
+	}
+
+	App_stop();
+	Stop();
+
+	/* ======== */
+	return EXIT_SUCCESS;
+}
