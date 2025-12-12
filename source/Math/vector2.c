@@ -153,3 +153,16 @@ float Vector2_dot_product(const Vector2* a, const Vector2* b) {
 }
 
 /* ================================================================ */
+
+float Vector2_eAngle(const Vector2* a, const Vector2* b) {
+
+    Vector2 _a = Vector2_normalize(a);
+    Vector2 _b = Vector2_normalize(b);
+
+    float dp = Vector2_dot_product(&_a, &_b);
+
+    /* ======== */
+    return rad2deg(acosf(dp));
+}
+
+/* ================================================================ */

@@ -88,7 +88,7 @@ float Vector2_get_magnitude(const Vector2* vector);
  *
  * @param v Pointer to the `Vector2` to normalize.
  * 
- * @return A new Vector2 with unit length in the same direction as `v`.
+ * @return A new `Vector2` with unit length in the same direction as `v`.
  * 
  * @note The behavior is undefined if `v` is `NULL`.
  */
@@ -100,7 +100,7 @@ Vector2 Vector2_normalize(const Vector2* vector);
  * @param a Pointer to the first `Vector2`.
  * @param b Pointer to the second `Vector2`.
  * 
- * @return A new Vector2 representing the sum of `a` and `b`.
+ * @return A new `Vector2` representing the sum of `a` and `b`.
  * 
  * @note The behavior is undefined if either `a` or `b` is `NULL`.
  */
@@ -112,7 +112,7 @@ Vector2 Vector2_add(const Vector2* a, const Vector2* b);
  * @param a Pointer to the first `Vector2`.
  * @param b Pointer to the second `Vector2`.
  * 
- * @return A new Vector2 representing the difference of `a` and `b`.
+ * @return A new `Vector2` representing the difference of `a` and `b`.
  * 
  * @note The behavior is undefined if either `a` or `b` is `NULL`.
  */
@@ -159,6 +159,18 @@ Vector2 Vector2_rotate(Vector2* a, float degrees);
  * @note The behavior is undefined if vectors are `NULL`.
  */
 float Vector2_dot_product(const Vector2* a, const Vector2* b);
+
+/**
+ * Computes the enclosed angle between two vectors.
+ * 
+ * @param a Pointer to the first `Vector2`.
+ * @param b Pointer to the second `Vector2`.
+ * 
+ * @return The angle between vectors.
+ * 
+ * @note The behavior is undefined if vectors are `NULL`.
+ */
+float Vector2_eAngle(const Vector2* a, const Vector2* b);
 
 /* ================================================================ */
 

@@ -47,7 +47,7 @@ extern "C" {
 /**
  * Compares two floating-point values for approximate equality.
  */
-#define eqf(a, b) fasbs((a) - (b)) < 1.0f / 8192.0f
+#define eqf(a, b) fabs((a) - (b)) < 1.0f / 8192.0f
 
 /**
  * Convert degrees to radians
