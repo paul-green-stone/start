@@ -31,12 +31,12 @@ typedef struct vector2 Vector2;
 #define v2_len(a) Vector2_get_magnitude((a))
 #define v2_nrm(a) Vector2_normalize((a))
 #define v2_scl(a, s) Vector2_scale((a), (s))
-#define v2_uscl(a, s) Vector2_scale((a), 1/(s))
+#define v2_uscl(a, s) Vector2_unscale((a), (s))
 
 /* ======== */
 
-#define v2_add(a, b, dst) Vector2_add((a), (b), (dst))
-#define v2_sub(a, b, dst) Vector2_subtract((a), (b), (dst))
+#define v2_add(a, b, dst) Vector2_add((a), (b))
+#define v2_sub(a, b, dst) Vector2_subtract((a), (b))
 
 /* ================================================================ */
 /* ========================== INTERFACE =========================== */
@@ -124,14 +124,41 @@ Vector2 Vector2_subtract(const Vector2* a, const Vector2* b);
  * @param a      Pointer to the `Vector2` to scale.
  * @param scalar The scalar value to multiply the vector by.
  * 
+ * @return A new  `Vector2` vector representing the scaled version of the original one
+ * 
  * @note The behavior is undefined if `a` is `NULL`.
  */
 Vector2 Vector2_scale(const Vector2* a, float scalar);
 
 /**
+ * Rotates a vector by the given number of degrees.
  * 
+ * @param a Pointer to the `Vector2` to rotate.
+ * @param degrees The scalar value to rotate the vector by.
+ * 
+ * @return A new `Vector2` representing the rotated version of the original one.
+ * 
+ * @note The behavior is undefined if `a` is `NULL`.
  */
 Vector2 Vector2_rotate(Vector2* a, float degrees);
+
+/**
+ * Computes the dot product of two 2D vectors.
+ * 
+ * @param a Pointer to the first `Vector2`.
+ * @param b Pointer to the second `Vector2`.
+ * 
+ * - When the `dot product equals zero` the angle between the vectors is 90°
+ * 
+ * - When the `dot product is positive` the angle is less than 90°.
+ * 
+ * - When the `dot product is negative` the angle is greater than 90°.
+ * 
+ * @return The dot product of two vectors.
+ * 
+ * @note The behavior is undefined if vectors are `NULL`.
+ */
+float Vector2_dot_product(const Vector2* a, const Vector2* b);
 
 /* ================================================================ */
 

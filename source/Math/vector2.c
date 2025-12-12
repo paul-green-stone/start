@@ -147,3 +147,9 @@ Vector2 Vector2_rotate(Vector2* v, float degrees) {
 }
 
 /* ================================================================ */
+
+float Vector2_dot_product(const Vector2* a, const Vector2* b) {
+    return a->x * b->x + a->y * b->y;
+}
+
+/* ================================================================ */

@@ -54,6 +54,11 @@ extern "C" {
  */
 #define deg2rad(deg) deg * PI / 180.0f
 
+/**
+ * Convert radians to degrees
+ */
+#define rad2deg(rad) rad * 180.0f / PI
+
 /* ================================================================ */
 
 #ifdef __cplusplus
