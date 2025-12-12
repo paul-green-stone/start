@@ -46,13 +46,17 @@ int main(int argc, char** argv) {
 
 	Vector2 v1 = {125, 0};
 	Vector2 v2 = {-125, 0};
-	Vector2 v3 = {0, -125};
+
+	Clock* timer = Clock_new();
+	Clock_setTimer(timer, 1);
 
 	/* ================================================================ */
     /* =============== A pretty standard main game loop =============== */
     /* ================================================================ */
 
 	while (App_isRunning()) {
+
+		Clock_update(timer);
 
 		while (SDL_PollEvent(&event)) {
 
@@ -65,9 +69,17 @@ int main(int argc, char** argv) {
 			}
 		}
 
-		update(&v1, .5f);
-		update(&v2, -.5f);
-		update(&v3, -.45);
+		if (Clock_isReady(timer)) {
+
+			update(&v1, 1.f);
+			update(&v2, -1.f);
+
+			Clock_reset(timer);
+		}
+
+		if (eqf(Vector2_eAngle(&v1, &v2), 90.0)) {
+			Clock_stop(timer);
+		}
 
 		SDL_SetRenderDrawColor(ctx, 255, 255, 255, 255);
 		SDL_RenderClear(ctx);
@@ -80,13 +92,12 @@ int main(int argc, char** argv) {
 		SDL_SetRenderDrawColor(ctx, 255, 0, 0, 255);
 		draw(&v2);
 
-		SDL_SetRenderDrawColor(ctx, 0, 0, 255, 255);
-		draw(&v3);
-
 		/* ======== */
 
 		App_render();
 	}
+
+	Clock_destroy(&timer);
 
 	App_stop();
 	Stop();
