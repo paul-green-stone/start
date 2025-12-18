@@ -166,3 +166,19 @@ float Vector2_eAngle(const Vector2* a, const Vector2* b) {
 }
 
 /* ================================================================ */
+
+Vector2 Vector2_projection(const Vector2* project, const Vector2* onto) {
+
+    Vector2 res = {onto->x, onto->y};
+    float dp;
+    /* ======== */
+
+    if ((dp = Vector2_dot_product(onto, onto)) > 0) {
+        return Vector2_scale(onto, Vector2_dot_product(project, onto) / dp);
+    }
+
+    /* ======== */
+    return res;
+}
+
+/* ================================================================ */

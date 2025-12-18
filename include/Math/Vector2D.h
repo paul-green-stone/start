@@ -172,6 +172,18 @@ float Vector2_dot_product(const Vector2* a, const Vector2* b);
  */
 float Vector2_eAngle(const Vector2* a, const Vector2* b);
 
+/**
+ * Computes the vector projection of one 2D vector onto another 2D vector.
+ * 
+ * @param project The vector to be projected.
+ * @param onto Rhe vector onto which the projection is made.
+ * 
+ * @return A `Vector2` representing the projection of `project` onto `onto`.
+ * 
+ * @note The behavior is undefined if vectors are `NULL`.
+ */
+Vector2 Vector2_projection(const Vector2* project, const Vector2* onto);
+
 /* ================================================================ */
 
 #ifdef __cplusplus
