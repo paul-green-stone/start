@@ -1,8 +1,10 @@
 #include <SDL2/SDL.h>
 
-#include "../include/Shapes/Line.h"
+#include "../include/Shapes/Shapes.h"
 #include "../include/Application.h"
 
+/* ================================================================ */
+/* ============================= LINE ============================= */
 /* ================================================================ */
 
 void Line_draw(const Line* line) {
@@ -67,6 +69,47 @@ void Line_draw(const Line* line) {
             }
 
             y += sign_y;
+        }
+    }
+}
+
+/* ================================================================ */
+/* ============================ CIRCLE ============================ */
+/* ================================================================ */
+
+void Cirlce_draw(const Circle* circle) {
+
+    int x, y;       /* Current pixel to plot */
+    int p;
+
+    SDL_Renderer* ctx = get_context();
+    /* ======== */
+
+    x = 0;
+    y = circle->radius;
+
+    p = 1 - circle->radius;
+
+    /* ======== */
+
+    for (; x <= y; ) {
+
+        SDL_RenderDrawPoint(ctx, x + circle->center.x, y + circle->center.y);
+        SDL_RenderDrawPoint(ctx, x + circle->center.x, -y + circle->center.y);
+        SDL_RenderDrawPoint(ctx, -x + circle->center.x, y + circle->center.y);
+        SDL_RenderDrawPoint(ctx, -x + circle->center.x, -y + circle->center.y);
+        SDL_RenderDrawPoint(ctx, y + circle->center.x, x + circle->center.y);
+        SDL_RenderDrawPoint(ctx, y + circle->center.x, -x + circle->center.y);
+        SDL_RenderDrawPoint(ctx, -y + circle->center.x, x + circle->center.y);
+        SDL_RenderDrawPoint(ctx, -y + circle->center.x, -x + circle->center.y);
+
+        x++;
+        
+        if (p < 0) {
+            p += 2 * x + 1;
+        } else {
+            y--;
+            p += 2 * (x - y) + 1;
         }
     }
 }

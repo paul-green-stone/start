@@ -14,6 +14,17 @@ typedef struct circle {
     float radius;
 } Circle;
 
+/**
+ * Draws a circle using the midpoint circle algorithm.
+ * 
+ * @param circle pointer to a `Circle` structure.
+ * 
+ * @return None.
+ * 
+ * @note The behavior is undefined if a circle is `NULL`.
+ */
+void Cirlce_draw(const Circle* circle);
+
 /* ================================================================ */
 
 #endif /* _START_CIRCLE_SHAPE_H */
