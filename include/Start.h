@@ -11,6 +11,7 @@ extern "C" {
 #include "File/conf.h"
 #include "Particles/Particle.h"
 #include "Particles/Particles.h"
+#include "Shapes/Shapes.h"
 #include "Animation.h"
 #include "Application.h"
 #include "Camera.h"
