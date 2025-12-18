@@ -5,7 +5,7 @@
 # Object files location. Object files will be placed in this directory during compilation
 OBJDIR   = objects
 # Full names of object files
-OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o List.o Camera.o Animation.o cJSON.o Particles.o)
+OBJECTS	 = $(addprefix $(OBJDIR)/, Window.o Clock.o Texture.o Text.o Vector2.o Input.o Application.o State.o Manager.o Conf.o Core.o Error.o Widgets.o List.o Camera.o Animation.o cJSON.o Particles.o shapes.o)
 
 RELEASE ?= DEBUG
 
@@ -106,6 +106,11 @@ $(OBJDIR)/Window.o: $(WINDOW) $(INCLUDE)
 LIST     = $(addprefix source/, list.c)
 
 $(OBJDIR)/List.o: $(LIST) $(INCLUDE)
+	$(CC) $(CFLAGS) -o $@ $<
+
+# ================================================================ #
+
+$(OBJDIR)/shapes.o: source/shapes.c
 	$(CC) $(CFLAGS) -o $@ $<
 
 # ================================================================ #
