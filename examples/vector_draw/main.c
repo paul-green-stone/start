@@ -50,6 +50,14 @@ int main(int argc, char** argv) {
 	Clock* timer = Clock_new();
 	Clock_setTimer(timer, 1);
 
+	Line a;
+	a.base = (Vector2) {10, 10};
+	a.direction = (Vector2) {width - 10, 10};
+
+	Circle A;
+	A.center = (Vector2) {width / 2, height / 2};
+	A.radius = 50; 
+
 	/* ================================================================ */
     /* =============== A pretty standard main game loop =============== */
     /* ================================================================ */
@@ -91,6 +99,9 @@ int main(int argc, char** argv) {
 
 		SDL_SetRenderDrawColor(ctx, 255, 0, 0, 255);
 		draw(&v2);
+
+		Line_draw(&a);
+		Cirlce_draw(&A);
 
 		/* ======== */
 

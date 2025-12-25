@@ -1,4 +1,8 @@
-#include <SDL2/SDL.h>
+#ifdef _MSC_VER
+    #include <SDL.h>
+#else
+    #include <SDL2/SDL.h>
+#endif
 
 #include "../include/Shapes/Shapes.h"
 #include "../include/Application.h"
@@ -104,7 +108,7 @@ void Cirlce_draw(const Circle* circle) {
         SDL_RenderDrawPoint(ctx, -y + circle->center.x, -x + circle->center.y);
 
         x++;
-        
+
         if (p < 0) {
             p += 2 * x + 1;
         } else {
